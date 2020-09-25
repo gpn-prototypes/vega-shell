@@ -4,4 +4,5 @@ yarn.lock
 yarn-error.log
 package-lock.json
 LICENSE
+*.ejs
 dist
