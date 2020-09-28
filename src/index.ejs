@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Root Config</title>
+  <title>Vega Shell</title>
 
   <!--
     Remove this if you only support browsers that support async/await.
@@ -12,8 +12,8 @@
     browsers. More information at https://github.com/single-spa/create-single-spa/issues/112
   -->
   <script src="https://cdn.jsdelivr.net/npm/regenerator-runtime@0.13.5/runtime.min.js"></script>
-  
-  <!-- 
+
+  <!--
     This CSP allows any SSL-enabled host, but you should limit these directives further to increase your app's security.
     Learn more about CSP policies at https://content-security-policy.com/#directive
   -->
@@ -34,6 +34,8 @@
   <script type="systemjs-importmap">
     {
       "imports": {
+        "react": "https://cdn.jsdelivr.net/npm/react@16.13.0/umd/react.production.min.js",
+        "react-dom": "https://cdn.jsdelivr.net/npm/react-dom@16.13.0/umd/react-dom.production.min.js",
         "single-spa": "https://cdn.jsdelivr.net/npm/single-spa@5.5.5/lib/system/single-spa.min.js"
       }
     }
@@ -48,7 +50,7 @@
     {
       "imports": {
         "@single-spa/welcome": "https://unpkg.com/single-spa-welcome/dist/single-spa-welcome.js",
-        "@vega/root-config": "//localhost:9000/vega-root-config.js"
+        "@gpn-prototypes/vega-shell": "//localhost:9000/gpn-prototypes-vega-shell.js"
       }
     }
   </script>
@@ -74,9 +76,9 @@
 
   <template id="single-spa-layout">
     <single-spa-router>
-      <!-- <nav>
-        <application name="@<%- orgName %>/navbar"></application>
-      </nav> -->
+      <!-- <route path="login">
+        <application name="@gpn-prototypes/vega-auth"></application>
+      </route> -->
       <main>
         <route default>
           <application name="@single-spa/welcome"></application>
@@ -87,7 +89,7 @@
 </head>
 <body>
   <script>
-    System.import('@vega/root-config');
+    System.import('@gpn-prototypes/vega-shell');
   </script>
   <import-map-overrides-full show-when-local-storage="devtools" dev-libs></import-map-overrides-full>
 </body>
