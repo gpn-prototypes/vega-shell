@@ -1,51 +1,64 @@
 {
   "name": "@gpn-prototypes/vega-shell",
+  "author": "csssr",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": "^12.16.2",
+    "yarn": "^1.22.4"
+  },
   "scripts": {
     "start": "webpack-dev-server --mode=development --port 9000 --env.isLocal=true",
-    "lint": "eslint src --ext js,ts,tsx",
     "test": "cross-env BABEL_ENV=test jest --passWithNoTests",
-    "format": "prettier --write \"./**\"",
-    "build": "webpack --mode=production"
+    "format": "prettier --write '{src,types,scripts}/**/*.{json,{j,t}s{,x},css,}'",
+    "build": "webpack --mode=production",
+    "lint": "npm-run-all lint:*",
+    "lint-fix": "npm-run-all format lint-fix:*",
+    "lint:ts": "eslint '{src,types}/**/*.ts{,x}'",
+    "lint-fix:ts": "eslint '{src,types}/**/*.ts{,x}' --fix"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged && concurrently yarn:test yarn:lint"
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-customizable"
+    },
+    "cz-customizable": {
+      "config": "./node_modules/@gpn-prototypes/frontend-configs/git/commitizen.js"
     }
   },
   "devDependencies": {
     "@babel/core": "^7.7.4",
     "@babel/plugin-transform-runtime": "^7.8.3",
     "@babel/preset-env": "^7.7.4",
+    "@babel/preset-typescript": "^7.9.0",
     "@babel/runtime": "^7.8.7",
+    "@gpn-prototypes/frontend-configs": "^1.2.12",
     "@types/systemjs": "^6.1.0",
     "babel-eslint": "^11.0.0-beta.2",
+    "commitizen": "^4.2.1",
     "concurrently": "^5.1.0",
     "cross-env": "^7.0.2",
-    "eslint": "^6.7.2",
-    "eslint-config-prettier": "^6.7.0",
-    "eslint-plugin-prettier": "^3.1.1",
+    "cz-customizable": "^6.3.0",
+    "dotenv": "^8.2.0",
+    "eslint-config-ts-important-stuff": "^1.0.0",
     "html-webpack-plugin": "^4.0.4",
     "husky": "^4.2.3",
     "jest": "^25.2.7",
     "jest-cli": "^25.2.7",
-    "prettier": "^2.0.4",
-    "pretty-quick": "^2.0.1",
+    "lint-staged": "^10.4.0",
+    "npm-run-all": "^4.1.5",
     "serve": "^11.2.0",
+    "ts-config-single-spa": "^1.7.0",
+    "typescript": "^3.8.3",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10",
-    "webpack-dev-server": "^3.9.0",
-    "webpack-merge": "^4.2.2",
-    "@babel/preset-typescript": "^7.9.0",
-    "eslint-config-ts-important-stuff": "^1.0.0",
-    "typescript": "^3.8.3",
     "webpack-config-single-spa-ts": "^1.4.2",
-    "ts-config-single-spa": "^1.7.0"
+    "webpack-dev-server": "^3.9.0",
+    "webpack-merge": "^4.2.2"
   },
   "dependencies": {
-    "single-spa": "^5.3.1",
     "@types/jest": "^25.2.1",
     "@types/systemjs": "^6.1.0",
     "@types/webpack-env": "^1.15.1",
+    "single-spa": "^5.3.1",
     "single-spa-layout": "1.0.0-beta.11"
   }
 }
