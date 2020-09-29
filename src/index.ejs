@@ -50,7 +50,7 @@
     {
       "imports": {
         "@single-spa/welcome": "https://unpkg.com/single-spa-welcome/dist/single-spa-welcome.js",
-        "@gpn-prototypes/vega-shell": "//localhost:9000/gpn-prototypes-vega-shell.js"
+        "@vega/shell": "//localhost:9000/vega-shell.js"
       }
     }
   </script>
@@ -77,7 +77,7 @@
   <template id="single-spa-layout">
     <single-spa-router>
       <!-- <route path="login">
-        <application name="@gpn-prototypes/vega-auth"></application>
+        <application name="@vega/auth"></application>
       </route> -->
       <main>
         <route default>
@@ -89,7 +89,7 @@
 </head>
 <body>
   <script>
-    System.import('@gpn-prototypes/vega-shell');
+    System.import('@vega/shell');
   </script>
   <import-map-overrides-full show-when-local-storage="devtools" dev-libs></import-map-overrides-full>
 </body>

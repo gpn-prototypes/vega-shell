@@ -3,10 +3,10 @@ const singleSpaDefaults = require('webpack-config-single-spa-ts');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = (webpackConfigEnv) => {
-  const orgName = 'gpn-prototypes';
+  const orgName = 'vega';
   const defaultConfig = singleSpaDefaults({
     orgName,
-    projectName: 'vega-shell',
+    projectName: 'shell',
     webpackConfigEnv,
   });
 
