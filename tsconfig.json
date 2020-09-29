@@ -1,4 +1,13 @@
 {
-  "extends": "ts-config-single-spa",
-  "include": ["src/**/*"]
+  "extends": "@gpn-prototypes/frontend-configs/tsconfig",
+  "shouldExtractLiteralValuesFromEnum": true,
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "**/dist/**/*"],
+  "compilerOptions": {
+    "baseUrl": "./",
+    "moduleResolution": "node",
+    "paths": {
+      "@vega/*": ["./src/*"]
+    }
+  }
 }

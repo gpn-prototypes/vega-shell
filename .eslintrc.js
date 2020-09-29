@@ -1,4 +1,4 @@
 module.exports = {
-  extends: [require.resolve('@gpn-prototypes/frontend-configs/.eslintrc'), 'important-stuff'],
+  extends: [require.resolve('@gpn-prototypes/frontend-configs/.eslintrc.js'), 'important-stuff'],
   parser: 'babel-eslint',
 };
