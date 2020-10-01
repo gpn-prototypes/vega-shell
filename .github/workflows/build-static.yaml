@@ -1,0 +1,41 @@
+name: vega-shell
+on:
+  workflow_dispatch:
+    inputs:
+      kuberta_system:
+
+jobs:
+  build:
+    name: Build Static
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: docker://quay.csssr.cloud/csssr/kuberta-init-workflow:v1
+
+      - name: Download CSSSR actions
+        uses: actions/checkout@v2
+        with:
+          repository: CSSSR/actions
+          ssh-key: ${{ secrets.DOWNLOAD_ACTIONS_SSH_KEY }}
+          path: actions
+
+      - uses: actions/checkout@v2
+        with:
+          path: vega
+
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+
+      - run: yarn install --frozen-lockfile
+        working-directory: vega
+
+      - run: yarn build
+        working-directory: vega
+
+      - uses: ./actions/upload-static/v1beta1
+        with:
+          project-id: vega
+          files: ./vega/dist
+          auth: ${{ secrets.CDN_UPLOAD_SECRET }}
+          token: ${{ secrets.GITHUB_TOKEN }}
