@@ -1,0 +1,11 @@
+name: vega-shell
+on:
+  workflow_dispatch:
+    inputs:
+      kuberta_system:
+jobs:
+  build:
+    name: Build Static
+    runs-on: ubuntu-latest
+    steps:
+      - uses: docker://quay.csssr.cloud/csssr/kuberta-init-workflow:v1
