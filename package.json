@@ -26,6 +26,13 @@
       "config": "./node_modules/@gpn-prototypes/frontend-configs/git/commitizen.js"
     }
   },
+  "dependencies": {
+    "@types/jest": "^25.2.1",
+    "@types/systemjs": "^6.1.0",
+    "@types/webpack-env": "^1.15.1",
+    "single-spa": "^5.3.1",
+    "single-spa-layout": "1.0.0-beta.11"
+  },
   "devDependencies": {
     "@gpn-prototypes/frontend-configs": "^1.2.12",
     "@testing-library/jest-dom": "^5.11.4",
@@ -38,6 +45,7 @@
     "dotenv": "^8.2.0",
     "eslint-config-ts-important-stuff": "^1.0.0",
     "fetch-mock": "^9.10.7",
+    "html-webpack-plugin": "^4.0.4",
     "husky": "^4.2.3",
     "jest": "^26.4.2",
     "jest-cli": "^25.2.7",
@@ -51,12 +59,5 @@
     "webpack-config-single-spa-ts": "^1.4.2",
     "webpack-dev-server": "^3.9.0",
     "webpack-merge": "^4.2.2"
-  },
-  "dependencies": {
-    "@types/jest": "^25.2.1",
-    "@types/systemjs": "^6.1.0",
-    "@types/webpack-env": "^1.15.1",
-    "single-spa": "^5.3.1",
-    "single-spa-layout": "1.0.0-beta.11"
   }
 }
