@@ -3,10 +3,12 @@ export type UserDataType = {
   password: string;
 };
 
+type TokenType = {
+  token: string;
+};
+
 type SuccessResponseType = {
-  data: {
-    token: string;
-  };
+  data: TokenType;
 };
 
 type Error = {
@@ -27,12 +29,7 @@ export class APIClient {
     this.url = url;
   }
 
-  public async auth({
-    login,
-    password,
-  }: UserDataType): Promise<{
-    token: string;
-  }> {
+  public auth = async ({ login, password }: UserDataType): Promise<TokenType> => {
     const response = await fetch(this.url, {
       method: 'POST',
       headers: {
@@ -49,5 +46,5 @@ export class APIClient {
     }
     const { error }: FailedResponseType = await response.json();
     return Promise.reject(error);
-  }
+  };
 }
