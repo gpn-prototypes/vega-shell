@@ -1,6 +1,6 @@
 import fetchMock from 'fetch-mock';
 
-import { APIClient } from './APIClient';
+import { APIClient } from './api-client';
 
 beforeEach(() => {
   fetchMock.reset();

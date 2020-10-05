@@ -1,1 +1,1 @@
-export { APIClient } from './APIClient';
+export { APIClient, UserDataType } from './api-client';
