@@ -15,7 +15,7 @@
     "build": "webpack --mode=production",
     "lint": "npm-run-all lint:*",
     "lint:fix": "npm-run-all format lint:fix:*",
-    "lint:ts": "eslint '{src,types}/**/*.ts{,x}'",
+    "lint:ts": "eslint --ext=.ts,.tsx .",
     "lint:fix:ts": "eslint '{src,types}/**/*.ts{,x}' --fix"
   },
   "config": {
@@ -37,7 +37,7 @@
     "@gpn-prototypes/frontend-configs": "^1.2.12",
     "@testing-library/jest-dom": "^5.11.4",
     "@types/systemjs": "^6.1.0",
-    "babel-eslint": "^11.0.0-beta.2",
+    "babel-plugin-transform-class-properties": "^6.24.1",
     "commitizen": "^4.2.1",
     "concurrently": "^5.1.0",
     "cross-env": "^7.0.2",
@@ -58,6 +58,7 @@
     "webpack-cli": "^3.3.10",
     "webpack-config-single-spa-ts": "^1.4.2",
     "webpack-dev-server": "^3.9.0",
-    "webpack-merge": "^4.2.2"
+    "webpack-merge": "^4.2.2",
+    "worker-plugin": "^5.0.0"
   }
 }
