@@ -29,6 +29,8 @@ jobs:
 
       - run: yarn install --frozen-lockfile
         working-directory: vega
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - run: yarn build
         working-directory: vega
