@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-console */
 export class Logger {
   private scope: string;
@@ -11,7 +10,7 @@ export class Logger {
     return `[${this.scope}] ${message}`;
   }
 
-  log(message: string, ...args: any[]): void {
+  log(message: string, ...args: unknown[]): void {
     console.groupCollapsed(this.template(message));
 
     args.forEach((arg) => {
@@ -21,7 +20,7 @@ export class Logger {
     console.groupEnd();
   }
 
-  warn(message: string, ...args: any[]): void {
+  warn(message: string, ...args: unknown[]): void {
     console.warn(this.template(message), ...args);
   }
 }
