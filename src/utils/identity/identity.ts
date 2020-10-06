@@ -5,10 +5,12 @@ export type IdentityConfigType = {
   token?: string;
 };
 
+const AUTH_TOKEN = 'auth-token';
+
 export class Identity {
   private apiClient: APIClient;
 
-  private AUTH_TOKEN = 'auth-token';
+  private readonly AUTH_TOKEN = AUTH_TOKEN;
 
   constructor(config: IdentityConfigType) {
     const { apiUrl, token = null } = config;
