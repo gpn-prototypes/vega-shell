@@ -1,6 +1,25 @@
-type UserData = {
+export type UserDataType = {
   login: string;
   password: string;
+};
+
+type TokenType = {
+  token: string;
+};
+
+type SuccessResponseType = {
+  data: TokenType;
+};
+
+type Error = {
+  code: string;
+  message: string;
+};
+
+type FailedResponseType = {
+  error: {
+    errors: Error[];
+  };
 };
 
 export class APIClient {
@@ -10,7 +29,7 @@ export class APIClient {
     this.url = url;
   }
 
-  public async auth({ login, password }: UserData) {
+  public auth = async ({ login, password }: UserDataType): Promise<TokenType> => {
     const response = await fetch(this.url, {
       method: 'POST',
       headers: {
@@ -22,10 +41,10 @@ export class APIClient {
     });
 
     if (response.status === 200) {
-      const { data } = await response.json();
+      const { data }: SuccessResponseType = await response.json();
       return data;
     }
-    const { error } = await response.json();
+    const { error }: FailedResponseType = await response.json();
     return Promise.reject(error);
-  }
+  };
 }

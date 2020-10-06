@@ -10,13 +10,13 @@
   "scripts": {
     "dev": "webpack-dev-server --mode=development --port 9000 --env.isLocal=true",
     "test": "cross-env BABEL_ENV=test jest --passWithNoTests",
-    "format": "prettier --write '{src,types,scripts}/**/*.{json,{j,t}s{,x},css,}'",
     "coverage": "jest --all --coverage",
+    "format": "prettier --write {src,types,scripts}/**/*.{json,{j,t}s{,x},css,}",
     "build": "webpack --mode=production",
     "lint": "npm-run-all lint:*",
     "lint:fix": "npm-run-all format lint:fix:*",
-    "lint:ts": "eslint --ext=.ts,.tsx .",
-    "lint:fix:ts": "eslint '{src,types}/**/*.ts{,x}' --fix"
+    "lint:ts": "eslint {src,types}/**/*.ts{,x}",
+    "lint:fix:ts": "eslint {src,types}/**/*.ts{,x} --fix"
   },
   "config": {
     "commitizen": {

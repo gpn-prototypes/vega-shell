@@ -1,5 +1,5 @@
 module.exports = {
-  extends: [require.resolve('@gpn-prototypes/frontend-configs/.eslintrc')],
+  extends: [require.resolve('@gpn-prototypes/frontend-configs/.eslintrc.js')],
   rules: {
     '@typescript-eslint/no-empty-function': 'off',
     '@typescript-eslint/no-explicit-any': 'error',
@@ -9,5 +9,7 @@ module.exports = {
     '@typescript-eslint/no-redeclare': ['error'],
     'no-shadow': 'off',
     '@typescript-eslint/no-shadow': ['error'],
+    'no-useless-constructor': 'off',
+    '@typescript-eslint/no-useless-constructor': 'error',
   },
 };
