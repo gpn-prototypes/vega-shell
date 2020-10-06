@@ -10,7 +10,7 @@ import { BrowserMessageBus } from './message-bus';
 const bus = BrowserMessageBus.create();
 
 const { baseApiUrl } = getAppConfig();
-const identity = new Identity({ apiUrl: baseApiUrl });
+const identity = new Identity({ apiUrl: `${baseApiUrl}/auth` });
 
 const layoutData = {
   props: {
