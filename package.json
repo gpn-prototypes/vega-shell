@@ -30,6 +30,9 @@
     "@types/jest": "^25.2.1",
     "@types/systemjs": "^6.1.0",
     "@types/webpack-env": "^1.15.1",
+    "faker": "^5.1.0",
+    "isomorphic-fetch": "^3.0.0",
+    "jsondiffpatch": "^0.4.1",
     "single-spa": "^5.3.1",
     "single-spa-layout": "1.0.0-beta.11"
   },
