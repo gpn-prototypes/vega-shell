@@ -89,6 +89,7 @@
       {
         "imports": {
           "@vega/shell": "//localhost:9000/vega-shell.js",
+          "@vega/auth": "//localhost:9002/vega-auth.js"
           "@vega/header": "//localhost:9001/vega-header.js"
         }
       }
@@ -119,6 +120,9 @@
 
     <template id="single-spa-layout">
       <single-spa-router>
+        <route path="auth">
+          <application name="@vega/auth" props="identity"></application>
+        </route>
         <div class="header">
           <application name="@vega/header"></application>
         </div>
