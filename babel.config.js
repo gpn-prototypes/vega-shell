@@ -2,5 +2,26 @@ const base = require('@gpn-prototypes/frontend-configs/babel.config');
 
 module.exports = {
   ...base,
-  plugins: ['transform-class-properties'],
+  plugins: [
+    [
+      '@babel/plugin-transform-runtime',
+      {
+        useESModules: true,
+        regenerator: false,
+      },
+    ],
+    'transform-class-properties',
+  ],
+  env: {
+    test: {
+      presets: [
+        [
+          '@babel/preset-env',
+          {
+            targets: 'current node',
+          },
+        ],
+      ],
+    },
+  },
 };
