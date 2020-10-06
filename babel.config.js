@@ -1,6 +1,7 @@
+const base = require('@gpn-prototypes/frontend-configs/babel.config');
+
 module.exports = {
-  // eslint-disable-next-line global-require
-  ...require('@gpn-prototypes/frontend-configs/babel.config'),
+  ...base,
   plugins: [
     [
       '@babel/plugin-transform-runtime',
@@ -9,6 +10,7 @@ module.exports = {
         regenerator: false,
       },
     ],
+    'transform-class-properties',
   ],
   env: {
     test: {

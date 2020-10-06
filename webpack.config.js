@@ -1,6 +1,7 @@
 const webpackMerge = require('webpack-merge');
 const singleSpaDefaults = require('webpack-config-single-spa-ts');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const WorkerPlugin = require('worker-plugin');
 
 module.exports = (webpackConfigEnv) => {
   const orgName = 'vega';
@@ -27,6 +28,7 @@ module.exports = (webpackConfigEnv) => {
           orgName,
         },
       }),
+      new WorkerPlugin({ sharedWorker: true }),
     ],
   });
 };
