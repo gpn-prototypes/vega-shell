@@ -95,7 +95,9 @@
     </script>
     <% } else { %>
       <script type="systemjs-importmap" src="<%= baseUrl %>/import-map.json"></script>
+      <script type="systemjs-importmap" src="http://master.vega-auth.csssr.cloud/import-map.json" crossorigin="anonymous"></script>
     <% } %>
+
 
     <!--
     If you need to support Angular applications, uncomment the script tag below to ensure only one instance of ZoneJS is loaded
@@ -120,7 +122,14 @@
         <div class="header">
           <application name="@vega/header"></application>
         </div>
-        <main class="main">Main</main>
+        <main class="main">
+          <route path="/login">
+            <application name="@vega/auth"></application>
+          </route>
+          <route default>
+            Main
+          </route>
+        </main>
       </single-spa-router>
     </template>
   </head>
