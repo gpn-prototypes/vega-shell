@@ -33,7 +33,7 @@ const httpLink = (uri: string): ApolloLink =>
     uri,
   });
 
-export function createClient(config: Config): GraphQLClient {
+export function createGraphqlClient(config: Config): GraphQLClient {
   const { uri, identity } = config;
   return new ApolloClient({
     cache: new InMemoryCache(),
