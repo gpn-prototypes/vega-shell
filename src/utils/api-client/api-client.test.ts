@@ -17,9 +17,7 @@ describe('APIClient', () => {
 
     fetchMock.mock(AUTH_URL, {
       status: 200,
-      body: {
-        data: TOKEN,
-      },
+      body: TOKEN,
     });
 
     const client = new APIClient(AUTH_URL);
