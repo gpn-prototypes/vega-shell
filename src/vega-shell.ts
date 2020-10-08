@@ -12,8 +12,16 @@ const { registerApplication, start } = singleSpa;
 const bus = BrowserMessageBus.create();
 
 const sendMessageOnAuth = () => {
-  bus.send({ channel: 'auth', topic: 'logged-in' });
+  bus.send({ channel: 'auth', topic: 'logged-in', self: true });
 };
+
+bus.subscribe({ channel: 'auth', topic: 'logged-in' }, () => {
+  singleSpa.navigateToUrl('/');
+});
+
+bus.subscribe({ channel: 'auth', topic: 'logged-out' }, () => {
+  singleSpa.navigateToUrl('/login');
+});
 
 const { baseApiUrl } = getAppConfig();
 const identity = new Identity({ apiUrl: `${baseApiUrl}/auth`, cbOnAuth: sendMessageOnAuth });
@@ -45,9 +53,10 @@ layoutEngine.activate();
 
 start();
 
-window.addEventListener('single-spa:before-routing-event', (evt) => {
+// TODO создать тип для событий
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+window.addEventListener('single-spa:before-routing-event', (evt: any) => {
   const { location } = evt.currentTarget;
-  bus.send({ channel: 'auth', topic: 'logged-in' });
 
   const { pathname, searchParams, hash } = new URL(location.href);
 
@@ -58,9 +67,4 @@ window.addEventListener('single-spa:before-routing-event', (evt) => {
   } else {
     singleSpa.navigateToUrl(referer);
   }
-});
-
-bus.subscribe({ channel: 'auth', topic: 'logged-in' }, () => {
-  console.log('-----------------------------------------------');
-  singleSpa.navigateToUrl('/');
 });
