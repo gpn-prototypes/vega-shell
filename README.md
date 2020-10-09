@@ -1,4 +1,4 @@
-# vega-shell
+# Vega-shell
 
 ## Зависимости
 

@@ -7,10 +7,6 @@ type TokenType = {
   token: string;
 };
 
-type SuccessResponseType = {
-  data: TokenType;
-};
-
 type Error = {
   code: string;
   message: string;
@@ -32,16 +28,16 @@ export class APIClient {
   public auth = async ({ login, password }: UserDataType): Promise<TokenType> => {
     const response = await fetch(this.url, {
       method: 'POST',
+      mode: 'cors',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache',
       },
       body: JSON.stringify({ login, password }),
     });
 
     if (response.status === 200) {
-      const { data }: SuccessResponseType = await response.json();
+      const data: TokenType = await response.json();
       return data;
     }
     const { error }: FailedResponseType = await response.json();

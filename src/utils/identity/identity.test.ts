@@ -17,9 +17,7 @@ describe('Identity', () => {
 
     fetchMock.mock(AUTH_URL, {
       status: 200,
-      body: {
-        data: TOKEN,
-      },
+      body: TOKEN,
     });
 
     const CONFIG: IdentityConfigType = {
@@ -37,9 +35,7 @@ describe('Identity', () => {
 
     fetchMock.mock(AUTH_URL, {
       status: 200,
-      body: {
-        data: TOKEN,
-      },
+      body: TOKEN,
     });
 
     const CONFIG: IdentityConfigType = {
@@ -57,9 +53,7 @@ describe('Identity', () => {
 
     fetchMock.mock(AUTH_URL, {
       status: 200,
-      body: {
-        data: TOKEN,
-      },
+      body: TOKEN,
     });
 
     const CONFIG: IdentityConfigType = {
@@ -79,9 +73,7 @@ describe('Identity', () => {
 
     fetchMock.mock(AUTH_URL, {
       status: 200,
-      body: {
-        data: TOKEN,
-      },
+      body: TOKEN,
     });
 
     const CONFIG: IdentityConfigType = {

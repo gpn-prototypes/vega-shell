@@ -22,7 +22,7 @@ export class BrowserMessageBus implements MessageBus {
       }
 
       if (output.type === 'reply') {
-        this.logger.log(`Комманда "${output.meta.command}" выполнена`, {
+        this.logger.log(`Команда "${output.meta.command}" выполнена`, {
           result: output.payload,
           input: output.meta,
         });

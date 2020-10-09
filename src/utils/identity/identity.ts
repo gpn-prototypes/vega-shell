@@ -3,6 +3,7 @@ import { APIClient, UserDataType } from '../api-client';
 export type IdentityConfigType = {
   apiUrl: string;
   token?: string;
+  cbOnAuth?(): void;
 };
 
 export class Identity {
@@ -10,27 +11,36 @@ export class Identity {
 
   private AUTH_TOKEN = 'auth-token';
 
+  private cbOnAuth?(): void;
+
   constructor(config: IdentityConfigType) {
-    const { apiUrl, token = null } = config;
+    const { apiUrl, token = null, cbOnAuth = () => {} } = config;
     this.apiClient = new APIClient(apiUrl);
+    this.cbOnAuth = cbOnAuth;
     if (token) {
-      localStorage.setItem(this.AUTH_TOKEN, JSON.stringify(token));
+      localStorage.setItem(this.AUTH_TOKEN, token);
     }
   }
 
   public auth = async ({ login, password }: UserDataType): Promise<void> => {
     const { token } = await this.apiClient.auth({ login, password });
-    localStorage.setItem(this.AUTH_TOKEN, JSON.stringify(token));
+    if (token) {
+      if (typeof this.cbOnAuth === 'function') {
+        this.cbOnAuth();
+      }
+
+      localStorage.setItem(this.AUTH_TOKEN, token);
+    }
   };
 
-  public getToken = (): Pick<IdentityConfigType, 'token'> => {
+  public getToken = (): IdentityConfigType['token'] | null => {
     const authToken = localStorage.getItem('auth-token');
-    return authToken ? JSON.parse(authToken) : null;
+    return authToken || null;
   };
 
   public updateToken = (newToken: IdentityConfigType['token']): void => {
     if (newToken) {
-      localStorage.setItem(this.AUTH_TOKEN, JSON.stringify(newToken));
+      localStorage.setItem(this.AUTH_TOKEN, newToken);
     }
   };
 
