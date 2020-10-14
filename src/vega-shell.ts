@@ -4,6 +4,7 @@ import { constructApplications, constructLayoutEngine, constructRoutes } from 's
 
 import { getAppConfig } from '../app-config';
 
+import { createGraphqlClient } from './utils/graphql-client';
 import { Identity } from './utils/identity';
 import { BrowserMessageBus } from './message-bus';
 
@@ -25,11 +26,16 @@ bus.subscribe({ channel: 'auth', topic: 'logged-out' }, () => {
 
 const { baseApiUrl } = getAppConfig();
 const identity = new Identity({ apiUrl: `${baseApiUrl}/auth`, cbOnAuth: sendMessageOnAuth });
+const graphqlClient = createGraphqlClient({
+  uri: `${baseApiUrl}/graphql`,
+  identity,
+});
 
 const layoutData = {
   props: {
     bus,
     identity,
+    graphqlClient,
   },
   loaders: {},
 };

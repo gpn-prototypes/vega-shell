@@ -51,7 +51,7 @@
   -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self' data: https: localhost:* *.csssr.cloud; script-src 'unsafe-inline' *.csssr.cloud https: localhost:*; connect-src *.csssr.cloud https: localhost:* ws://localhost:* http://outsourcing.nat.tepkom.ru:38080/; style-src 'unsafe-inline' https:; object-src 'none';"
+      content="default-src 'self' data: https: localhost:* http://outsourcing.nat.tepkom.ru:38080 *.csssr.cloud; script-src 'unsafe-inline' *.csssr.cloud https: localhost:*; connect-src *.csssr.cloud http://outsourcing.nat.tepkom.ru:38080 https: localhost:* ws://localhost:*; style-src 'unsafe-inline' https:; object-src 'none';"
     />
     <meta name="importmap-type" content="systemjs-importmap" />
     <!-- If you wish to turn off import-map-overrides for specific environments (prod), uncomment the line below -->
@@ -90,7 +90,8 @@
         "imports": {
           "@vega/shell": "//localhost:9000/vega-shell.js",
           "@vega/header": "//localhost:9001/vega-header.js",
-          "@vega/auth": "//localhost:9002/vega-auth.js"
+          "@vega/auth": "//localhost:9002/vega-auth.js",
+          "@vega/sp": "//localhost:9003/vega-sp.js"
         }
       }
     </script>
@@ -131,7 +132,7 @@
             <application name="@vega/auth"></application>
           </route>
           <route default>
-            Main
+            <application name="@vega/sp" props="graphqlClient"></application>
           </route>
         </main>
       </single-spa-router>
