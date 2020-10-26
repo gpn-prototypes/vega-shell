@@ -30,7 +30,8 @@
     "@apollo/client": "^3.2.2",
     "graphql": "^15.3.0",
     "single-spa": "^5.8.0",
-    "single-spa-layout": "1.1.5"
+    "single-spa-layout": "1.1.5",
+    "react": "^16.13.1"
   },
   "devDependencies": {
     "@gpn-prototypes/frontend-configs": "^1.2.12",

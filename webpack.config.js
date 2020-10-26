@@ -31,6 +31,13 @@ module.exports = (webpackConfigEnv) => {
         '/graphql': 'http://outsourcing.nat.tepkom.ru:38300/',
       },
     },
+    entry: {
+      'vega-shell': defaultConfig.entry,
+      'react': './node_modules/react/index.js',
+    },
+    output: {
+      filename: '[name].js',
+    },
     plugins: [
       new HtmlWebpackPlugin({
         inject: false,
@@ -46,11 +53,17 @@ module.exports = (webpackConfigEnv) => {
         fileName: 'import-map.json',
         baseUrl: withTrailingSlash(BASE_URL),
         filter(x) {
-          return ['main.js'].includes(x.name);
+          return ['vega-shell.js', 'react.js'].includes(x.name);
         },
         transformKeys(filename) {
-          if (filename === 'main.js') {
+          if (filename === 'vega-shell.js') {
             return '@vega/shell';
+          }
+
+          const extIndex = filename.indexOf('.js');
+
+          if (extIndex > -1) {
+            return filename.slice(0, extIndex);
           }
 
           return undefined;
