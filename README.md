@@ -15,3 +15,7 @@
 Для запуска в dev-режиме выполните команду `yarn start`.
 
 Для сборки проекта в prod-режиме выполните `yarn build`.
+
+## Тестирование
+
+- [Работа с single-spa-inspector](./docs/single-spa-inspector/single-spa-inspector.md)
