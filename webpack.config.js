@@ -16,11 +16,11 @@ function withTrailingSlash(path) {
 }
 
 const sharedDependencies = {
-  'react': './node_modules/react/index.js',
-  'react-dom': './node_modules/react-dom/index.js',
-  'apollo-client': './node_modules/@apollo/client/index.js',
-  'single-spa': './node_modules/single-spa/lib/esm/single-spa.min.js',
-  'graphql': './node_modules/graphql/index.js',
+  'react': 'react',
+  'react-dom': 'react-dom',
+  '@apollo/client': '@apollo/client',
+  'single-spa': 'single-spa',
+  'graphql': 'graphql',
 };
 
 const importNamesList = Object.keys(sharedDependencies).map((key) => `${key}.js`);
