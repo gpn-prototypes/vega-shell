@@ -15,6 +15,16 @@ function withTrailingSlash(path) {
   return `${path}/`;
 }
 
+const sharedDependencies = {
+  'react': './node_modules/react/index.js',
+  'react-dom': './node_modules/react-dom/index.js',
+  'apollo-client': './node_modules/@apollo/client/index.js',
+  'single-spa': './node_modules/single-spa/lib/system/single-spa.min.js',
+  'graphql': './node_modules/graphql/index.js',
+};
+
+const importNamesList = Object.keys(sharedDependencies).map((key) => `${key}.js`);
+
 module.exports = (webpackConfigEnv) => {
   const orgName = 'vega';
   const defaultConfig = singleSpaDefaults({
@@ -33,7 +43,7 @@ module.exports = (webpackConfigEnv) => {
     },
     entry: {
       'vega-shell': defaultConfig.entry,
-      'react': './node_modules/react/index.js',
+      ...sharedDependencies,
     },
     output: {
       filename: '[name].js',
@@ -53,11 +63,15 @@ module.exports = (webpackConfigEnv) => {
         fileName: 'import-map.json',
         baseUrl: withTrailingSlash(BASE_URL),
         filter(x) {
-          return ['vega-shell.js', 'react.js'].includes(x.name);
+          return ['vega-shell.js', ...importNamesList].includes(x.name);
         },
         transformKeys(filename) {
           if (filename === 'vega-shell.js') {
             return '@vega/shell';
+          }
+
+          if (filename === 'apollo-client.js') {
+            return '@apollo/client';
           }
 
           const extIndex = filename.indexOf('.js');
