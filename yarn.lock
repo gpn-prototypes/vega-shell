@@ -8399,7 +8399,7 @@ parse5@5.1.1:
   resolved "https://registry.yarnpkg.com/parse5/-/parse5-5.1.1.tgz#f68e4e5ba1852ac2cadc00f4555fff6c2abb6178"
   integrity sha512-ugq4DFI0Ptb+WWjAdOK16+u/nHfiIrcE+sh8kZMaM0WllQKLI9rOUq6c2b7cwPkXdzfQESqvoqK6ug7U/Yyzug==
 
-parse5@^6.0.0:
+parse5@^6.0.1:
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/parse5/-/parse5-6.0.1.tgz#e1a1c085c569b3dc08321184f19a39cc27f7c30b"
   integrity sha512-Ofn/CTFzRGTTxwpNEs9PP93gXShHcTq255nzRYSKe8AkVpZY7e1fpmTfOyoIvjP5HG7Z2ZM7VS9PPhQGW2pOpw==
@@ -9716,19 +9716,19 @@ signal-exit@^3.0.0, signal-exit@^3.0.2:
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.3.tgz#a1410c2edd8f077b08b4e253c8eacfcaf057461c"
   integrity sha512-VUJ49FC8U1OxwZLxIbTTrDvLnf/6TDgxZcK8wxR8zs13xpx7xbG60ndBlhNrFi2EMuFRoeDoJO7wthSLq42EjA==
 
-single-spa-layout@1.0.0-beta.11:
-  version "1.0.0-beta.11"
-  resolved "https://registry.yarnpkg.com/single-spa-layout/-/single-spa-layout-1.0.0-beta.11.tgz#e83607f0c91ed4e1a7985461679fa100c0955fa9"
-  integrity sha512-HymvK/0eE4Gc4rNfEte2DfhpDiPn5p6qU0JczTacELfU0bfvO5/bi0BTr8ly+4a4BeI6boO0y2lt+qvCxpM9oQ==
+single-spa-layout@1.1.5:
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/single-spa-layout/-/single-spa-layout-1.1.5.tgz#a676311fedf5b6133529679eede74deb33b499e4"
+  integrity sha512-EhnPB9QX7hi3bqT+q2Dj8YzklsljRu7I0ALOsuYz/8Qq7Lhj08gfF9z4NWAAeoeMh2KY3cbyPnlKLcqIAVLkyw==
   dependencies:
     "@types/parse5" "^5.0.3"
     merge2 "^1.4.1"
-    parse5 "^6.0.0"
+    parse5 "^6.0.1"
 
-single-spa@^5.3.1:
-  version "5.6.0"
-  resolved "https://registry.yarnpkg.com/single-spa/-/single-spa-5.6.0.tgz#69bfa4d6885c29b7b5627ca3d145de2af8cff887"
-  integrity sha512-UJ89FkEjW6JqAMoyW9RBA7cfpnQ2N8l8E1PEKqgLaHNyYr90WYB2v9s6iR7h0zm6AL218D+obmwtYVLKwetUzw==
+single-spa@^5.8.0:
+  version "5.8.0"
+  resolved "https://registry.yarnpkg.com/single-spa/-/single-spa-5.8.0.tgz#edfa0ab04e1fafbc4e1a46a110e1a692a6f1af88"
+  integrity sha512-lLjcRuljtaprvN0LRBf8358awAjWU29II1y20yqmuablGYXw0RIpYDWDl+oLMS5ZzTAJk2t7L1NY47LFP5Qw/Q==
 
 sisteransi@^1.0.4:
   version "1.0.5"

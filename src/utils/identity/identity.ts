@@ -35,15 +35,18 @@ export class Identity {
     }
   };
 
-  public getToken = (): IdentityConfigType['token'] | null => {
+  public getToken = (): string | null => {
     const authToken = localStorage.getItem('auth-token');
     return authToken || null;
   };
 
-  public updateToken = (newToken: IdentityConfigType['token']): void => {
-    if (newToken) {
-      localStorage.setItem(this.AUTH_TOKEN, newToken);
-    }
+  public isLoggedIn(): boolean {
+    const token = this.getToken();
+    return token !== null;
+  }
+
+  public updateToken = (newToken: string): void => {
+    localStorage.setItem(this.AUTH_TOKEN, newToken);
   };
 
   public logout = (): void => {
