@@ -66,6 +66,23 @@
 
     More information about shared dependencies can be found at https://single-spa.js.org/docs/recommended-setup#sharing-with-import-maps.
   -->
+    <% if (isLocal) { %>
+      <script type="systemjs-importmap">
+        {
+          "imports": {
+            "single-spa": "http://localhost:9000/single-spa.js"
+          }
+        }
+      </script>
+    <% } else { %>
+      <script type="systemjs-importmap">
+        {
+          "imports": {
+            "single-spa": "<%= baseUrl %>/single-spa.js"
+          }
+        }
+      </script>
+    <% } %>
     <link
       rel="preload"
       href="https://cdn.jsdelivr.net/npm/single-spa@5.5.5/lib/system/single-spa.min.js"

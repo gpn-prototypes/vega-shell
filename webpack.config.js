@@ -19,7 +19,7 @@ const sharedDependencies = {
   'react': './node_modules/react/index.js',
   'react-dom': './node_modules/react-dom/index.js',
   'apollo-client': './node_modules/@apollo/client/index.js',
-  'single-spa': './node_modules/single-spa/lib/system/single-spa.min.js',
+  'single-spa': './node_modules/single-spa/lib/esm/single-spa.min.js',
   'graphql': './node_modules/graphql/index.js',
 };
 
@@ -63,7 +63,10 @@ module.exports = (webpackConfigEnv) => {
         fileName: 'import-map.json',
         baseUrl: withTrailingSlash(BASE_URL),
         filter(x) {
-          return ['vega-shell.js', ...importNamesList].includes(x.name);
+          return [
+            'vega-shell.js',
+            ...importNamesList.filter((name) => name !== 'single-spa'),
+          ].includes(x.name);
         },
         transformKeys(filename) {
           if (filename === 'vega-shell.js') {
