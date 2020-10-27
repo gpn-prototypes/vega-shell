@@ -67,13 +67,7 @@
     More information about shared dependencies can be found at https://single-spa.js.org/docs/recommended-setup#sharing-with-import-maps.
   -->
     <% if (isLocal) { %>
-      <script type="systemjs-importmap">
-        {
-          "imports": {
-            "single-spa": "http://localhost:9000/single-spa.js"
-          }
-        }
-      </script>
+      <script type="systemjs-importmap" src="./import-map.json"></script>
     <% } else { %>
       <script type="systemjs-importmap">
         {
@@ -83,11 +77,6 @@
         }
       </script>
     <% } %>
-    <link
-      rel="preload"
-      href="https://cdn.jsdelivr.net/npm/single-spa@5.5.5/lib/system/single-spa.min.js"
-      as="script"
-    />
 
     <!-- Add your organization's prod import map URL to this script's src  -->
     <!-- <script type="systemjs-importmap" src="/importmap.json"></script> -->
@@ -96,7 +85,6 @@
     <script type="systemjs-importmap">
       {
         "imports": {
-          "@vega/shell": "//localhost:9000/vega-shell.js",
           "@vega/header": "//localhost:9001/vega-header.js",
           "@vega/auth": "//localhost:9002/vega-auth.js",
           "@vega/sp": "//localhost:9003/vega-sp.js",

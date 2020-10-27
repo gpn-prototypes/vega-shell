@@ -4,9 +4,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WorkerPlugin = require('worker-plugin');
 const ImportMapPlugin = require('webpack-import-map-plugin');
 
-const PORT = process.env.PORT || 3000;
-const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
-
 function withTrailingSlash(path) {
   if (path.endsWith('/')) {
     return path;
@@ -16,16 +13,37 @@ function withTrailingSlash(path) {
 }
 
 const sharedDependencies = {
-  'react': 'react',
-  'react-dom': 'react-dom',
-  '@apollo/client': '@apollo/client',
-  'single-spa': 'single-spa',
-  'graphql': 'graphql',
+  development: {
+    'react': 'react/cjs/react.development.js',
+    'react-dom': 'react-dom/cjs/react-dom.development.js',
+    // '@apollo/client': '@apollo/client',
+    'single-spa': 'single-spa/lib/umd/single-spa.dev.js',
+    // 'graphql': 'graphql',
+  },
+  production: {
+    'react': 'react/cjs/react.production.js',
+    'react-dom': 'react-dom/cjs/react-dom.production.js',
+    'single-spa': 'single-spa/lib/umd/single-spa.min.js',
+  },
 };
 
-const importNamesList = Object.keys(sharedDependencies).map((key) => `${key}.js`);
+function getPort(webpackConfigEnv) {
+  let port = process.env.PORT || 3000;
+
+  if (webpackConfigEnv !== undefined && 'port' in webpackConfigEnv) {
+    port = webpackConfigEnv.port;
+  }
+
+  return port;
+}
 
 module.exports = (webpackConfigEnv) => {
+  const PORT = getPort(webpackConfigEnv);
+  const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
+
+  const NODE_ENV = process.env.NODE_ENV || 'development';
+  const importNamesList = Object.keys(sharedDependencies[NODE_ENV]).map((key) => `${key}.js`);
+
   const orgName = 'vega';
   const defaultConfig = singleSpaDefaults({
     orgName,
@@ -33,7 +51,7 @@ module.exports = (webpackConfigEnv) => {
     webpackConfigEnv,
   });
 
-  return webpackMerge.smart(defaultConfig, {
+  const config = webpackMerge.smart(defaultConfig, {
     // modify the webpack config however you'd like to by adding to this object
     devServer: {
       historyApiFallback: true,
@@ -43,11 +61,12 @@ module.exports = (webpackConfigEnv) => {
     },
     entry: {
       'vega-shell': defaultConfig.entry,
-      ...sharedDependencies,
+      ...sharedDependencies[NODE_ENV],
     },
     output: {
       filename: '[name].js',
     },
+    externals: Object.keys(sharedDependencies[NODE_ENV]),
     plugins: [
       new HtmlWebpackPlugin({
         inject: false,
@@ -63,10 +82,7 @@ module.exports = (webpackConfigEnv) => {
         fileName: 'import-map.json',
         baseUrl: withTrailingSlash(BASE_URL),
         filter(x) {
-          return [
-            'vega-shell.js',
-            ...importNamesList.filter((name) => name !== 'single-spa'),
-          ].includes(x.name);
+          return ['vega-shell.js', ...importNamesList].includes(x.name);
         },
         transformKeys(filename) {
           if (filename === 'vega-shell.js') {
@@ -88,4 +104,6 @@ module.exports = (webpackConfigEnv) => {
       }),
     ],
   });
+
+  return config;
 };

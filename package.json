@@ -8,7 +8,7 @@
     "yarn": "^1.22.4"
   },
   "scripts": {
-    "dev": "webpack-dev-server --mode=development --port 9000 --env.isLocal=true",
+    "dev": "webpack-dev-server --mode=development --port 9000 --env.isLocal=true --env.port=9000",
     "test": "cross-env BABEL_ENV=test jest --passWithNoTests",
     "coverage": "jest --all --coverage",
     "format": "prettier --write {src,types,scripts}/**/*.{json,{j,t}s{,x},css,}",
