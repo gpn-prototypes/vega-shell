@@ -86,7 +86,6 @@ const singleSpaConfig = (webpackConfigEnv) => {
     output: {
       filename: '[name].js',
     },
-    devtool: 'cheap-source-map',
     externals: Object.keys(sharedDependencies[NODE_ENV]),
     plugins: [
       new HtmlWebpackPlugin({
