@@ -66,17 +66,7 @@
 
     More information about shared dependencies can be found at https://single-spa.js.org/docs/recommended-setup#sharing-with-import-maps.
   -->
-    <% if (isLocal) { %>
-      <script type="systemjs-importmap" src="./import-map.json"></script>
-    <% } else { %>
-      <script type="systemjs-importmap">
-        {
-          "imports": {
-            "single-spa": "<%= baseUrl %>/single-spa.js"
-          }
-        }
-      </script>
-    <% } %>
+    <script type="systemjs-importmap" src="<%= baseUrl %>/import-map.json"></script>
 
     <!-- Add your organization's prod import map URL to this script's src  -->
     <!-- <script type="systemjs-importmap" src="/importmap.json"></script> -->
