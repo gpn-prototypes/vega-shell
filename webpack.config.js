@@ -12,18 +12,35 @@ function withTrailingSlash(path) {
   return `${path}/`;
 }
 
+const systemDependencies = {
+  development: {
+    'systemjs': 'systemjs/dist/system.js',
+    'systemjs-amd': 'systemjs/dist/extras/amd.js',
+    'systemjs-named-exports': 'systemjs/dist/extras/named-exports.js',
+    'import-map-overrides': 'import-map-overrides/dist/import-map-overrides.js',
+  },
+  production: {
+    'systemjs': 'systemjs/dist/system.min.js',
+    'systemjs-amd': 'systemjs/dist/extras/amd.min.js',
+    'systemjs-named-exports': 'systemjs/dist/extras/named-exports.min.js',
+    'import-map-overrides': 'import-map-overrides/dist/import-map-overrides.js',
+  },
+};
+
 const sharedDependencies = {
   development: {
     'react': 'react/cjs/react.development.js',
     'react-dom': 'react-dom/cjs/react-dom.development.js',
-    // '@apollo/client': '@apollo/client',
+    '@apollo/client': '@apollo/client/index.js',
     'single-spa': 'single-spa/lib/umd/single-spa.dev.js',
-    // 'graphql': 'graphql',
+    'graphql': 'graphql/index.js',
   },
   production: {
+    '@apollo/client': '@apollo/client/index.js',
     'react': 'react/cjs/react.production.js',
     'react-dom': 'react-dom/cjs/react-dom.production.js',
     'single-spa': 'single-spa/lib/umd/single-spa.min.js',
+    'graphql': 'graphql/index.js',
   },
 };
 
@@ -37,12 +54,15 @@ function getPort(webpackConfigEnv) {
   return port;
 }
 
-module.exports = (webpackConfigEnv) => {
+const NODE_ENV = process.env.NODE_ENV || 'development';
+
+const singleSpaConfig = (webpackConfigEnv) => {
   const PORT = getPort(webpackConfigEnv);
   const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 
-  const NODE_ENV = process.env.NODE_ENV || 'development';
-  const importNamesList = Object.keys(sharedDependencies[NODE_ENV]).map((key) => `${key}.js`);
+  const importNamesList = Object.keys(sharedDependencies[NODE_ENV])
+    .map((key) => `${key}.js`)
+    .filter((key) => !['systemjs', 'systemjs-amd', 'systemjs-named-exports'].includes(key));
 
   const orgName = 'vega';
   const defaultConfig = singleSpaDefaults({
@@ -66,6 +86,7 @@ module.exports = (webpackConfigEnv) => {
     output: {
       filename: '[name].js',
     },
+    devtool: 'cheap-source-map',
     externals: Object.keys(sharedDependencies[NODE_ENV]),
     plugins: [
       new HtmlWebpackPlugin({
@@ -107,3 +128,16 @@ module.exports = (webpackConfigEnv) => {
 
   return config;
 };
+
+const systemConfig = {
+  entry: {
+    ...systemDependencies[NODE_ENV],
+  },
+  devtool: 'cheap-source-map',
+  output: {
+    filename: '[name].js',
+    libraryTarget: 'umd',
+  },
+};
+
+module.exports = [systemConfig, singleSpaConfig];

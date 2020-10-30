@@ -3473,6 +3473,11 @@ cookie@0.4.0:
   resolved "https://registry.yarnpkg.com/cookie/-/cookie-0.4.0.tgz#beb437e7022b3b6d49019d088665303ebe9c14ba"
   integrity sha512-+Hp8fLp57wnUSt0tY0tHEXh4voZRDnoIrZPqlo3DPiI4y9lwg/jqx+1Om94/W6ZaPDOUbnjOt/99w66zk+l1Xg==
 
+cookie@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/cookie/-/cookie-0.4.1.tgz#afd713fe26ebd21ba95ceb61f9a8116e50a537d1"
+  integrity sha512-ZwrFkGJxUR3EIoXtO+yVE69Eb7KlixbaeAWfBQB9vVsNn/o+Yw69gBWSSDK825hQNdN+wF8zELf3dFNl/kxkUA==
+
 copy-concurrently@^1.0.0:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/copy-concurrently/-/copy-concurrently-1.0.5.tgz#92297398cae34937fcafd6ec8139c18051f0b5e0"
@@ -5720,6 +5725,13 @@ import-local@^3.0.2:
   dependencies:
     pkg-dir "^4.2.0"
     resolve-cwd "^3.0.0"
+
+import-map-overrides@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/import-map-overrides/-/import-map-overrides-2.1.0.tgz#5681212138beb03a5deb9fdea1114f3772985937"
+  integrity sha512-Mlp3h3B6aDQ/MlGSvykfYuKLqZdCDdH9VjgJP8H1B5vX8c/6t/xkSNo719gIEIcZzxPwIHnmw9fLUd49qpb97Q==
+  dependencies:
+    cookie "^0.4.1"
 
 imurmurhash@^0.1.4:
   version "0.1.4"
@@ -10413,6 +10425,11 @@ symbol-tree@^3.2.2, symbol-tree@^3.2.4:
   version "3.2.4"
   resolved "https://registry.yarnpkg.com/symbol-tree/-/symbol-tree-3.2.4.tgz#430637d248ba77e078883951fb9aa0eed7c63fa2"
   integrity sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==
+
+systemjs@^6.7.1:
+  version "6.7.1"
+  resolved "https://registry.yarnpkg.com/systemjs/-/systemjs-6.7.1.tgz#3db5036f450180a0701e078fbb5b434a690026f0"
+  integrity sha512-Q78H/SYy9ErC8PH8r9vA/FcQ3X+Hf33dOpx2JKP/Ma6f2gHuSScPFuCKZH+6CIj7EsIJlzODxSG4mMIpjOh5oA==
 
 table@^5.2.3:
   version "5.4.6"
