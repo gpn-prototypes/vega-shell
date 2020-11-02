@@ -56,9 +56,10 @@ function getPort(webpackConfigEnv) {
   return port;
 }
 
-const singleSpaConfig = (webpackConfigEnv, { mode }) => {
+const NODE_ENV = process.env.NODE_ENV || 'development';
+
+const singleSpaConfig = (webpackConfigEnv) => {
   const PORT = getPort(webpackConfigEnv);
-  const NODE_ENV = mode || 'development';
   const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 
   const importNamesList = Object.keys(sharedDependencies[NODE_ENV])
@@ -134,20 +135,17 @@ const singleSpaConfig = (webpackConfigEnv, { mode }) => {
   return config;
 };
 
-const systemConfig = (_, { mode }) => {
-  const NODE_ENV = mode || 'development';
-  return {
-    name: 'system-js',
-    entry: {
-      ...systemDependencies[NODE_ENV],
-    },
-    devtool: 'cheap-source-map',
-    output: {
-      filename: '[name].js',
-      libraryTarget: 'umd',
-      path: join(__dirname, 'dist'),
-    },
-  };
+const systemConfig = {
+  name: 'system-js',
+  entry: {
+    ...systemDependencies[NODE_ENV],
+  },
+  devtool: 'sourcemap',
+  output: {
+    filename: '[name].js',
+    libraryTarget: 'umd',
+    path: join(__dirname, 'dist'),
+  },
 };
 
 module.exports = [singleSpaConfig, systemConfig];

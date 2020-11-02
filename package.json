@@ -12,7 +12,7 @@
     "test": "cross-env BABEL_ENV=test jest --passWithNoTests",
     "coverage": "jest --all --coverage",
     "format": "prettier --write {src,types,scripts}/**/*.{json,{j,t}s{,x},css,}",
-    "build": "rimraf dist && webpack --mode=production",
+    "build": "rimraf dist && cross-env NODE_ENV=production webpack --mode=production",
     "lint": "npm-run-all lint:*",
     "lint:fix": "npm-run-all format lint:fix:*",
     "lint:ts": "eslint {src,types}/**/*.ts{,x}",
