@@ -64,7 +64,7 @@ const singleSpaConfig = (webpackConfigEnv) => {
 
   const importNamesList = Object.keys(sharedDependencies[NODE_ENV])
     .map((key) => `${key}.js`)
-    .filter((key) => !['systemjs', 'systemjs-amd', 'systemjs-named-exports'].includes(key));
+    .filter((key) => !Object.keys(systemDependencies[NODE_ENV]).includes(key));
 
   const orgName = 'vega';
   const defaultConfig = singleSpaDefaults({
