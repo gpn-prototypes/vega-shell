@@ -33,16 +33,16 @@ const sharedDependencies = {
   development: {
     'react': 'react/cjs/react.development.js',
     'react-dom': 'react-dom/cjs/react-dom.development.js',
-    '@apollo/client': '@apollo/client/index.js',
     'single-spa': 'single-spa/lib/umd/single-spa.dev.js',
     'graphql': 'graphql/index.js',
+    '@apollo/client': '@apollo/client/index.js',
   },
   production: {
-    '@apollo/client': '@apollo/client/index.js',
-    'react': 'react/cjs/react.production.js',
-    'react-dom': 'react-dom/cjs/react-dom.production.js',
+    'react': 'react/cjs/react.production.min.js',
+    'react-dom': 'react-dom/cjs/react-dom.production.min.js',
     'single-spa': 'single-spa/lib/umd/single-spa.min.js',
     'graphql': 'graphql/index.js',
+    '@apollo/client': '@apollo/client/apollo-client.cjs.min.js',
   },
 };
 
@@ -56,10 +56,9 @@ function getPort(webpackConfigEnv) {
   return port;
 }
 
-const NODE_ENV = process.env.NODE_ENV || 'development';
-
 const singleSpaConfig = (webpackConfigEnv) => {
   const PORT = getPort(webpackConfigEnv);
+  const NODE_ENV = webpackConfigEnv.NODE_ENV || 'development';
   const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 
   const importNamesList = Object.keys(sharedDependencies[NODE_ENV])
@@ -135,17 +134,20 @@ const singleSpaConfig = (webpackConfigEnv) => {
   return config;
 };
 
-const systemConfig = {
-  name: 'system-js',
-  entry: {
-    ...systemDependencies[NODE_ENV],
-  },
-  devtool: 'cheap-source-map',
-  output: {
-    filename: '[name].js',
-    libraryTarget: 'umd',
-    path: join(__dirname, 'dist'),
-  },
+const systemConfig = (env) => {
+  const NODE_ENV = env.NODE_ENV || 'development';
+  return {
+    name: 'system-js',
+    entry: {
+      ...systemDependencies[NODE_ENV],
+    },
+    devtool: 'cheap-source-map',
+    output: {
+      filename: '[name].js',
+      libraryTarget: 'umd',
+      path: join(__dirname, 'dist'),
+    },
+  };
 };
 
 module.exports = [singleSpaConfig, systemConfig];
