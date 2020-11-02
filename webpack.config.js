@@ -38,6 +38,7 @@ const sharedDependencies = {
     'single-spa': 'single-spa/lib/umd/single-spa.dev.js',
     'graphql': 'graphql/index.js',
     '@apollo/client': '@apollo/client/index.js',
+    '@gpn-prototypes/vega-ui': '@gpn-prototypes/vega-ui/dist/index.js',
   },
   production: {
     'react': 'react/cjs/react.production.min.js',
@@ -45,6 +46,7 @@ const sharedDependencies = {
     'single-spa': 'single-spa/lib/umd/single-spa.min.js',
     'graphql': 'graphql/index.js',
     '@apollo/client': '@apollo/client/apollo-client.cjs.min.js',
+    '@gpn-prototypes/vega-ui': '@gpn-prototypes/vega-ui/dist/index.js',
   },
 };
 
@@ -94,6 +96,26 @@ const singleSpaConfig = (webpackConfigEnv) => {
     },
     output: {
       filename: '[name].js',
+    },
+    module: {
+      rules: [
+        {
+          test: /\.(png|jpe?g|gif|svg)$/i,
+          use: [
+            {
+              loader: 'file-loader',
+            },
+          ],
+        },
+        {
+          test: /\.css$/,
+          use: [
+            {
+              loader: 'postcss-loader',
+            },
+          ],
+        },
+      ],
     },
     externals: Object.keys(sharedDependencies[NODE_ENV]),
     plugins: [
