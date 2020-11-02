@@ -56,9 +56,9 @@ function getPort(webpackConfigEnv) {
   return port;
 }
 
-const singleSpaConfig = (webpackConfigEnv) => {
+const singleSpaConfig = (webpackConfigEnv, { mode }) => {
   const PORT = getPort(webpackConfigEnv);
-  const NODE_ENV = webpackConfigEnv.NODE_ENV || 'development';
+  const NODE_ENV = mode || 'development';
   const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 
   const importNamesList = Object.keys(sharedDependencies[NODE_ENV])
@@ -134,8 +134,8 @@ const singleSpaConfig = (webpackConfigEnv) => {
   return config;
 };
 
-const systemConfig = (env) => {
-  const NODE_ENV = env.NODE_ENV || 'development';
+const systemConfig = (_, { mode }) => {
+  const NODE_ENV = mode || 'development';
   return {
     name: 'system-js',
     entry: {
