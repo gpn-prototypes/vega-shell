@@ -107,14 +107,6 @@ const singleSpaConfig = (webpackConfigEnv) => {
             },
           ],
         },
-        {
-          test: /\.css$/,
-          use: [
-            {
-              loader: 'postcss-loader',
-            },
-          ],
-        },
       ],
     },
     externals: Object.keys(sharedDependencies[NODE_ENV]),
