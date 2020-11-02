@@ -3,6 +3,8 @@ const singleSpaDefaults = require('webpack-config-single-spa-ts');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WorkerPlugin = require('worker-plugin');
 const ImportMapPlugin = require('webpack-import-map-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const { join } = require('path');
 
 function withTrailingSlash(path) {
   if (path.endsWith('/')) {
@@ -71,8 +73,13 @@ const singleSpaConfig = (webpackConfigEnv) => {
     webpackConfigEnv,
   });
 
+  defaultConfig.plugins = defaultConfig.plugins.filter((plugin) => {
+    return !(plugin instanceof CleanWebpackPlugin);
+  });
+
   const config = webpackMerge.smart(defaultConfig, {
     // modify the webpack config however you'd like to by adding to this object
+    name: 'single-spa',
     devServer: {
       historyApiFallback: true,
       proxy: {
@@ -129,6 +136,7 @@ const singleSpaConfig = (webpackConfigEnv) => {
 };
 
 const systemConfig = {
+  name: 'system-js',
   entry: {
     ...systemDependencies[NODE_ENV],
   },
@@ -136,7 +144,8 @@ const systemConfig = {
   output: {
     filename: '[name].js',
     libraryTarget: 'umd',
+    path: join(__dirname, 'dist'),
   },
 };
 
-module.exports = [systemConfig, singleSpaConfig];
+module.exports = [singleSpaConfig, systemConfig];
