@@ -51,7 +51,7 @@
   -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self' data: https: localhost:* http://outsourcing.nat.tepkom.ru:38080 *.csssr.cloud; script-src 'unsafe-inline' *.csssr.cloud https: localhost:*; connect-src *.csssr.cloud http://outsourcing.nat.tepkom.ru:38080 https: localhost:* ws://localhost:*; style-src 'unsafe-inline' https:; object-src 'none';"
+      content="default-src 'self' data: https: localhost:* http://outsourcing.nat.tepkom.ru:38080 *.csssr.cloud; script-src 'unsafe-inline' *.csssr.cloud https: localhost:*; connect-src *.csssr.cloud http://outsourcing.nat.tepkom.ru:38080 https: localhost:* ws://localhost:*; style-src 'unsafe-inline' blob: https:; object-src 'none';"
     />
     <meta name="importmap-type" content="systemjs-importmap" />
     <!-- If you wish to turn off import-map-overrides for specific environments (prod), uncomment the line below -->
@@ -71,7 +71,7 @@
         "imports": {
           "react": "https://cdn.jsdelivr.net/npm/react@16.13.0/umd/react.production.min.js",
           "react-dom": "https://cdn.jsdelivr.net/npm/react-dom@16.13.0/umd/react-dom.production.min.js",
-          "single-spa": "https://cdn.jsdelivr.net/npm/single-spa@5.5.5/lib/system/single-spa.min.js"
+          "single-spa": "https://cdn.jsdelivr.net/npm/single-spa@5.8.0/lib/system/single-spa.min.js"
         }
       }
     </script>
@@ -91,7 +91,8 @@
           "@vega/shell": "//localhost:9000/vega-shell.js",
           "@vega/header": "//localhost:9001/vega-header.js",
           "@vega/auth": "//localhost:9002/vega-auth.js",
-          "@vega/sp": "//localhost:9003/vega-sp.js"
+          "@vega/sp": "//localhost:9003/vega-sp.js",
+          "@vega/rb": "//localhost:9004/vega-rb.js"
         }
       }
     </script>
@@ -100,6 +101,7 @@
       <script type="systemjs-importmap" src="http://master.vega-auth.csssr.cloud/import-map.json" crossorigin="anonymous"></script>
       <script type="systemjs-importmap" src="http://release.vega-sp.csssr.cloud/import-map.json" crossorigin="anonymous"></script>
       <script type="systemjs-importmap" src="http://release.vega-header.csssr.cloud/import-map.json" crossorigin="anonymous"></script>
+      <script type="systemjs-importmap" src="http://develop.vega-rb.csssr.cloud/import-map.json" crossorigin="anonymous"></script>
     <% } %>
 
 
@@ -126,12 +128,15 @@
         <route path="/login">
           <application name="@vega/auth" props="identity"></application>
         </route>
-        <route default>
+        <route path="/projects">
           <div class="header">
             <application name="@vega/header" props="graphqlClient,identity"></application>
           </div>
           <main class="main">
             <application name="@vega/sp" props="graphqlClient,identity"></application>
+            <route path="show/:project_id/rb">
+              <application name="@vega/rb" props="graphqlClient,identity"></application>
+            </route>
           </main>
         </route>
       </single-spa-router>

@@ -1,5 +1,4 @@
 import * as singleSpa from 'single-spa';
-// eslint-disable-next-line import/no-unresolved
 import { constructApplications, constructLayoutEngine, constructRoutes } from 'single-spa-layout';
 
 import { getAppConfig } from '../app-config';
@@ -10,6 +9,8 @@ import { BrowserMessageBus } from './message-bus';
 
 const { registerApplication, start } = singleSpa;
 
+const HOME_PAGE = '/projects';
+
 const bus = BrowserMessageBus.create();
 
 const sendMessageOnAuth = () => {
@@ -17,11 +18,16 @@ const sendMessageOnAuth = () => {
 };
 
 bus.subscribe({ channel: 'auth', topic: 'logged-in' }, () => {
-  singleSpa.navigateToUrl('/');
+  const url = new URL(window.location.href).searchParams.get('redirect-to') ?? HOME_PAGE;
+  singleSpa.navigateToUrl(url.toString());
 });
 
 bus.subscribe({ channel: 'auth', topic: 'logged-out' }, () => {
-  singleSpa.navigateToUrl('/login');
+  const url = new URL(window.location.href);
+  url.searchParams.set('redirect-to', url.toString().replace(url.origin, ''));
+  url.pathname = '/login';
+
+  singleSpa.navigateToUrl(url.toString());
 });
 
 const { baseApiUrl } = getAppConfig();
@@ -59,18 +65,55 @@ layoutEngine.activate();
 
 start();
 
+type BeforeRoutingEvent = CustomEvent<{
+  originalEvent: Event;
+  totalAppChanges: number;
+  oldUrl: string;
+  newUrl: string;
+  navigationIsCanceled: boolean;
+  cancelNavigation: VoidFunction;
+}>;
+
 // TODO создать тип для событий
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 window.addEventListener('single-spa:before-routing-event', (evt: any) => {
-  const { location } = evt.currentTarget;
+  const { detail } = evt as BeforeRoutingEvent;
+  const { cancelNavigation } = detail;
 
-  const { pathname, searchParams, hash } = new URL(location.href);
+  const newUrl = new URL(detail.newUrl);
+  const oldUrl = new URL(detail.oldUrl);
 
-  const referer = pathname === '/login' ? '/' : `${pathname}${searchParams || ''}${hash || ''}`;
+  const isLoggedIn = identity.isLoggedIn();
 
-  if (!identity.getToken()) {
-    singleSpa.navigateToUrl('/login');
-  } else {
-    singleSpa.navigateToUrl(referer);
+  if (!isLoggedIn) {
+    if (newUrl.pathname !== '/login') {
+      cancelNavigation();
+      const url = new URL(newUrl.href);
+
+      url.pathname = '/login';
+      url.searchParams.set('redirect-to', newUrl.pathname !== '/' ? newUrl.pathname : HOME_PAGE);
+
+      singleSpa.navigateToUrl(url.toString().replace(url.origin, ''));
+    }
+
+    return;
+  }
+
+  if (newUrl.pathname === '/login') {
+    cancelNavigation();
+
+    if (!oldUrl.pathname.startsWith(HOME_PAGE)) {
+      singleSpa.navigateToUrl(HOME_PAGE);
+    }
+
+    return;
+  }
+
+  if (newUrl.pathname === '/') {
+    cancelNavigation();
+
+    if (!oldUrl.pathname.startsWith(HOME_PAGE)) {
+      singleSpa.navigateToUrl(HOME_PAGE);
+    }
   }
 });
