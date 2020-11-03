@@ -8,11 +8,11 @@
     "yarn": "^1.22.4"
   },
   "scripts": {
-    "dev": "webpack-dev-server --mode=development --port 9000 --env.isLocal=true",
+    "dev": "webpack-dev-server --mode=development --port 9000 --env.isLocal=true --env.port=9000",
     "test": "cross-env BABEL_ENV=test jest --passWithNoTests",
     "coverage": "jest --all --coverage",
     "format": "prettier --write {src,types,scripts}/**/*.{json,{j,t}s{,x},css,}",
-    "build": "webpack --mode=production",
+    "build": "rimraf dist && cross-env NODE_ENV=production webpack --mode=production",
     "lint": "npm-run-all lint:*",
     "lint:fix": "npm-run-all format lint:fix:*",
     "lint:ts": "eslint {src,types}/**/*.ts{,x}",
@@ -30,7 +30,11 @@
     "@apollo/client": "^3.2.2",
     "graphql": "^15.3.0",
     "single-spa": "^5.8.0",
-    "single-spa-layout": "1.1.5"
+    "single-spa-layout": "1.1.5",
+    "react-dom": "^16.14.0",
+    "react": "^16.14.0",
+    "import-map-overrides": "^2.1.0",
+    "systemjs": "^6.7.1"
   },
   "devDependencies": {
     "@gpn-prototypes/frontend-configs": "^1.2.12",
@@ -39,6 +43,7 @@
     "@types/systemjs": "^6.1.0",
     "@types/webpack-env": "^1.15.1",
     "babel-plugin-transform-class-properties": "^6.24.1",
+    "clean-webpack-plugin": "^3.0.0",
     "commitizen": "^4.2.1",
     "concurrently": "^5.1.0",
     "cross-env": "^7.0.2",
@@ -53,6 +58,7 @@
     "lint-staged": "^10.4.0",
     "node-fetch": "^2.6.1",
     "npm-run-all": "^4.1.5",
+    "rimraf": "^3.0.2",
     "ts-config-single-spa": "^1.7.0",
     "typescript": "^4.0.3",
     "webpack": "^4.41.2",
