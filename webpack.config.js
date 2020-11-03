@@ -20,12 +20,14 @@ const systemDependencies = {
     'systemjs-amd': 'systemjs/dist/extras/amd.js',
     'systemjs-named-exports': 'systemjs/dist/extras/named-exports.js',
     'import-map-overrides': 'import-map-overrides/dist/import-map-overrides.js',
+    'regenerator-runtime': 'regenerator-runtime/runtime.js',
   },
   production: {
     'systemjs': 'systemjs/dist/system.min.js',
     'systemjs-amd': 'systemjs/dist/extras/amd.min.js',
     'systemjs-named-exports': 'systemjs/dist/extras/named-exports.min.js',
     'import-map-overrides': 'import-map-overrides/dist/import-map-overrides.js',
+    'regenerator-runtime': 'regenerator-runtime/runtime.js',
   },
 };
 
