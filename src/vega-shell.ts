@@ -31,7 +31,7 @@ bus.subscribe({ channel: 'auth', topic: 'logged-out' }, () => {
 });
 
 const { baseApiUrl } = getAppConfig();
-const identity = new Identity({ apiUrl: `${baseApiUrl}/auth`, cbOnAuth: sendMessageOnAuth });
+const identity = new Identity({ apiUrl: `${baseApiUrl}/login`, cbOnAuth: sendMessageOnAuth });
 const graphqlClient = createGraphqlClient({
   uri: `${baseApiUrl}/graphql`,
   identity,
