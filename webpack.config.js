@@ -1,10 +1,10 @@
+const { join } = require('path');
 const webpackMerge = require('webpack-merge');
 const singleSpaDefaults = require('webpack-config-single-spa-ts');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WorkerPlugin = require('worker-plugin');
 const ImportMapPlugin = require('webpack-import-map-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const { join } = require('path');
 
 function withTrailingSlash(path) {
   if (path.endsWith('/')) {
@@ -65,6 +65,7 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 const singleSpaConfig = (webpackConfigEnv) => {
   const PORT = getPort(webpackConfigEnv);
   const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
+  const YC_DEPLOYMENT = process.env.YC_DEPLOYMENT === 'true' || false; // Yandex Cloud Deployment
 
   const importNamesList = Object.keys(sharedDependencies[NODE_ENV])
     .map((key) => `${key}.js`)
@@ -116,6 +117,7 @@ const singleSpaConfig = (webpackConfigEnv) => {
         template: 'src/index.ejs',
         templateParameters: {
           isLocal: webpackConfigEnv && webpackConfigEnv.isLocal === 'true',
+          isYc: YC_DEPLOYMENT,
           baseUrl: BASE_URL,
           orgName,
         },
