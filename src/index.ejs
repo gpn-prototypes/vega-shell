@@ -43,7 +43,7 @@
     This is needed by babel to share largeish helper code for compiling async/await in older
     browsers. More information at https://github.com/single-spa/create-single-spa/issues/112
   -->
-    <script src="https://cdn.jsdelivr.net/npm/regenerator-runtime@0.13.5/runtime.min.js"></script>
+    <script src="<%= baseUrl %>/regenerator-runtime.js"></script>
 
     <!--
     This CSP allows any SSL-enabled host, but you should limit these directives further to increase your app's security.
@@ -83,7 +83,6 @@
       }
     </script>
     <% } else { %>
-      <script type="systemjs-importmap" src="<%= baseUrl %>/import-map.json"></script>
       <script type="systemjs-importmap" src="http://master.vega-auth.csssr.cloud/import-map.json" crossorigin="anonymous"></script>
       <script type="systemjs-importmap" src="http://release.vega-sp.csssr.cloud/import-map.json" crossorigin="anonymous"></script>
       <script type="systemjs-importmap" src="http://release.vega-header.csssr.cloud/import-map.json" crossorigin="anonymous"></script>
