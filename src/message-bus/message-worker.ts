@@ -23,6 +23,9 @@ export class BrowserMessageWorker extends MessageWorker {
     super();
 
     this.worker = new SharedWorker('./worker.ts', { type: 'module' });
+    this.worker.onerror = (e) => {
+      console.log(e)
+    }
     this.worker.port.start();
     this.close = this.close.bind(this);
     this.subscriptions = [];
@@ -43,7 +46,9 @@ export class BrowserMessageWorker extends MessageWorker {
       fn(event.data);
     };
 
-    this.worker.port.addEventListener('message', listener);
+    this.worker.port.addEventListener('message', (event) => {
+      listener(event);
+    });
 
     const unsub = () => {
       this.worker.port.removeEventListener('message', listener);

@@ -13,6 +13,10 @@ const HOME_PAGE = '/projects';
 
 const bus = BrowserMessageBus.create();
 
+bus.subscribe({ channel: 'project', topic: 'project-not-found' }, () => {
+  console.log('not found');
+});
+
 const sendMessageOnAuth = () => {
   bus.send({ channel: 'auth', topic: 'logged-in', self: true });
 };
@@ -23,6 +27,7 @@ bus.subscribe({ channel: 'auth', topic: 'logged-in' }, () => {
 });
 
 bus.subscribe({ channel: 'auth', topic: 'logged-out' }, () => {
+  console.log('dflksdfjlksdj')
   const url = new URL(window.location.href);
   url.searchParams.set('redirect-to', url.toString().replace(url.origin, ''));
   url.pathname = '/login';
@@ -31,10 +36,11 @@ bus.subscribe({ channel: 'auth', topic: 'logged-out' }, () => {
 });
 
 const { baseApiUrl } = getAppConfig();
-const identity = new Identity({ apiUrl: `${baseApiUrl}/login`, cbOnAuth: sendMessageOnAuth });
+const identity = new Identity({ apiUrl: `${baseApiUrl}/auth/obtain`, cbOnAuth: sendMessageOnAuth });
 const graphqlClient = createGraphqlClient({
   uri: `${baseApiUrl}/graphql`,
   identity,
+  bus,
 });
 
 const layoutData = {
