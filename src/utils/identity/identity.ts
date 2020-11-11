@@ -4,9 +4,12 @@ export type IdentityConfigType = {
   apiUrl: string;
   token?: string;
   cbOnAuth?(): void;
+  cbOnLogout?(): void;
 };
 
 const AUTH_TOKEN = 'auth-token';
+
+const noop = () => {};
 
 export class Identity {
   private apiClient: APIClient;
@@ -15,10 +18,13 @@ export class Identity {
 
   private cbOnAuth?(): void;
 
+  private cbOnLogout?(): void;
+
   constructor(config: IdentityConfigType) {
-    const { apiUrl, token = null, cbOnAuth = () => {} } = config;
+    const { apiUrl, token = null, cbOnAuth = noop, cbOnLogout = noop } = config;
     this.apiClient = new APIClient(apiUrl);
     this.cbOnAuth = cbOnAuth;
+    this.cbOnLogout = cbOnLogout;
     if (token) {
       localStorage.setItem(this.AUTH_TOKEN, token);
     }
@@ -50,6 +56,9 @@ export class Identity {
   };
 
   public logout = (): void => {
+    if (typeof this.cbOnLogout === 'function') {
+      this.cbOnLogout();
+    }
     localStorage.removeItem(this.AUTH_TOKEN);
   };
 }
