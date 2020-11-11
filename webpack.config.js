@@ -1,4 +1,6 @@
 const { join } = require('path');
+const dotenv = require('dotenv');
+const webpack = require('webpack');
 const webpackMerge = require('webpack-merge');
 const singleSpaDefaults = require('webpack-config-single-spa-ts');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -82,6 +84,16 @@ const singleSpaConfig = (webpackConfigEnv) => {
     return !(plugin instanceof CleanWebpackPlugin);
   });
 
+  const envConfig = dotenv.config();
+
+  const env = envConfig.error ? {} : envConfig.parsed;
+
+  const envKeys = Object.keys(env).reduce((prev, next) => {
+    // eslint-disable-next-line no-param-reassign
+    prev[`process.env.${next}`] = JSON.stringify(env[next]);
+    return prev;
+  }, {});
+
   const config = webpackMerge.smart(defaultConfig, {
     // modify the webpack config however you'd like to by adding to this object
     name: 'single-spa',
@@ -113,6 +125,7 @@ const singleSpaConfig = (webpackConfigEnv) => {
     },
     externals: Object.keys(sharedDependencies[NODE_ENV]),
     plugins: [
+      new webpack.DefinePlugin(envKeys),
       new HtmlWebpackPlugin({
         inject: false,
         template: 'src/index.ejs',
