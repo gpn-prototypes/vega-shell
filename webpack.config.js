@@ -125,7 +125,13 @@ const singleSpaConfig = (webpackConfigEnv) => {
     },
     externals: Object.keys(sharedDependencies[NODE_ENV]),
     plugins: [
+      
+      new webpack.DefinePlugin({
+        'process.env.BASE_API_URL': JSON.stringify(process.env.BASE_API_URL),
+      }),
+
       new webpack.DefinePlugin(envKeys),
+
       new HtmlWebpackPlugin({
         inject: false,
         template: 'src/index.ejs',
