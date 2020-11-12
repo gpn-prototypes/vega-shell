@@ -23,7 +23,7 @@ type ErrorHandler = (error: Error) => void;
 type Config = {
   uri: string;
   identity: Identity;
-  onError: (error: Error) => void;
+  onError: ErrorHandler;
 };
 
 type ResponseLinkConfig = {

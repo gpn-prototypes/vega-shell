@@ -1,15 +1,14 @@
 import { ApolloLink, execute, Observable, throwServerError, toPromise } from '@apollo/client';
 
-import { mocks, queries } from '../test-utils/mocks';
-
 import { createErrorLink, createResponseLink } from './graphql-client';
+import { mocks, queries } from './mocks';
 
 beforeEach(() => {
   jest.restoreAllMocks();
 });
 
 describe('responseLink', () => {
-  test('обрабатывает 404 ошибку', async (done) => {
+  test('обрабатывает 404 ошибку', async () => {
     const handleError = jest.fn();
 
     const responseLink = createResponseLink({ handleError });
@@ -24,14 +23,12 @@ describe('responseLink', () => {
       }),
     );
 
-    done();
-
     expect(handleError).toBeCalledWith({ code: 404, message: 'project-not-found' });
   });
 });
 
 describe('errorLink', () => {
-  test('обрабатывает 500 ошибку', async (done) => {
+  test('обрабатывает 500 ошибку', async () => {
     const handleError = jest.fn();
     const errorLink = createErrorLink({ handleError });
 
@@ -48,7 +45,6 @@ describe('errorLink', () => {
         }),
       );
     } catch {
-      done();
       expect(handleError).toBeCalledWith({ code: 500, message: 'internal-server-error' });
     }
   });
