@@ -3,7 +3,7 @@ import { constructApplications, constructLayoutEngine, constructRoutes } from 's
 
 import { getAppConfig } from '../app-config';
 
-import { createGraphqlClient } from './utils/graphql-client';
+import { createGraphqlClient, Error } from './utils/graphql-client';
 import { Identity } from './utils/identity';
 import { BrowserMessageBus } from './message-bus';
 
@@ -30,11 +30,25 @@ bus.subscribe({ channel: 'auth', topic: 'logged-out' }, () => {
   singleSpa.navigateToUrl(url.toString());
 });
 
+const handleGraphqlClientError = (err: Error): void => {
+  if (err.code === 500) {
+    // Добавлю нормальную обработку, когда странички сверстаю
+    // eslint-disable-next-line no-console
+    console.log('internal server error');
+  }
+
+  if (err.code === 404 && err.message === 'project-not-found') {
+    // eslint-disable-next-line no-console
+    console.log('not found');
+  }
+};
+
 const { baseApiUrl } = getAppConfig();
 const identity = new Identity({ apiUrl: `${baseApiUrl}/login`, cbOnAuth: sendMessageOnAuth });
 const graphqlClient = createGraphqlClient({
   uri: `${baseApiUrl}/graphql`,
   identity,
+  onError: handleGraphqlClientError,
 });
 
 const layoutData = {
