@@ -67,7 +67,7 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 const singleSpaConfig = (webpackConfigEnv) => {
   const PORT = getPort(webpackConfigEnv);
   const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
-  const YC_DEPLOYMENT = process.env.YC_DEPLOYMENT === 'true' || false; // Yandex Cloud Deployment
+  const YC_DEPLOYMENT = process.env.YC_DEPLOYMENT === 'true'; // Yandex Cloud Deployment
 
   const importNamesList = Object.keys(sharedDependencies[NODE_ENV])
     .map((key) => `${key}.js`)
@@ -125,13 +125,13 @@ const singleSpaConfig = (webpackConfigEnv) => {
     },
     externals: Object.keys(sharedDependencies[NODE_ENV]),
     plugins: [
-      
       new webpack.DefinePlugin({
+        'process.env.NODE_ENV': JSON.stringify(NODE_ENV),
+        'process.env.YC_DEPLOYMENT': JSON.stringify(YC_DEPLOYMENT),
         'process.env.BASE_API_URL': JSON.stringify(process.env.BASE_API_URL),
+        'process.env.BASE_URL': JSON.stringify(BASE_URL),
+        ...envKeys,
       }),
-
-      new webpack.DefinePlugin(envKeys),
-
       new HtmlWebpackPlugin({
         inject: false,
         template: 'src/index.ejs',
