@@ -97,6 +97,7 @@ const singleSpaConfig = (webpackConfigEnv) => {
     },
     output: {
       filename: '[name].js',
+      publicPath: '/',
     },
     module: {
       rules: [
@@ -163,6 +164,7 @@ const systemConfig = {
     filename: '[name].js',
     libraryTarget: 'umd',
     path: join(__dirname, 'dist'),
+    publicPath: '/',
   },
 };
 

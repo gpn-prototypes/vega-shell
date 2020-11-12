@@ -24,9 +24,7 @@ class Hub {
 
   public notify(output: WorkerOutput, options: { exclude?: MessagePort } = {}) {
     this.ports.forEach((port) => {
-      console.log(output)
       if (port !== options.exclude) {
-        console.log(output)
         port.postMessage(output);
       }
     });

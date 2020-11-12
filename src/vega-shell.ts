@@ -3,7 +3,7 @@ import { constructApplications, constructLayoutEngine, constructRoutes } from 's
 
 import { getAppConfig } from '../app-config';
 
-import { createGraphqlClient } from './utils/graphql-client';
+import { createGraphqlClient, Error } from './utils/graphql-client';
 import { Identity } from './utils/identity';
 import { BrowserMessageBus } from './message-bus';
 
@@ -12,10 +12,6 @@ const { registerApplication, start } = singleSpa;
 const HOME_PAGE = '/projects';
 
 const bus = BrowserMessageBus.create();
-
-bus.subscribe({ channel: 'project', topic: 'project-not-found' }, () => {
-  console.log('not found');
-});
 
 const sendMessageOnAuth = () => {
   bus.send({ channel: 'auth', topic: 'logged-in', self: true });
@@ -27,7 +23,6 @@ bus.subscribe({ channel: 'auth', topic: 'logged-in' }, () => {
 });
 
 bus.subscribe({ channel: 'auth', topic: 'logged-out' }, () => {
-  console.log('dflksdfjlksdj')
   const url = new URL(window.location.href);
   url.searchParams.set('redirect-to', url.toString().replace(url.origin, ''));
   url.pathname = '/login';
@@ -35,12 +30,25 @@ bus.subscribe({ channel: 'auth', topic: 'logged-out' }, () => {
   singleSpa.navigateToUrl(url.toString());
 });
 
+const handleGraphqlClientError = (err: Error): void => {
+  if (err.code === 500) {
+    // Добавлю нормальную обработку, когда странички сверстаю
+    // eslint-disable-next-line no-console
+    console.log('internal server error');
+  }
+
+  if (err.code === 404 && err.message === 'project-not-found') {
+    // eslint-disable-next-line no-console
+    console.log('not found');
+  }
+};
+
 const { baseApiUrl } = getAppConfig();
-const identity = new Identity({ apiUrl: `${baseApiUrl}/auth/obtain`, cbOnAuth: sendMessageOnAuth });
+const identity = new Identity({ apiUrl: `${baseApiUrl}/login`, cbOnAuth: sendMessageOnAuth });
 const graphqlClient = createGraphqlClient({
   uri: `${baseApiUrl}/graphql`,
   identity,
-  bus,
+  onError: handleGraphqlClientError,
 });
 
 const layoutData = {
