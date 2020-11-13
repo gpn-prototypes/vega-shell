@@ -2197,6 +2197,34 @@
   resolved "https://registry.yarnpkg.com/@types/prettier/-/prettier-2.1.1.tgz#be148756d5480a84cde100324c03a86ae5739fb5"
   integrity sha512-2zs+O+UkDsJ1Vcp667pd3f8xearMdopz/z54i99wtRDI5KLmngk7vlrYZD0ZjKHaROR03EznlBbVY9PfAEyJIQ==
 
+"@types/prop-types@*":
+  version "15.7.3"
+  resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.3.tgz#2ab0d5da2e5815f94b0b9d4b95d1e5f243ab2ca7"
+  integrity sha512-KfRL3PuHmqQLOG+2tGpRO26Ctg+Cq1E01D2DMriKEATHgWLfeNDmq9e29Q9WIky0dQ3NPkd1mzYH8Lm936Z9qw==
+
+"@types/react-dom@*", "@types/react-dom@^16.9.9":
+  version "16.9.9"
+  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-16.9.9.tgz#d2d0a6f720a0206369ccbefff752ba37b9583136"
+  integrity sha512-jE16FNWO3Logq/Lf+yvEAjKzhpST/Eac8EMd1i4dgZdMczfgqC8EjpxwNgEe3SExHYLliabXDh9DEhhqnlXJhg==
+  dependencies:
+    "@types/react" "*"
+
+"@types/react@*", "@types/react@^16.9.56":
+  version "16.9.56"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.9.56.tgz#ea25847b53c5bec064933095fc366b1462e2adf0"
+  integrity sha512-gIkl4J44G/qxbuC6r2Xh+D3CGZpJ+NdWTItAPmZbR5mUS+JQ8Zvzpl0ea5qT/ZT3ZNTUcDKUVqV3xBE8wv/DyQ==
+  dependencies:
+    "@types/prop-types" "*"
+    csstype "^3.0.2"
+
+"@types/single-spa-react@^2.12.0":
+  version "2.12.0"
+  resolved "https://registry.yarnpkg.com/@types/single-spa-react/-/single-spa-react-2.12.0.tgz#3c0968a80bd61c22d506953257a32fa2401f41a3"
+  integrity sha512-FISPO51Cq961trYHVFr30iazZHuGyAJ0ZH38wpxhJdZUZcAwfR7UG19sHGWRtTip1kv3xRshS3L9tzaYcKbPVg==
+  dependencies:
+    "@types/react" "*"
+    "@types/react-dom" "*"
+
 "@types/source-list-map@*":
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/@types/source-list-map/-/source-list-map-0.1.2.tgz#0078836063ffaf17412349bba364087e0ac02ec9"
@@ -10379,6 +10407,11 @@ single-spa-layout@1.1.5:
     "@types/parse5" "^5.0.3"
     merge2 "^1.4.1"
     parse5 "^6.0.1"
+
+single-spa-react@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/single-spa-react/-/single-spa-react-3.2.0.tgz#97bfcb03e418f7daa2b1bd05eab1c62632351d91"
+  integrity sha512-s8K7AuS26WvN9n81z1NBlnZIe/Hin423P8jYLuG/DCNTYo5JbJMS5+Cb/wQd4ikG6YqoedpV4cb7nAcxvlLyhg==
 
 single-spa@^5.8.0:
   version "5.8.0"

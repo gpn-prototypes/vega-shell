@@ -3,6 +3,7 @@ import { constructApplications, constructLayoutEngine, constructRoutes } from 's
 
 import { getAppConfig } from '../app-config';
 
+import { loaderLifecycles } from './components/Loader';
 import { createGraphqlClient, Error } from './utils/graphql-client';
 import { Identity } from './utils/identity';
 import { BrowserMessageBus } from './message-bus';
@@ -65,7 +66,9 @@ const layoutData = {
     identity,
     graphqlClient,
   },
-  loaders: {},
+  loaders: {
+    main: loaderLifecycles,
+  },
 };
 
 const routes = constructRoutes(
