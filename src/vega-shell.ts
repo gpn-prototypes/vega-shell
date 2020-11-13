@@ -17,6 +17,10 @@ const sendMessageOnAuth = () => {
   bus.send({ channel: 'auth', topic: 'logged-in', self: true });
 };
 
+const sendMessageOnLogout = () => {
+  bus.send({ channel: 'auth', topic: 'logged-out', self: true });
+};
+
 bus.subscribe({ channel: 'auth', topic: 'logged-in' }, () => {
   const url = new URL(window.location.href).searchParams.get('redirect-to') ?? HOME_PAGE;
   singleSpa.navigateToUrl(url.toString());
@@ -44,7 +48,11 @@ const handleGraphqlClientError = (err: Error): void => {
 };
 
 const { baseApiUrl } = getAppConfig();
-const identity = new Identity({ apiUrl: `${baseApiUrl}/login`, cbOnAuth: sendMessageOnAuth });
+const identity = new Identity({
+  apiUrl: `${baseApiUrl}/login`,
+  cbOnAuth: sendMessageOnAuth,
+  cbOnLogout: sendMessageOnLogout,
+});
 const graphqlClient = createGraphqlClient({
   uri: `${baseApiUrl}/graphql`,
   identity,
