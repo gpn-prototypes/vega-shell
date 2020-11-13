@@ -74,7 +74,13 @@ export const createHttpLink = (uri: string): ApolloLink =>
 export function createGraphqlClient(config: Config): GraphQLClient {
   const { uri, identity, onError: handleError } = config;
   return new ApolloClient({
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache({
+      typePolicies: {
+        Project: {
+          keyFields: ['vid'],
+        },
+      },
+    }),
     link: from([
       createResponseLink({ handleError }),
       createErrorLink({ handleError }),
