@@ -3,6 +3,7 @@ import {
   ApolloLink,
   createHttpLink as createApolloHttpLink,
   from,
+  HttpOptions,
   InMemoryCache,
   NormalizedCacheObject,
 } from '@apollo/client';
@@ -70,13 +71,23 @@ export const createResponseLink = (config: ResponseLinkConfig): ApolloLink =>
     });
   });
 
-export const createHttpLink = (uri: string): ApolloLink =>
-  createApolloHttpLink({
-    uri,
+export const createHttpLink = (options?: HttpOptions): ApolloLink => {
+  return createApolloHttpLink(options);
+};
+
+export const switchUriLink = (uri: string): ApolloLink =>
+  new ApolloLink((operation, forward) => {
+    const { projectVid } = operation.getContext();
+    operation.setContext({
+      uri: `${uri}${projectVid || ''}`,
+    });
+
+    return forward(operation);
   });
 
 export function createGraphqlClient(config: Config): GraphQLClient {
   const { uri, identity, onError: handleError } = config;
+  const uriLink = switchUriLink(uri);
   return new ApolloClient({
     connectToDevTools: process.env.VEGA_ENV === 'development',
     cache: new InMemoryCache({
@@ -129,7 +140,8 @@ export function createGraphqlClient(config: Config): GraphQLClient {
     link: from([
       createResponseLink({ handleError }),
       createErrorLink({ handleError }),
-      createAuthLink(identity).concat(createHttpLink(uri)),
+      uriLink,
+      createAuthLink(identity).concat(createHttpLink()),
     ]),
   });
 }

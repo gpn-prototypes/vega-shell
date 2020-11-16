@@ -1,6 +1,15 @@
 import { ApolloLink, execute, Observable, throwServerError, toPromise } from '@apollo/client';
+import fetchMock from 'fetch-mock';
 
-import { createErrorLink, createResponseLink } from './graphql-client';
+import { Identity } from '../identity';
+
+import {
+  createAuthLink,
+  createErrorLink,
+  createHttpLink,
+  createResponseLink,
+  switchUriLink,
+} from './graphql-client';
 import { mocks, queries } from './mocks';
 
 beforeEach(() => {
@@ -47,5 +56,94 @@ describe('errorLink', () => {
     } catch {
       expect(handleError).toBeCalledWith({ code: 500, message: 'internal-server-error' });
     }
+  });
+});
+
+function makePromise(res: unknown) {
+  return new Promise((resolve) => setTimeout(() => resolve(res)));
+}
+
+function makeCallback(done: jest.DoneCallback, body: (...args: unknown[]) => void) {
+  return (...args: unknown[]) => {
+    try {
+      body(...args);
+      done();
+    } catch (error) {
+      done.fail(error);
+    }
+  };
+}
+
+describe('client', () => {
+  const data = { data: { hello: 'world' } };
+
+  beforeEach(() => {
+    fetchMock.restore();
+  });
+
+  afterEach(() => {
+    fetchMock.restore();
+  });
+
+  it('меняется uri', async (done) => {
+    fetchMock.get(
+      '/graphql/projectVid1?query=query%20SampleQuery%20%7B%0A%20%20stub%20%7B%0A%20%20%20%20id%0A%20%20%7D%0A%7D%0A&operationName=SampleQuery&variables=%7B%7D',
+      makePromise(data),
+    );
+
+    const URI = 'graphql/';
+    const PROJECT_VID = 'projectVid1';
+    const CONFIG = { apiUrl: 'auth_rest', token: 'token2' };
+
+    const uriLink = switchUriLink(URI);
+
+    const identity = new Identity(CONFIG);
+    const authLink = createAuthLink(identity);
+
+    const linkR = ApolloLink.from([authLink, uriLink]);
+    const link = linkR.concat(createHttpLink({ useGETForQueries: true }));
+
+    execute(link, {
+      query: queries.sample,
+      context: {
+        projectVid: 'projectVid1',
+      },
+    }).subscribe(
+      makeCallback(done, () => {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const [uri] = fetchMock.lastCall()!;
+        const { pathname } = new URL(`http://localhost${uri}`);
+        expect(pathname).toBe(`/${URI}${PROJECT_VID}`);
+      }),
+    );
+  });
+
+  it('не меняется uri', async (done) => {
+    fetchMock.get(
+      '/graphql/?query=query%20SampleQuery%20%7B%0A%20%20stub%20%7B%0A%20%20%20%20id%0A%20%20%7D%0A%7D%0A&operationName=SampleQuery&variables=%7B%7D',
+      makePromise(data),
+    );
+
+    const URI = 'graphql/';
+    const CONFIG = { apiUrl: 'auth_rest', token: 'token2' };
+
+    const uriLink = switchUriLink(URI);
+
+    const identity = new Identity(CONFIG);
+    const authLink = createAuthLink(identity);
+
+    const linkR = ApolloLink.from([authLink, uriLink]);
+    const link = linkR.concat(createHttpLink({ useGETForQueries: true }));
+
+    execute(link, {
+      query: queries.sample,
+    }).subscribe(
+      makeCallback(done, () => {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const [uri] = fetchMock.lastCall()!;
+        const { pathname } = new URL(`http://localhost${uri}`);
+        expect(pathname).toBe(`/${URI}`);
+      }),
+    );
   });
 });
