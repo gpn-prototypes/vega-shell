@@ -86,4 +86,6 @@ describe('Identity', () => {
     identity.updateToken('token3');
     expect(identity.getToken()).toEqual('token3');
   });
+
+  test.todo('выбрасывается ошибка');
 });
