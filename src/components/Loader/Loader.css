@@ -1,0 +1,6 @@
+.ShellLoader {
+  position: absolute;
+  background: var(--color-bg-default);
+  width: 100%;
+  height: 100%;
+}
