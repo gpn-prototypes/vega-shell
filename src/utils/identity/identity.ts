@@ -30,14 +30,19 @@ export class Identity {
     }
   }
 
+  // eslint-disable-next-line consistent-return
   public auth = async ({ login, password }: UserDataType): Promise<void> => {
-    const { token } = await this.apiClient.auth({ login, password });
-    if (token) {
-      if (typeof this.cbOnAuth === 'function') {
-        this.cbOnAuth();
-      }
+    try {
+      const { token } = await this.apiClient.auth({ login, password });
+      if (token) {
+        if (typeof this.cbOnAuth === 'function') {
+          this.cbOnAuth();
+        }
 
-      localStorage.setItem(this.AUTH_TOKEN, token);
+        localStorage.setItem(this.AUTH_TOKEN, token);
+      }
+    } catch (err) {
+      return Promise.reject(err);
     }
   };
 

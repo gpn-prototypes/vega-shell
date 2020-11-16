@@ -13,9 +13,7 @@ type Error = {
 };
 
 type FailedResponseType = {
-  error: {
-    errors: Error[];
-  };
+  Error: Error;
 };
 
 export class APIClient {
@@ -40,7 +38,8 @@ export class APIClient {
       const data: TokenType = await response.json();
       return data;
     }
-    const { error }: FailedResponseType = await response.json();
-    return Promise.reject(error);
+    const { Error }: FailedResponseType = await response.json();
+
+    return Promise.reject(Error);
   };
 }

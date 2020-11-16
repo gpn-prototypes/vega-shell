@@ -27,7 +27,7 @@ describe('APIClient', () => {
 
   test('возвращается errors при неверных данных', async () => {
     const AUTH_URL = 'http://localhost/auth';
-    const ERRORS = { errors: [{ code: 'INVALID_JSON' }] };
+    const ERROR = { Error: { code: 'INVALID_JSON' } };
     const AUTH_REQUEST = {
       login: 'foo',
       password: 'bar',
@@ -36,11 +36,11 @@ describe('APIClient', () => {
     fetchMock.mock(AUTH_URL, {
       status: 401,
       body: {
-        error: ERRORS,
+        Error: ERROR,
       },
     });
 
     const client = new APIClient(AUTH_URL);
-    await expect(client.auth(AUTH_REQUEST)).rejects.toEqual(ERRORS);
+    await expect(client.auth(AUTH_REQUEST)).rejects.toEqual(ERROR);
   });
 });
