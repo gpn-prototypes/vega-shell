@@ -3,16 +3,25 @@ import { constructApplications, constructLayoutEngine, constructRoutes } from 's
 
 import { getAppConfig } from '../app-config';
 
-import { loaderLifecycles } from './components/Loader';
-import { createGraphqlClient, Error } from './utils/graphql-client';
+import { createGraphqlClient, ShellServerError } from './utils/graphql-client';
 import { Identity } from './utils/identity';
+import { createErrorWidget, ErrorViewWidget, loaderLifecycles } from './components';
 import { BrowserMessageBus } from './message-bus';
 
 const { registerApplication, start } = singleSpa;
 
 const HOME_PAGE = '/projects';
-
 const bus = BrowserMessageBus.create();
+
+const ErrorWidget = createErrorWidget({ bus });
+
+if (window.customElements.get(ErrorWidget.widgetName) === undefined) {
+  window.customElements.define(ErrorWidget.widgetName, ErrorWidget);
+}
+
+if (window.customElements.get(ErrorViewWidget.widgetName) === undefined) {
+  window.customElements.define(ErrorViewWidget.widgetName, ErrorViewWidget);
+}
 
 const sendMessageOnAuth = () => {
   bus.send({ channel: 'auth', topic: 'logged-in', self: true });
@@ -35,17 +44,8 @@ bus.subscribe({ channel: 'auth', topic: 'logged-out' }, () => {
   singleSpa.navigateToUrl(url.toString());
 });
 
-const handleGraphqlClientError = (err: Error): void => {
-  if (err.code === 500) {
-    // Добавлю нормальную обработку, когда странички сверстаю
-    // eslint-disable-next-line no-console
-    console.log('internal server error');
-  }
-
-  if (err.code === 404 && err.message === 'project-not-found') {
-    // eslint-disable-next-line no-console
-    console.log('not found');
-  }
+const handleGraphqlClientError = (err: ShellServerError): void => {
+  bus.send({ channel: 'error', topic: 'server-error', payload: err, self: true });
 };
 
 const { baseApiUrl } = getAppConfig();
@@ -141,4 +141,6 @@ window.addEventListener('single-spa:before-routing-event', (evt: any) => {
       singleSpa.navigateToUrl(HOME_PAGE);
     }
   }
+
+  bus.send({ channel: 'error', topic: 'server-error', self: true, payload: null });
 });

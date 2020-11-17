@@ -123,25 +123,37 @@
     <% } %>
 
     <template id="single-spa-layout">
-      <single-spa-router>
-        <route path="/login">
+      <single-spa-router base="/">
+        <route path="login">
           <application name="@vega/auth" loader="main" props="identity"></application>
         </route>
-        <route path="/projects">
+        <route path="projects">
           <div class="header">
             <application name="@vega/header" loader="main" props="graphqlClient,identity"></application>
           </div>
           <main class="main">
-            <application name="@vega/sp" loader="main" props="graphqlClient,identity"></application>
-            <route path="show/:project_id/rb">
-              <application name="@vega/rb" loader="main" props="graphqlClient,identity"></application>
+            <route path="/">
+              <application name="@vega/sp" loader="main" props="graphqlClient,identity"></application>
+            </route>
+            <route path="show/:projectId">
+              <application name="@vega/sp" loader="main" props="graphqlClient,identity"></application>
+              <route path="rb">
+                <application name="@vega/rb" loader="main" props="graphqlClient,identity"></application>
+              </route>
+            </route>
+            <route path="create">
+              <application name="@vega/sp" loader="main" props="graphqlClient,identity"></application>
             </route>
           </main>
-        </route>
+      </route>
+      <route default>
+        <error-view-widget code="404" message="page-not-found" userMessage="Ошибка 404. Страница не найдена. Обратитесь в службу технической поддержки" />
+      </route>
       </single-spa-router>
     </template>
   </head>
   <body>
+    <error-widget />
     <script>
       System.import('@vega/shell');
     </script>
