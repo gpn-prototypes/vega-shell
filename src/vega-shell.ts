@@ -124,12 +124,10 @@ window.addEventListener('single-spa:before-routing-event', (evt: any) => {
     return;
   }
 
-  if (newUrl.pathname === '/login') {
+  if (isLoggedIn && newUrl.pathname === '/login') {
     cancelNavigation();
 
-    if (!oldUrl.pathname.startsWith(HOME_PAGE)) {
-      singleSpa.navigateToUrl(HOME_PAGE);
-    }
+    singleSpa.navigateToUrl(detail.oldUrl);
 
     return;
   }
