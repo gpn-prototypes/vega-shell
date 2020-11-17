@@ -20,10 +20,10 @@ export type ShellServerError = {
   userMessage: string;
 };
 
-const internalServerErrorUserMessage =
+export const internalServerErrorUserMessage =
   'Ошибка 500. Сервер недоступен. Повторное подключение через 60 сек.';
 
-const notFoundErrorUserMessage = `Ошибка 404. Страница не найдена.
+export const notFoundErrorUserMessage = `Ошибка 404. Страница не найдена.
   Обратитесь в службу технической поддержки`;
 
 type ErrorHandler = (error: ShellServerError) => void;
