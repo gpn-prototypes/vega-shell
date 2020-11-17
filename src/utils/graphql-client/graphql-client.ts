@@ -74,7 +74,48 @@ export const createHttpLink = (uri: string): ApolloLink =>
 export function createGraphqlClient(config: Config): GraphQLClient {
   const { uri, identity, onError: handleError } = config;
   return new ApolloClient({
+    connectToDevTools: process.env.VEGA_ENV === 'development',
     cache: new InMemoryCache({
+      dataIdFromObject(obj, context) {
+        // eslint-disable-next-line no-underscore-dangle
+        const { id, vid, _id, __typename } = obj;
+
+        if (typeof __typename !== 'string') {
+          return undefined;
+        }
+
+        let resultId = id;
+
+        if (context !== undefined) {
+          if (id !== undefined) {
+            context.keyObject = { id };
+          } else if (vid !== undefined) {
+            context.keyObject = { vid };
+          } else if (_id !== undefined) {
+            context.keyObject = { _id };
+          } else {
+            context.keyObject = undefined;
+          }
+        }
+
+        if (_id !== undefined) {
+          resultId = _id;
+        }
+
+        if (vid !== undefined) {
+          resultId = vid;
+        }
+
+        if (resultId === undefined || resultId === null) {
+          return undefined;
+        }
+
+        return `${__typename}:${
+          typeof resultId === 'string' || typeof resultId === 'number'
+            ? resultId
+            : JSON.stringify(resultId)
+        }`;
+      },
       typePolicies: {
         Project: {
           keyFields: ['vid'],
