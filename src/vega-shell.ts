@@ -124,7 +124,7 @@ window.addEventListener('single-spa:before-routing-event', (evt: any) => {
     return;
   }
 
-  if (isLoggedIn && newUrl.pathname === '/login') {
+  if (newUrl.pathname === '/login') {
     cancelNavigation();
 
     singleSpa.navigateToUrl(detail.oldUrl);
