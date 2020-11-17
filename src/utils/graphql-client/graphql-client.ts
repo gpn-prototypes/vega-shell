@@ -48,6 +48,10 @@ export const createErrorLink = (config: ResponseLinkConfig): ApolloLink =>
       if (error.networkError.statusCode === 500) {
         config.handleError({ code: 500, message: 'internal-server-error' });
       }
+
+      if (error.networkError.statusCode === 401) {
+        config.handleError({ code: 401, message: 'unauthorized' });
+      }
     }
   });
 

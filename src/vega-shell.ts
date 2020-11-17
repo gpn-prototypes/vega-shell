@@ -46,6 +46,10 @@ const handleGraphqlClientError = (err: Error): void => {
     // eslint-disable-next-line no-console
     console.log('not found');
   }
+
+  if (err.code === 401 && err.message === 'unauthorized') {
+    sendMessageOnLogout();
+  }
 };
 
 const { baseApiUrl } = getAppConfig();
