@@ -14,12 +14,19 @@ import { Identity } from '../identity/identity';
 
 export type GraphQLClient = ApolloClient<NormalizedCacheObject>;
 
-export type Error = {
+export type ShellServerError = {
   code: number;
   message: string;
+  userMessage: string;
 };
 
-type ErrorHandler = (error: Error) => void;
+const internalServerErrorUserMessage =
+  'Ошибка 500. Сервер недоступен. Повторное подключение через 60 сек.';
+
+const notFoundErrorUserMessage = `Ошибка 404. Страница не найдена.
+  Обратитесь в службу технической поддержки`;
+
+type ErrorHandler = (error: ShellServerError) => void;
 
 type Config = {
   uri: string;
@@ -66,7 +73,11 @@ export const createErrorLink = (config: ResponseLinkConfig): ApolloLink =>
   onError((error) => {
     if (error.networkError && 'statusCode' in error.networkError) {
       if (error.networkError.statusCode === 500) {
-        config.handleError({ code: 500, message: 'internal-server-error' });
+        config.handleError({
+          code: 500,
+          message: 'internal-server-error',
+          userMessage: internalServerErrorUserMessage,
+        });
       }
 
       if (error.networkError.statusCode === 401) {
@@ -78,11 +89,15 @@ export const createErrorLink = (config: ResponseLinkConfig): ApolloLink =>
 export const createResponseLink = (config: ResponseLinkConfig): ApolloLink =>
   new ApolloLink((operation, forward) => {
     return forward(operation).map((response) => {
-      if (response.data && response.data.data) {
-        const { code, __typename: typename } = response.data.data;
+      if (response.data && response.data.project) {
+        const { code, __typename: typename } = response.data.project;
 
         if (typename === 'Error' && code === 'PROJECT_NOT_FOUND') {
-          config.handleError({ code: 404, message: 'project-not-found' });
+          config.handleError({
+            code: 404,
+            message: 'project-not-found',
+            userMessage: notFoundErrorUserMessage,
+          });
         }
       }
 

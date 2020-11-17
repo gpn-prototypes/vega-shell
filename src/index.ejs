@@ -126,31 +126,9 @@
     <script src="<%= baseUrl %>/systemjs-amd.js"></script>
     <script src="<%= baseUrl %>/systemjs-named-exports.js"></script>
     <% } %>
-
-    <template id="single-spa-layout">
-      <single-spa-router>
-        <route path="/login">
-          <application name="@vega/auth" loader="main" props="identity,notifications"></application>
-        </route>
-        <route path="/projects">
-          <div class="header">
-            <application name="@vega/header" loader="main" props="graphqlClient,identity"></application>
-          </div>
-          <main class="main">
-            <application name="@vega/sp" loader="main" props="graphqlClient,identity,notifications"></application>
-            <route path="show/:project_id/rb">
-              <application name="@vega/rb" loader="main" props="graphqlClient,identity"></application>
-            </route>
-            <route path="show/:project_id/lc">
-              <application name="@vega/lc" loader="main" props="graphqlClient,identity"></application>
-            </route>
-          </main>
-        </route>
-      </single-spa-router>
-      <application name="@vega-shell/notifications" props="bus,notifications"></application>
-    </template>
   </head>
   <body>
+    <error-widget />
     <script>
       System.import('@vega/shell');
     </script>
