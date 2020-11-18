@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, useHistory } from 'react-router-dom';
+import { BrowserRouter as Router, useHistory } from 'react-router-dom';
 import { Button, Logo, presetGpnDark, Text, Theme } from '@gpn-prototypes/vega-ui';
 import cn from 'bem-cn';
 
