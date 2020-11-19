@@ -1,6 +1,16 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, useHistory } from 'react-router-dom';
-import { Button, Logo, presetGpnDark, Text, Theme } from '@gpn-prototypes/vega-ui';
+import {
+  Button,
+  Loader,
+  Logo,
+  presetGpnDark,
+  Text,
+  Theme,
+  useInterval,
+  useMount,
+  useUnmount,
+} from '@gpn-prototypes/vega-ui';
 import cn from 'bem-cn';
 
 import { ShellServerError } from '../../utils/graphql-client';
@@ -11,16 +21,27 @@ import './Error.css';
 
 type ErrorViewProps = ShellServerError;
 
+const TIME_TO_RELOAD = 60;
+
 const cnErrorView = cn('ErrorView');
 
-const ErrorViewButton = (props: ErrorViewProps): React.ReactElement => {
-  const { code } = props;
+type ErrorViewButtonProps = ErrorViewProps & {
+  reloadInterval: ReturnType<typeof useInterval>;
+};
+
+const ErrorViewButton = (props: ErrorViewButtonProps): React.ReactElement => {
+  const { code, reloadInterval } = props;
   const history = useHistory();
-  const buttonText = 'В список проектов';
+  const buttonText = code === 500 ? 'Попробовать снова' : 'В список проектов';
 
   const handleClick = (): void => {
     if (code === 404) {
       history.push('/projects');
+    }
+
+    if (code === 500) {
+      reloadInterval.clear();
+      window.location.reload();
     }
   };
 
@@ -36,7 +57,46 @@ const ErrorViewButton = (props: ErrorViewProps): React.ReactElement => {
 };
 
 export const ErrorView: React.FC<ErrorViewProps> = (props) => {
-  const { userMessage } = props;
+  const { userMessage, code } = props;
+  const [timeLeft, setTimeLeft] = useState(TIME_TO_RELOAD);
+
+  const IS_INTERNAL_SERVER_ERROR = code === 500;
+
+  const getMessage = (): string => {
+    if (IS_INTERNAL_SERVER_ERROR) {
+      return `Ошибка 500. Сервер недоступен
+        Повторное подключение через ${timeLeft} секунд`;
+    }
+
+    return userMessage ?? '';
+  };
+
+  const intervalAPI = useInterval(
+    1000,
+    () => {
+      if (timeLeft > 1) {
+        setTimeLeft((prevTime) => prevTime - 1);
+      }
+    },
+    { autostart: false },
+  );
+
+  useMount(() => {
+    if (code === 500) {
+      intervalAPI.start();
+    }
+  });
+
+  useUnmount(() => {
+    intervalAPI.clear();
+  });
+
+  useEffect(() => {
+    if (timeLeft <= 1) {
+      intervalAPI.clear();
+      window.location.reload();
+    }
+  }, [intervalAPI, timeLeft]);
 
   return (
     <Router>
@@ -45,9 +105,10 @@ export const ErrorView: React.FC<ErrorViewProps> = (props) => {
           <GazpromLogo />
           <Logo className={cnErrorView('VegaLogo')} />
           <Text size="xl" className={cnErrorView('UserMessage').toString()}>
-            {userMessage}
+            {getMessage()}
           </Text>
-          <ErrorViewButton {...props} />
+          {IS_INTERNAL_SERVER_ERROR && <Loader className={cnErrorView('Loader').toString()} />}
+          <ErrorViewButton {...props} reloadInterval={intervalAPI} />
         </div>
       </Theme>
     </Router>

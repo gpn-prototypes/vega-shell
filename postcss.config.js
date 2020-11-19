@@ -1,6 +1,8 @@
 const createPostcssConfig = require('@gpn-prototypes/frontend-configs/postcss.config');
 
+const config = createPostcssConfig();
+
 module.exports = {
-  ...createPostcssConfig(),
-  plugins: [...createPostcssConfig().plugins],
+  ...config,
+  plugins: [...config.plugins],
 };

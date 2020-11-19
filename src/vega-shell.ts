@@ -128,7 +128,7 @@ type BeforeRoutingEvent = CustomEvent<{
 
 // TODO создать тип для событий
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-window.addEventListener('single-spa:before-routing-event', (evt: any) => {
+window.addEventListener('single-spa:before-routing-event', async (evt: any) => {
   const { detail } = evt as BeforeRoutingEvent;
   const { cancelNavigation } = detail;
 

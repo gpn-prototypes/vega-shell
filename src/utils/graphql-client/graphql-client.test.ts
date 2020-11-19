@@ -17,6 +17,7 @@ import {
   createResponseLink,
   createSwitchUriLink,
   normalizeUri,
+  notFoundErrorUserMessage,
 } from './graphql-client';
 import { mocks, queries } from './mocks';
 
@@ -83,7 +84,6 @@ describe('errorLink', () => {
       expect(handleError).toBeCalledWith({
         code: 500,
         message: 'internal-server-error',
-        userMessage: internalServerErrorUserMessage,
       });
     }
   });
