@@ -16,11 +16,8 @@ export type GraphQLClient = ApolloClient<NormalizedCacheObject>;
 export type ShellServerError = {
   code: number;
   message: string;
-  userMessage: string;
+  userMessage?: string;
 };
-
-export const internalServerErrorUserMessage =
-  'Ошибка 500. Сервер недоступен. Повторное подключение через 60 сек.';
 
 export const notFoundErrorUserMessage = `Ошибка 404. Страница не найдена.
   Обратитесь в службу технической поддержки`;
@@ -56,7 +53,6 @@ export const createErrorLink = (config: ResponseLinkConfig): ApolloLink =>
         config.handleError({
           code: 500,
           message: 'internal-server-error',
-          userMessage: internalServerErrorUserMessage,
         });
       }
     }

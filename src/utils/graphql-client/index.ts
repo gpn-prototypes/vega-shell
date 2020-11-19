@@ -1,1 +1,1 @@
-export { createGraphqlClient, ShellServerError } from './graphql-client';
+export * from './graphql-client';

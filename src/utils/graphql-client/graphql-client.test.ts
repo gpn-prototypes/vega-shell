@@ -1,11 +1,6 @@
 import { ApolloLink, execute, Observable, throwServerError, toPromise } from '@apollo/client';
 
-import {
-  createErrorLink,
-  createResponseLink,
-  internalServerErrorUserMessage,
-  notFoundErrorUserMessage,
-} from './graphql-client';
+import { createErrorLink, createResponseLink, notFoundErrorUserMessage } from './graphql-client';
 import { mocks, queries } from './mocks';
 
 beforeEach(() => {
@@ -57,7 +52,6 @@ describe('errorLink', () => {
       expect(handleError).toBeCalledWith({
         code: 500,
         message: 'internal-server-error',
-        userMessage: internalServerErrorUserMessage,
       });
     }
   });
