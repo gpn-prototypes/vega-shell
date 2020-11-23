@@ -8,7 +8,7 @@ import {
   createErrorLink,
   createHttpLink,
   createResponseLink,
-  switchUriLink,
+  createSwitchUriLink,
 } from './graphql-client';
 import { mocks, queries } from './mocks';
 
@@ -86,22 +86,19 @@ describe('client', () => {
   });
 
   it('меняется uri', async (done) => {
-    fetchMock.get(
-      '/graphql/projectVid1?query=query%20SampleQuery%20%7B%0A%20%20stub%20%7B%0A%20%20%20%20id%0A%20%20%7D%0A%7D%0A&operationName=SampleQuery&variables=%7B%7D',
-      makePromise(data),
-    );
+    fetchMock.post('/graphql/projectVid1', makePromise(data));
 
     const URI = 'graphql/';
     const PROJECT_VID = 'projectVid1';
     const CONFIG = { apiUrl: 'auth_rest', token: 'token2' };
 
-    const uriLink = switchUriLink(URI);
+    const uriLink = createSwitchUriLink(URI);
 
     const identity = new Identity(CONFIG);
     const authLink = createAuthLink(identity);
 
     const linkR = ApolloLink.from([authLink, uriLink]);
-    const link = linkR.concat(createHttpLink({ useGETForQueries: true }));
+    const link = linkR.concat(createHttpLink());
 
     execute(link, {
       query: queries.sample,
@@ -112,28 +109,24 @@ describe('client', () => {
       makeCallback(done, () => {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const [uri] = fetchMock.lastCall()!;
-        const { pathname } = new URL(`http://localhost${uri}`);
-        expect(pathname).toBe(`/${URI}${PROJECT_VID}`);
+        expect(uri).toBe(`/${URI}${PROJECT_VID}`);
       }),
     );
   });
 
   it('не меняется uri', async (done) => {
-    fetchMock.get(
-      '/graphql/?query=query%20SampleQuery%20%7B%0A%20%20stub%20%7B%0A%20%20%20%20id%0A%20%20%7D%0A%7D%0A&operationName=SampleQuery&variables=%7B%7D',
-      makePromise(data),
-    );
+    fetchMock.post('/graphql', makePromise(data));
 
-    const URI = 'graphql/';
+    const URI = 'graphql';
     const CONFIG = { apiUrl: 'auth_rest', token: 'token2' };
 
-    const uriLink = switchUriLink(URI);
+    const uriLink = createSwitchUriLink(URI);
 
     const identity = new Identity(CONFIG);
     const authLink = createAuthLink(identity);
 
     const linkR = ApolloLink.from([authLink, uriLink]);
-    const link = linkR.concat(createHttpLink({ useGETForQueries: true }));
+    const link = linkR.concat(createHttpLink());
 
     execute(link, {
       query: queries.sample,
@@ -141,8 +134,7 @@ describe('client', () => {
       makeCallback(done, () => {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const [uri] = fetchMock.lastCall()!;
-        const { pathname } = new URL(`http://localhost${uri}`);
-        expect(pathname).toBe(`/${URI}`);
+        expect(uri).toBe(`/${URI}`);
       }),
     );
   });

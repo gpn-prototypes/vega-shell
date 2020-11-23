@@ -75,7 +75,7 @@ export const createHttpLink = (options?: HttpOptions): ApolloLink => {
   return createApolloHttpLink(options);
 };
 
-export const switchUriLink = (uri: string): ApolloLink =>
+export const createSwitchUriLink = (uri: string): ApolloLink =>
   new ApolloLink((operation, forward) => {
     const { projectVid } = operation.getContext();
     operation.setContext({
@@ -87,7 +87,6 @@ export const switchUriLink = (uri: string): ApolloLink =>
 
 export function createGraphqlClient(config: Config): GraphQLClient {
   const { uri, identity, onError: handleError } = config;
-  const uriLink = switchUriLink(uri);
   return new ApolloClient({
     connectToDevTools: process.env.VEGA_ENV === 'development',
     cache: new InMemoryCache({
@@ -140,8 +139,9 @@ export function createGraphqlClient(config: Config): GraphQLClient {
     link: from([
       createResponseLink({ handleError }),
       createErrorLink({ handleError }),
-      uriLink,
-      createAuthLink(identity).concat(createHttpLink()),
+      createSwitchUriLink(uri),
+      createAuthLink(identity),
+      createHttpLink(),
     ]),
   });
 }
