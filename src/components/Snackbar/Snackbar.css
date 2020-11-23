@@ -1,0 +1,17 @@
+.vega-shell-snackbar {
+  width: 400px;
+}
+
+.vega-shell-snackbar-container {
+  position: fixed;
+  z-index: 100;
+
+  left: 50%;
+
+  bottom: 0;
+
+  display: flex;
+  justify-content: center;
+
+  transform: translate(-50%, 0);
+}
