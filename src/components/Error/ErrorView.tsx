@@ -13,7 +13,7 @@ import {
 } from '@gpn-prototypes/vega-ui';
 import cn from 'bem-cn';
 
-import { ServerError } from '../../utils/graphql-client';
+import { ServerError } from '../../services/graphql-client';
 
 import { GazpromLogo } from './GazpromLogo';
 
