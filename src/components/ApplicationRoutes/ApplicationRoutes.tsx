@@ -3,7 +3,7 @@ import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
 import { useMount, useOnChange, usePreviousRef } from '@gpn-prototypes/vega-ui';
 
 import { useAppContext } from '../../app-context';
-import { ServerError } from '../../utils/graphql-client';
+import { ServerError } from '../../services/graphql-client';
 import { Application } from '../Application';
 import { ErrorView } from '../Error';
 

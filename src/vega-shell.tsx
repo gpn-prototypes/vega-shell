@@ -5,11 +5,11 @@ import { start } from 'single-spa';
 
 import { getAppConfig } from '../app-config';
 
-import { createGraphqlClient, ServerError } from './utils/graphql-client';
-import { Identity } from './utils/identity';
-import { Notifications } from './utils/notifications';
+import { createGraphqlClient, ServerError } from './services/graphql-client';
+import { Identity } from './services/identity';
+import { BrowserMessageBus } from './services/message-bus';
+import { Notifications } from './services/notifications';
 import { Applications } from './Applications';
-import { BrowserMessageBus } from './message-bus';
 
 const bus = BrowserMessageBus.create();
 
