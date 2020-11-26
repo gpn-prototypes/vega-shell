@@ -131,9 +131,7 @@ window.addEventListener('single-spa:before-routing-event', (evt: any) => {
   if (newUrl.pathname === '/login') {
     cancelNavigation();
 
-    if (!oldUrl.pathname.startsWith(HOME_PAGE)) {
-      singleSpa.navigateToUrl(HOME_PAGE);
-    }
+    singleSpa.navigateToUrl(oldUrl.pathname === '/login' ? HOME_PAGE : detail.oldUrl);
 
     return;
   }
