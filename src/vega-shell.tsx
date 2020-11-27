@@ -6,7 +6,7 @@ import { getAppConfig } from '../app-config';
 
 import { createGraphqlClient, ShellServerError } from './utils/graphql-client';
 import { Identity } from './utils/identity';
-import { ApplicationsParcel } from './application-parcel';
+import { ApplicationsParcel, ServerErrorListener } from './application-parcel';
 import { BrowserMessageBus } from './message-bus';
 
 const HOME_PAGE = '/projects';
@@ -49,7 +49,20 @@ const graphqlClient = createGraphqlClient({
   onError: handleGraphqlClientError,
 });
 
+const addServerErrorListener = (callback: ServerErrorListener): VoidFunction => {
+  return bus.subscribe<ShellServerError>(
+    { channel: 'error', topic: 'server-error' },
+    ({ payload: error }) => {
+      callback(error);
+    },
+  );
+};
+
 ReactDOM.render(
-  <ApplicationsParcel graphqlClient={graphqlClient} identity={identity} bus={bus} />,
+  <ApplicationsParcel
+    addServerErrorListener={addServerErrorListener}
+    graphqlClient={graphqlClient}
+    identity={identity}
+  />,
   document.getElementById('root'),
 );

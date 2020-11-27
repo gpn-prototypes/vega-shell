@@ -1,27 +1,26 @@
 import React, { useState } from 'react';
-import { Redirect, Route, Router, Switch, useHistory, useLocation } from 'react-router-dom';
+import { Route, Router, Switch } from 'react-router-dom';
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
-import { Root, useOnChange, usePreviousRef } from '@gpn-prototypes/vega-ui';
+import { Root, useMount } from '@gpn-prototypes/vega-ui';
 import { createBrowserHistory } from 'history';
 import { mountRootParcel } from 'single-spa';
-import { Lifecycles } from 'single-spa-react';
 import Parcel from 'single-spa-react/lib/esm/parcel';
 
+import { AUTH_PAGE, MAIN_PAGE } from './utils/constants';
+import { ShellServerError } from './utils/graphql-client';
 import { Identity } from './utils/identity';
-import { Error, ErrorView, RootLoader } from './components';
-import { BrowserMessageBus } from './message-bus';
+import { AuthGuard, ErrorView, RootLoader } from './components';
 
 import './App.css';
 
 const history = createBrowserHistory();
 
-const MAIN_PAGE = '/projects';
-const AUTH_PAGE = '/login';
+export type ServerErrorListener = (error: ShellServerError) => void;
 
 type Props = {
+  addServerErrorListener: (callback: ServerErrorListener) => VoidFunction;
   graphqlClient: ApolloClient<NormalizedCacheObject>;
   identity: Identity;
-  bus: BrowserMessageBus;
 };
 
 const NotFoundView = () => (
@@ -34,32 +33,10 @@ const NotFoundView = () => (
   </Route>
 );
 
-export const AppGuard = (props: Omit<Props, 'graphqlClient'>): React.ReactElement | null => {
-  const { identity, bus } = props;
-
-  const location = useLocation();
-
-  const isLoggedIn = identity.isLoggedIn();
-
-  const isAuthPage = location.pathname.includes(AUTH_PAGE);
-
-  useOnChange(location.pathname, () => {
-    bus.send({ topic: 'server-error', channel: 'error', payload: null, self: true });
-  });
-
-  if ((isAuthPage || location.pathname === '/') && isLoggedIn) {
-    return <Redirect to={MAIN_PAGE} />;
-  }
-
-  if (!isAuthPage && !isLoggedIn) {
-    return <Redirect to={AUTH_PAGE} />;
-  }
-
-  return null;
-};
-
 export const ApplicationsParcel = (props: Props): React.ReactElement => {
+  const { addServerErrorListener, ...rest } = props;
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<ShellServerError | null>(null);
 
   const loadConfig = (url: string): (() => Promise<System.Module>) => async () => {
     setIsLoading(true);
@@ -68,12 +45,20 @@ export const ApplicationsParcel = (props: Props): React.ReactElement => {
     return config;
   };
 
-  const handleError = (): void => {
-    props.bus.send({
-      channel: 'error',
-      topic: 'server-error',
-      payload: { code: 500, message: 'service-error' },
-      self: true,
+  const handleServerError = (serverError: ShellServerError): void => {
+    setError(serverError);
+  };
+
+  useMount(() => {
+    const unsub = addServerErrorListener(handleServerError);
+
+    return unsub;
+  });
+
+  const handleServiceError = (): void => {
+    setError({
+      code: 500,
+      message: 'service-error',
     });
 
     if (isLoading) {
@@ -82,18 +67,20 @@ export const ApplicationsParcel = (props: Props): React.ReactElement => {
   };
 
   const applicationProps = {
-    ...props,
+    ...rest,
     history,
-    handleError,
+    handleError: handleServiceError,
     mountParcel: mountRootParcel,
   };
 
   return (
     <Root defaultTheme="dark" className="AppParcel">
-      <Error bus={props.bus} />
+      {error && (
+        <ErrorView code={error.code} message={error.message} userMessage={error.userMessage} />
+      )}
       {isLoading && <RootLoader />}
       <Router history={history}>
-        <AppGuard identity={props.identity} bus={props.bus} />
+        <AuthGuard isLoggedIn={props.identity.isLoggedIn()} onRouteChanged={() => setError(null)} />
         <Switch>
           <Route exact path={AUTH_PAGE}>
             <div>
