@@ -2,7 +2,7 @@ import React from 'react';
 import { MemoryRouter, Route, useLocation } from 'react-router';
 import { render, RenderResult } from '@testing-library/react';
 
-import { AUTH_PAGE } from '../../utils/constants';
+import { AUTH_PAGE, MAIN_PAGE } from '../../utils/constants';
 
 import { AuthGuard } from './AuthGuard';
 
@@ -16,7 +16,7 @@ afterEach(() => {
   testLocation = null;
 });
 
-const renderComponent = (props: Props): RenderResult => {
+const renderComponent = (props: Omit<Props, 'onRouteChanged'>): RenderResult => {
   return render(
     <MemoryRouter initialEntries={props.initialEntries}>
       <Route
@@ -26,19 +26,45 @@ const renderComponent = (props: Props): RenderResult => {
           return null;
         }}
       />
-      <AuthGuard isLoggedIn={props.isLoggedIn} onRouteChanged={props.onRouteChanged} />
+      <AuthGuard isLoggedIn={props.isLoggedIn} onRouteChanged={jest.fn()} />
     </MemoryRouter>,
   );
 };
 
-describe('AppGuard', () => {
-  test('редиректит на главную, если пользователь не авторизован', () => {
+describe('Authuard', () => {
+  test('редиректит на страницу логина, если пользователь не авторизован', () => {
     renderComponent({
       isLoggedIn: false,
-      onRouteChanged: jest.fn(),
-      initialEntries: ['/projects'],
+      initialEntries: [MAIN_PAGE],
     });
 
     expect(testLocation?.pathname).toBe(AUTH_PAGE);
+  });
+
+  test('не редиректит со страницы, если пользователь авторизован', () => {
+    renderComponent({
+      isLoggedIn: true,
+      initialEntries: [MAIN_PAGE],
+    });
+
+    expect(testLocation?.pathname).toBe(MAIN_PAGE);
+  });
+
+  test('редиректит на главную страницу при попытке зайти на корневой роут', () => {
+    renderComponent({
+      isLoggedIn: true,
+      initialEntries: ['/'],
+    });
+
+    expect(testLocation?.pathname).toBe(MAIN_PAGE);
+  });
+
+  test('редиректит со страницы логина на главную, если пользователь авторизован', () => {
+    renderComponent({
+      isLoggedIn: true,
+      initialEntries: [AUTH_PAGE],
+    });
+
+    expect(testLocation?.pathname).toBe(MAIN_PAGE);
   });
 });

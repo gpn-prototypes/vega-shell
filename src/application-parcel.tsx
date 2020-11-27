@@ -35,11 +35,13 @@ const NotFoundView = () => (
 
 export const ApplicationsParcel = (props: Props): React.ReactElement => {
   const { addServerErrorListener, ...rest } = props;
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<ShellServerError | null>(null);
 
   const loadConfig = (url: string): (() => Promise<System.Module>) => async () => {
-    setIsLoading(true);
+    if (!isLoading) {
+      setIsLoading(true);
+    }
     const config = await System.import(url);
     setIsLoading(false);
     return config;
@@ -66,6 +68,16 @@ export const ApplicationsParcel = (props: Props): React.ReactElement => {
     }
   };
 
+  const handleRouteChanged = (): void => {
+    if (error !== null) {
+      setError(null);
+    }
+
+    if (isLoading) {
+      setIsLoading(false);
+    }
+  };
+
   const applicationProps = {
     ...rest,
     history,
@@ -80,7 +92,7 @@ export const ApplicationsParcel = (props: Props): React.ReactElement => {
       )}
       {isLoading && <RootLoader />}
       <Router history={history}>
-        <AuthGuard isLoggedIn={props.identity.isLoggedIn()} onRouteChanged={() => setError(null)} />
+        <AuthGuard isLoggedIn={props.identity.isLoggedIn()} onRouteChanged={handleRouteChanged} />
         <Switch>
           <Route exact path={AUTH_PAGE}>
             <div>
