@@ -1055,9 +1055,9 @@
   integrity sha512-VoNqai1vR5anRF5Tuh/+SWDFk7xi7oMwHrHrbm1BprYXjB2RJsWLhUrStMssDxEl5lW/z3EUdg8RvH/IUBccSQ==
 
 "@consta/uikit@^1.10.4":
-  version "1.10.4"
-  resolved "https://registry.yarnpkg.com/@consta/uikit/-/uikit-1.10.4.tgz#9d56249efb7e7254d481a0765589e72d40c793af"
-  integrity sha512-693fxNHu4qS4mgEMi46H7ovpuEp2PyfVGXiGwA1KVYPtoKKX7ouFEbMbo21f6Oo1tkcYAYGqfzUcefyZQzWiiQ==
+  version "1.10.8"
+  resolved "https://registry.yarnpkg.com/@consta/uikit/-/uikit-1.10.8.tgz#6fe4a2960fe7a67585dcba1c3947b91e6890cd1a"
+  integrity sha512-i8cGy//EyaIGgm3NK79s1/IVFLyawvdnWmXDBN56WmFwfpBe1zriDb3zJyS7FGqw3B1euJQxrzzyNGFiGiOb6A==
   dependencies:
     "@bem-react/classname" "^1.5.8"
     "@bem-react/classnames" "^1.3.9"
@@ -1501,17 +1501,23 @@
   dependencies:
     "@consta/uikit" "^1.10.4"
 
-"@gpn-prototypes/vega-tree@^0.0.5":
-  version "0.0.5"
-  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-tree/0.0.5/635df882dc25f38a30f3f424461fad3f150b6563df0bbe945b66f1d229ea12d8#1790ab177a554be2d1ed0a6eb271f6fbad11c376"
-  integrity sha512-EWPOULWAW5tDwr/PNLrsUtiDqEmUQEzzXTsbuSw0Uqk7He8azm4MFivF3Ly8sO0vFllBu5kRGiWpbo7hQazigw==
+"@gpn-prototypes/vega-tree@^0.0.6":
+  version "0.0.6"
+  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-tree/0.0.6/fd2b89f1b38d71e37e5c4448e2fc972140e34b80429b06ee3aa04ac270ad1fba#7626246166bcd9348d4f76836961340943a55552"
+  integrity sha512-zV+YDvPbeE47NhUOtKavcLj6Q5QdzFD1OMniTxQDlX68sgri6laBbMif1I9Q3y0z0fvabfkJ4E9MsLa+54PxHA==
   dependencies:
+    "@gpn-prototypes/vega-button" "^0.2.3"
+    "@gpn-prototypes/vega-hooks" "^0.5.3"
+    "@gpn-prototypes/vega-icons" "^0.2.6"
+    "@gpn-prototypes/vega-root" "^0.2.7"
+    "@gpn-prototypes/vega-text" "^0.1.8"
+    "@gpn-prototypes/vega-tooltip" "^0.0.3"
     bem-cn "^3.0.1"
 
 "@gpn-prototypes/vega-ui@^2.15.1":
-  version "2.15.1"
-  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-ui/2.15.1/bac8c6fd09b055b772a9a8d65323192bf5d589e92d89539b268f88282ec8a25d#ce14dbc31e332a59a5ce0a775fd1b281cce65a3c"
-  integrity sha512-CbEQtFrXD2E5Jveqi9H2+pQeQG5VCaftGoYyr8wnOHpt95YhgjnhcJEKuWTXaf+KS0vx5MFtz2Wgl1n3xu3Fmg==
+  version "2.15.2"
+  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-ui/2.15.2/319410f0f92ecd22ba7c52386246ad0998d00ac7f5c6e948123cf76f0df6bbfa#dfd0074370df8c00972c5e2d36536bf1f5b1473a"
+  integrity sha512-iQfuFjibJqX284W9cwhwoHU7gvHwd96wGG3xUP6La1hdgAdXNkvWCMmFPFCg3gzMAtd6ESH83YB70r9KmE5u7w==
   dependencies:
     "@gpn-prototypes/vega-animation" "^0.0.3"
     "@gpn-prototypes/vega-attach" "^0.1.6"
@@ -1558,7 +1564,7 @@
     "@gpn-prototypes/vega-theme" "^0.0.7"
     "@gpn-prototypes/vega-timer" "^0.1.6"
     "@gpn-prototypes/vega-tooltip" "^0.0.3"
-    "@gpn-prototypes/vega-tree" "^0.0.5"
+    "@gpn-prototypes/vega-tree" "^0.0.6"
     "@gpn-prototypes/vega-user" "^0.1.8"
 
 "@gpn-prototypes/vega-user@^0.1.8":
@@ -4218,9 +4224,9 @@ cssstyle@^2.0.0, cssstyle@^2.2.0:
     cssom "~0.3.6"
 
 csstype@^3.0.2:
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/csstype/-/csstype-3.0.4.tgz#b156d7be03b84ff425c9a0a4b1e5f4da9c5ca888"
-  integrity sha512-xc8DUsCLmjvCfoD7LTGE0ou2MIWLx0K9RCZwSHMOdynqRsP4MtUcLeqh1HcQ2dInwDTqn+3CE0/FZh1et+p4jA==
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/csstype/-/csstype-3.0.5.tgz#7fdec6a28a67ae18647c51668a9ff95bb2fa7bb8"
+  integrity sha512-uVDi8LpBUKQj6sdxNaTetL6FpeCqTjOvAQuQUa/qAqq8oOd4ivkbhgnqayl0dnPal8Tb/yB1tF+gOvCBiicaiQ==
 
 cyclist@^1.0.1:
   version "1.0.1"
@@ -7756,9 +7762,9 @@ known-css-properties@^0.19.0:
   integrity sha512-eYboRV94Vco725nKMlpkn3nV2+96p9c3gKXRsYqAJSswSENvBhN7n5L+uDhY58xQa0UukWsDMTGELzmD8Q+wTA==
 
 konva@^7.0.6:
-  version "7.1.4"
-  resolved "https://registry.yarnpkg.com/konva/-/konva-7.1.4.tgz#2ec92cac04a40e5aff4f1cb063091958b06b9c44"
-  integrity sha512-YnouWYg14hrrIk987QCYP20HPu9OXfIDYs3jEX2ywhuGDAPP1RPF9xIJgY3odmWTpBXsa22YE+8txiKT+Fiwdw==
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/konva/-/konva-7.2.0.tgz#5a670a2a953463e04ecbe48bddc9103b89887f5a"
+  integrity sha512-YgSNIV588TWZuVlgP9vD+/TpLIpyNAw3ZwhXGCSC/6wKVKo/z5rqWMedw9Mg8MhvvSLWlEFQXEMPbgNJLIHVgw==
 
 language-subtag-registry@~0.3.2:
   version "0.3.20"
