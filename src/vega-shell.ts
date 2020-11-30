@@ -15,6 +15,7 @@ const { registerApplication, start } = singleSpa;
 const HOME_PAGE = '/projects';
 const APP: Record<string, string> = {
   '@vega/rb': 'Ресурсная база',
+  '@vega/header': 'Навигация',
   '@vega/auth': 'Авторизация',
   '@vega/sp': 'Расчетная платформа',
   '@vega/lc': 'Конструктор логики',
