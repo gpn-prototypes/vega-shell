@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.2.2",
-    "@gpn-prototypes/vega-ui": "^2.15.1",
+    "@gpn-prototypes/vega-ui": "^2.15.5",
     "graphql": "^15.3.0",
     "import-map-overrides": "^2.1.0",
     "react": "^16.14.0",
