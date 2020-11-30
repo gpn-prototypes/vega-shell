@@ -3,9 +3,10 @@ import { constructApplications, constructLayoutEngine, constructRoutes } from 's
 
 import { getAppConfig } from '../app-config';
 
-import { loaderLifecycles } from './components/Loader';
 import { createGraphqlClient, Error } from './utils/graphql-client';
 import { Identity } from './utils/identity';
+import { Notifications } from './utils/notifications';
+import { loaderLifecycles, SnackbarLifecycles } from './components';
 import { BrowserMessageBus } from './message-bus';
 
 const { registerApplication, start } = singleSpa;
@@ -52,6 +53,8 @@ const handleGraphqlClientError = (err: Error): void => {
   }
 };
 
+const notifications = new Notifications();
+
 const { baseApiUrl } = getAppConfig();
 const identity = new Identity({
   apiUrl: `${baseApiUrl}/login`,
@@ -69,6 +72,7 @@ const layoutData = {
     bus,
     identity,
     graphqlClient,
+    notifications,
   },
   loaders: {
     main: loaderLifecycles,
@@ -87,9 +91,17 @@ const applications = constructApplications({
   },
 });
 
-const layoutEngine = constructLayoutEngine({ routes, applications });
+const layoutEngine = constructLayoutEngine({
+  routes,
+  applications,
+});
+
+registerApplication('@vega-shell/notifications', SnackbarLifecycles, () => true, {
+  notifications,
+});
 
 applications.forEach(registerApplication);
+
 layoutEngine.activate();
 
 start();
