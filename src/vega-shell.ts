@@ -13,6 +13,12 @@ import { BrowserMessageBus } from './message-bus';
 const { registerApplication, start } = singleSpa;
 
 const HOME_PAGE = '/projects';
+const APP: Record<string, string> = {
+  '@vega/rb': 'Ресурсная база',
+  '@vega/auth': 'Авторизация',
+  '@vega/sp': 'Расчетная платформа',
+  '@vega/lc': 'Конструктор логики',
+} as const;
 
 const bus = BrowserMessageBus.create();
 
@@ -108,6 +114,16 @@ layoutEngine.activate();
 singleSpa.addErrorHandler((err) => {
   if (singleSpa.getAppStatus(err.appOrParcelName) === singleSpa.LOAD_ERROR) {
     System.delete(System.resolve(err.appOrParcelName));
+    const appName = err.appOrParcelName;
+    const key = `${appName}-load-error`;
+    notifications.add({
+      key,
+      message: `Ошибка загрузки модуля «${APP[appName]}»`,
+      status: 'alert',
+      onClose: () => {
+        notifications.remove(key);
+      },
+    });
   }
 });
 
