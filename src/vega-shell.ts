@@ -104,6 +104,12 @@ applications.forEach(registerApplication);
 
 layoutEngine.activate();
 
+singleSpa.addErrorHandler((err) => {
+  if (singleSpa.getAppStatus(err.appOrParcelName) === singleSpa.LOAD_ERROR) {
+    System.delete(System.resolve(err.appOrParcelName));
+  }
+});
+
 start();
 
 type BeforeRoutingEvent = CustomEvent<{
