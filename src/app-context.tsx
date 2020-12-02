@@ -7,7 +7,7 @@ import { BrowserMessageBus } from './message-bus';
 
 export type ServerErrorListener = (error: ServerError) => void;
 
-type AppContextProps = {
+export type AppContextProps = {
   history: History;
   identity: Identity;
   graphqlClient: GraphQLClient;

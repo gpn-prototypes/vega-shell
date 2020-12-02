@@ -1,0 +1,1 @@
+export { ApplicationRoutes } from './ApplicationRoutes';

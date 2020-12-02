@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useMount } from '@gpn-prototypes/vega-ui';
 import { mountRootParcel } from 'single-spa';
 import ParcelComponent from 'single-spa-react/lib/esm/parcel';
 
@@ -26,21 +25,6 @@ export const Application: React.FC<Props> = ({ name, wrapClassName, wrapWith }) 
   };
 
   const loadConfig = (url: string): (() => Promise<System.Module>) => () => System.import(url);
-
-  const handleServerError = (serverError: ServerError): void => {
-    setError(serverError);
-  };
-
-  useMount(() => {
-    const unsub = context.bus.subscribe<ServerError>(
-      { channel: 'error', topic: 'server-error' },
-      ({ payload }) => {
-        handleServerError(payload);
-      },
-    );
-
-    return unsub;
-  });
 
   const handleServiceError = (): void => {
     setError({
