@@ -1,4 +1,11 @@
-import { ApolloLink, execute, Observable, throwServerError, toPromise } from '@apollo/client';
+import {
+  ApolloLink,
+  execute,
+  FetchResult,
+  Observable,
+  throwServerError,
+  toPromise,
+} from '@apollo/client';
 import fetchMock from 'fetch-mock';
 
 import { Identity } from '../identity';
@@ -9,11 +16,26 @@ import {
   createHttpLink,
   createResponseLink,
   createSwitchUriLink,
+  normalizeUri,
 } from './graphql-client';
 import { mocks, queries } from './mocks';
 
 beforeEach(() => {
   jest.restoreAllMocks();
+});
+
+describe('normalizeUri', () => {
+  test('удалает последний слэш', () => {
+    expect(normalizeUri('/test/')).toBe('/test');
+  });
+
+  test('удаляет повторения слэшей', () => {
+    expect(normalizeUri('//test///foo/bar///')).toBe('/test/foo/bar');
+  });
+
+  test('учитывает протокол', () => {
+    expect(normalizeUri('/http:///foo.bar//graphql')).toBe('http://foo.bar/graphql');
+  });
 });
 
 describe('responseLink', () => {
@@ -64,7 +86,7 @@ function makePromise(res: unknown) {
 }
 
 describe('client', () => {
-  const data = { data: { hello: 'world' } };
+  const data: FetchResult = { data: { hello: 'world' } };
 
   beforeEach(() => {
     fetchMock.restore();
@@ -77,9 +99,9 @@ describe('client', () => {
   it('меняется uri', async () => {
     fetchMock.post('/graphql/projectVid1', makePromise(data));
 
-    const URI = 'graphql/';
+    const URI = 'graphql';
     const PROJECT_VID = 'projectVid1';
-    const CONFIG = { apiUrl: 'auth_rest', token: 'token2' };
+    const CONFIG = { apiUrl: '/auth', token: 'test-token' };
 
     const uriLink = createSwitchUriLink(URI);
 
@@ -92,20 +114,21 @@ describe('client', () => {
       execute(link, {
         query: queries.sample,
         context: {
-          projectVid: 'projectVid1',
+          projectVid: PROJECT_VID,
         },
       }),
     );
+
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const [uri] = fetchMock.lastCall()!;
-    expect(uri).toBe(`/${URI}${PROJECT_VID}`);
+    expect(uri).toBe('/graphql/projectVid1');
   });
 
   it('не меняется uri', async () => {
     fetchMock.post('/graphql', makePromise(data));
 
-    const URI = '/graphql';
-    const CONFIG = { apiUrl: 'auth_rest', token: 'token2' };
+    const URI = 'graphql';
+    const CONFIG = { apiUrl: '/auth', token: 'test-token' };
 
     const uriLink = createSwitchUriLink(URI);
 
@@ -115,8 +138,9 @@ describe('client', () => {
     const link = ApolloLink.from([authLink, uriLink, createHttpLink()]);
 
     await toPromise(execute(link, { query: queries.sample }));
+
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const [uri] = fetchMock.lastCall()!;
-    expect(uri).toBe(URI);
+    expect(uri).toBe('/graphql');
   });
 });

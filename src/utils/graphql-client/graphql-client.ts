@@ -31,6 +31,25 @@ type ResponseLinkConfig = {
   handleError: ErrorHandler;
 };
 
+export function normalizeUri(uri: string): string {
+  const trimSlashRegxp = /^\/|\/$/g;
+  const trimmed = uri.replace(trimSlashRegxp, '').trim();
+  let protocol = '';
+  let path = trimmed;
+
+  if (trimmed.startsWith('http')) {
+    [protocol, path] = trimmed.split('://');
+  }
+
+  path = path.replace(/\/{2,}/g, '/').replace(trimSlashRegxp, '');
+
+  if (protocol !== '') {
+    return `${protocol}://${path}`;
+  }
+
+  return `/${path}`;
+}
+
 export const createAuthLink = (identity: Identity): ApolloLink => {
   return setContext((_, { headers }) => {
     const token = identity.getToken();
@@ -78,8 +97,9 @@ export const createHttpLink = (options?: HttpOptions): ApolloLink => {
 export const createSwitchUriLink = (uri: string): ApolloLink =>
   new ApolloLink((operation, forward) => {
     const { projectVid } = operation.getContext();
+
     operation.setContext({
-      uri: `${uri}${projectVid || ''}`,
+      uri: normalizeUri(`/${uri}/${projectVid || ''}`),
     });
 
     return forward(operation);
