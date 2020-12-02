@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Redirect, Route, Router, Switch, useHistory, useLocation } from 'react-router-dom';
+import { Redirect, Route, Router, Switch, useLocation } from 'react-router-dom';
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
 import { Root, useMount } from '@gpn-prototypes/vega-ui';
 import { History } from 'history';
+import qs from 'query-string';
 
 import { Identity } from './utils/identity';
 import { AppContext, useAppContext } from './app-context';
@@ -34,7 +35,6 @@ const ApplicationRoutes = (): React.ReactElement => {
   const context = useAppContext();
   const { bus, identity } = context;
 
-  const history = useHistory();
   const location = useLocation();
 
   const [isLoggedIn, setIsLoggedIn] = useState(identity.isLoggedIn());
@@ -44,7 +44,6 @@ const ApplicationRoutes = (): React.ReactElement => {
       { channel: 'auth', topic: 'login' },
       ({ payload: { loggedIn } }) => {
         setIsLoggedIn(loggedIn);
-        console.log(location);
       },
     );
 
@@ -52,7 +51,12 @@ const ApplicationRoutes = (): React.ReactElement => {
   });
 
   const getLoginPath = (): string => {
-    return `${AUTH_PATH}?redirectTo${encodeURIComponent(location.pathname)}`;
+    return `${AUTH_PATH}?redirectTo=${encodeURIComponent(location.pathname)}`;
+  };
+
+  const getLoginRedirectPath = (): string => {
+    const query = qs.parse(location.search) as { redirectTo?: string };
+    return query.redirectTo ?? '/projects';
   };
 
   return (
@@ -61,7 +65,7 @@ const ApplicationRoutes = (): React.ReactElement => {
       <Switch>
         {isLoggedIn && <Redirect from="/" to="/projects" exact />}
         <Route exact path={AUTH_PATH}>
-          {isLoggedIn && <Redirect to={{ pathname: '/projects' }} />}
+          {isLoggedIn && <Redirect to={getLoginRedirectPath()} />}
           {/* TODO: https://jira.csssr.io/browse/VEGA-694 */}
           <div>
             <Application name="@vega/auth" />
