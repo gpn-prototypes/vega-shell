@@ -63,17 +63,6 @@ function makePromise(res: unknown) {
   return new Promise((resolve) => setTimeout(() => resolve(res)));
 }
 
-function makeCallback(done: jest.DoneCallback, body: (...args: unknown[]) => void) {
-  return (...args: unknown[]) => {
-    try {
-      body(...args);
-      done();
-    } catch (error) {
-      done.fail(error);
-    }
-  };
-}
-
 describe('client', () => {
   const data = { data: { hello: 'world' } };
 
@@ -85,7 +74,7 @@ describe('client', () => {
     fetchMock.restore();
   });
 
-  it('меняется uri', async (done) => {
+  it('меняется uri', async () => {
     fetchMock.post('/graphql/projectVid1', makePromise(data));
 
     const URI = 'graphql/';
@@ -97,27 +86,25 @@ describe('client', () => {
     const identity = new Identity(CONFIG);
     const authLink = createAuthLink(identity);
 
-    const linkR = ApolloLink.from([authLink, uriLink]);
-    const link = linkR.concat(createHttpLink());
+    const link = ApolloLink.from([authLink, uriLink, createHttpLink()]);
 
-    execute(link, {
-      query: queries.sample,
-      context: {
-        projectVid: 'projectVid1',
-      },
-    }).subscribe(
-      makeCallback(done, () => {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const [uri] = fetchMock.lastCall()!;
-        expect(uri).toBe(`/${URI}${PROJECT_VID}`);
+    await toPromise(
+      execute(link, {
+        query: queries.sample,
+        context: {
+          projectVid: 'projectVid1',
+        },
       }),
     );
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const [uri] = fetchMock.lastCall()!;
+    expect(uri).toBe(`/${URI}${PROJECT_VID}`);
   });
 
-  it('не меняется uri', async (done) => {
+  it('не меняется uri', async () => {
     fetchMock.post('/graphql', makePromise(data));
 
-    const URI = 'graphql';
+    const URI = '/graphql';
     const CONFIG = { apiUrl: 'auth_rest', token: 'token2' };
 
     const uriLink = createSwitchUriLink(URI);
@@ -125,17 +112,11 @@ describe('client', () => {
     const identity = new Identity(CONFIG);
     const authLink = createAuthLink(identity);
 
-    const linkR = ApolloLink.from([authLink, uriLink]);
-    const link = linkR.concat(createHttpLink());
+    const link = ApolloLink.from([authLink, uriLink, createHttpLink()]);
 
-    execute(link, {
-      query: queries.sample,
-    }).subscribe(
-      makeCallback(done, () => {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const [uri] = fetchMock.lastCall()!;
-        expect(uri).toBe(`/${URI}`);
-      }),
-    );
+    await toPromise(execute(link, { query: queries.sample }));
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const [uri] = fetchMock.lastCall()!;
+    expect(uri).toBe(URI);
   });
 });
