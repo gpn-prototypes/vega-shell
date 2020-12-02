@@ -11,5 +11,6 @@ module.exports = {
     '@typescript-eslint/no-shadow': ['error'],
     'no-useless-constructor': 'off',
     '@typescript-eslint/no-useless-constructor': 'error',
+    'react/no-unused-prop-types': 'off',
   },
 };

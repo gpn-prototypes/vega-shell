@@ -3,13 +3,13 @@ declare module 'single-spa-react/lib/esm/parcel' {
   import { mountRootParcel } from 'single-spa';
 
   interface ParcelProps {
-    // define here what props you need
     config:
       | (() => Promise<Lifecycles>)
       | (() => Promise<System.Module>)
       | Lifecycles
       | Promise<Lifecycles>;
     mountParcel?: typeof mountRootParcel;
+    parcelDidMount?: VoidFunction;
     wrapWith?: string;
     wrapClassName?: string;
     handleError?: (err) => void;

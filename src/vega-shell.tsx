@@ -1,39 +1,36 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { createBrowserHistory } from 'history';
 import * as singleSpa from 'single-spa';
 
 import { getAppConfig } from '../app-config';
 
-import { createGraphqlClient, ShellServerError } from './utils/graphql-client';
+import { createGraphqlClient, ServerError } from './utils/graphql-client';
 import { Identity } from './utils/identity';
-import { ApplicationsParcel, ServerErrorListener } from './application-parcel';
+import { Applications } from './applications';
 import { BrowserMessageBus } from './message-bus';
 
 const HOME_PAGE = '/projects';
 const bus = BrowserMessageBus.create();
 
+const history = createBrowserHistory();
+
+const authMessage = { channel: 'auth', topic: 'login', self: true };
+
 const sendMessageOnAuth = () => {
-  bus.send({ channel: 'auth', topic: 'logged-in', self: true });
+  bus.send({ ...authMessage, payload: { loggedIn: true } });
 };
 
 const sendMessageOnLogout = () => {
-  bus.send({ channel: 'auth', topic: 'logged-out', self: true });
+  bus.send({ ...authMessage, payload: { loggedIn: false } });
 };
 
 bus.subscribe({ channel: 'auth', topic: 'logged-in' }, () => {
-  const url = new URL(window.location.href).searchParams.get('redirect-to') ?? HOME_PAGE;
-  singleSpa.navigateToUrl(url.toString());
+  // const url = new URL(window.location.href).searchParams.get('redirect-to') ?? HOME_PAGE;
+  // singleSpa.navigateToUrl(url.toString());
 });
 
-bus.subscribe({ channel: 'auth', topic: 'logged-out' }, () => {
-  const url = new URL(window.location.href);
-  url.searchParams.set('redirect-to', url.toString().replace(url.origin, ''));
-  url.pathname = '/login';
-
-  singleSpa.navigateToUrl(url.toString());
-});
-
-const handleGraphqlClientError = (err: ShellServerError): void => {
+const handleGraphqlClientError = (err: ServerError): void => {
   bus.send({ channel: 'error', topic: 'server-error', payload: err, self: true });
 };
 
@@ -49,20 +46,7 @@ const graphqlClient = createGraphqlClient({
   onError: handleGraphqlClientError,
 });
 
-const addServerErrorListener = (callback: ServerErrorListener): VoidFunction => {
-  return bus.subscribe<ShellServerError>(
-    { channel: 'error', topic: 'server-error' },
-    ({ payload: error }) => {
-      callback(error);
-    },
-  );
-};
-
 ReactDOM.render(
-  <ApplicationsParcel
-    addServerErrorListener={addServerErrorListener}
-    graphqlClient={graphqlClient}
-    identity={identity}
-  />,
+  <Applications history={history} bus={bus} graphqlClient={graphqlClient} identity={identity} />,
   document.getElementById('root'),
 );

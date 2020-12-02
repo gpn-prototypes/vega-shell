@@ -13,7 +13,7 @@ import { Identity } from '../identity/identity';
 
 export type GraphQLClient = ApolloClient<NormalizedCacheObject>;
 
-export type ShellServerError = {
+export type ServerError = {
   code: number;
   message: string;
   userMessage?: string;
@@ -22,7 +22,7 @@ export type ShellServerError = {
 export const notFoundErrorUserMessage = `Ошибка 404. Страница не найдена.
   Обратитесь в службу технической поддержки`;
 
-type ErrorHandler = (error: ShellServerError) => void;
+type ErrorHandler = (error: ServerError) => void;
 
 type Config = {
   uri: string;
