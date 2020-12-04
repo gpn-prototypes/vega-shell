@@ -1,11 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { createGraphqlClient, Identity, ServerError } from '@gpn-prototypes/vega-sdk';
 import { createBrowserHistory } from 'history';
 
 import { getAppConfig } from '../app-config';
 
-import { createGraphqlClient, ServerError } from './utils/graphql-client';
-import { Identity } from './utils/identity';
 import { Notifications } from './utils/notifications';
 import { Applications } from './Applications';
 import { BrowserMessageBus } from './message-bus';

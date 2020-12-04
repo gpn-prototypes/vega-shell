@@ -1,8 +1,12 @@
 import { createContext, useContext } from 'react';
+import {
+  createGraphqlClient,
+  GraphQLClient,
+  Identity,
+  ServerError,
+} from '@gpn-prototypes/vega-sdk';
 import { createBrowserHistory, History } from 'history';
 
-import { createGraphqlClient, GraphQLClient, ServerError } from './utils/graphql-client';
-import { Identity } from './utils/identity';
 import { Notifications } from './utils/notifications';
 import { BrowserMessageBus } from './message-bus';
 

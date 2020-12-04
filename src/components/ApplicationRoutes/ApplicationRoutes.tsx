@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
+import { ServerError } from '@gpn-prototypes/vega-sdk';
 import { useMount, useOnChange, usePreviousRef } from '@gpn-prototypes/vega-ui';
 
 import { useAppContext } from '../../app-context';
-import { ServerError } from '../../utils/graphql-client';
 import { Application } from '../Application';
 import { ErrorView } from '../Error';
 

@@ -1,9 +1,9 @@
 import React, { useMemo, useState } from 'react';
+import { ServerError } from '@gpn-prototypes/vega-sdk';
 import { mountRootParcel } from 'single-spa';
 import ParcelComponent from 'single-spa-react/lib/esm/parcel';
 
 import { useAppContext } from '../../app-context';
-import { ServerError } from '../../utils/graphql-client';
 import { ErrorView } from '../Error';
 import { RootLoader } from '../Loader';
 

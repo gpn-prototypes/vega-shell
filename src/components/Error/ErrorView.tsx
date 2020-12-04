@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, useHistory } from 'react-router-dom';
+import { ServerError } from '@gpn-prototypes/vega-sdk';
 import {
   Button,
   Loader,
@@ -12,8 +13,6 @@ import {
   useUnmount,
 } from '@gpn-prototypes/vega-ui';
 import cn from 'bem-cn';
-
-import { ServerError } from '../../utils/graphql-client';
 
 import { GazpromLogo } from './GazpromLogo';
 

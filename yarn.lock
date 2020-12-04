@@ -23,21 +23,21 @@
     zen-observable "^0.8.14"
 
 "@apollo/client@^3.2.5":
-  version "3.2.9"
-  resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.2.9.tgz#a24a7792519adb3af8a74a60d9e83732238d0afd"
-  integrity sha512-AUvYITKhJNfRNU/Cf8t/N628ADdVah1+l9Qtjd09IwScRfDGvbBTkHMAgcb6hl7vuBVqGwQRq6fPKzHgWRlisg==
+  version "3.3.3"
+  resolved "https://registry.yarnpkg.com/@apollo/client/-/client-3.3.3.tgz#97433fd50c498197afea2b8da4195d350daebb4c"
+  integrity sha512-zs148iUbBgmeQFOc+Jc4/Cb3LK7urQuCQGHifviMp0ihxzbJ8rtj0hCVuQhWaZxZRcL5oZBCfIuL1O5xuvszmQ==
   dependencies:
     "@graphql-typed-document-node/core" "^3.0.0"
     "@types/zen-observable" "^0.8.0"
     "@wry/context" "^0.5.2"
-    "@wry/equality" "^0.2.0"
+    "@wry/equality" "^0.3.0"
     fast-json-stable-stringify "^2.0.0"
     graphql-tag "^2.11.0"
     hoist-non-react-statics "^3.3.2"
-    optimism "^0.13.0"
+    optimism "^0.13.1"
     prop-types "^15.7.2"
     symbol-observable "^2.0.0"
-    ts-invariant "^0.5.0"
+    ts-invariant "^0.5.1"
     tslib "^1.10.0"
     zen-observable "^0.8.14"
 
@@ -1423,9 +1423,9 @@
     bem-cn "^3.0.1"
 
 "@gpn-prototypes/vega-sdk@^1.1.1":
-  version "1.4.0"
-  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-sdk/1.4.0/b1b79de6b773596fe458bcf124010909c094eed04b672496903180ebcb2804c7#bf064ac885c4dca4e25322d493a8dcb2c751740f"
-  integrity sha512-Euzm9kVnbJ14OXW6eT1x8wHdJLq59YolpDmV3nrJyJ9rvrL8kfju9gZxU4/YKjU8GHE2b497geAVGnZMQzQTWA==
+  version "1.4.1"
+  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-sdk/1.4.1/dc2609f6fa86d2ce9a8d2b9364fd0175e6b2d7969b2baa6f79c29340d53aaa8b#81430a7efc4401d5f42a3a836ac356e86011d0c6"
+  integrity sha512-EjacjMVxhdcd/PvYn/uDD6emEVV3OCaAC4WSLBRXpTsZZkiGyXj/7+WZYKkfnWkF16ubDUHGx2grG/FdewCPJw==
   dependencies:
     "@apollo/client" "^3.2.5"
     graphql "^15.4.0"
@@ -2613,6 +2613,13 @@
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/@wry/equality/-/equality-0.2.0.tgz#a312d1b6a682d0909904c2bcd355b02303104fb7"
   integrity sha512-Y4d+WH6hs+KZJUC8YKLYGarjGekBrhslDbf/R20oV+AakHPINSitHfDRQz3EGcEWc1luXYNUvMhawWtZVWNGvQ==
+  dependencies:
+    tslib "^1.9.3"
+
+"@wry/equality@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@wry/equality/-/equality-0.3.0.tgz#4b022a0907f01f32c07a1a665d9430155a59ea06"
+  integrity sha512-DRDAu/e3oWBj826OWNV/GCmSdHD248mASXImgNoLE/3SDvpgb+k6G/+TAmdpIB35ju264+kB22Rx92eXg52DnA==
   dependencies:
     tslib "^1.9.3"
 
@@ -8883,7 +8890,7 @@ optimism@^0.12.1:
   dependencies:
     "@wry/context" "^0.5.2"
 
-optimism@^0.13.0:
+optimism@^0.13.1:
   version "0.13.1"
   resolved "https://registry.yarnpkg.com/optimism/-/optimism-0.13.1.tgz#df2e6102c973f870d6071712fffe4866bb240384"
   integrity sha512-16RRVYZe8ODcUqpabpY7Gb91vCAbdhn8FHjlUb2Hqnjjow1j8Z1dlppds+yAsLbreNTVylLC+tNX6DuC2vt3Kw==
@@ -11574,7 +11581,7 @@ ts-invariant@^0.4.4:
   dependencies:
     tslib "^1.9.3"
 
-ts-invariant@^0.5.0:
+ts-invariant@^0.5.1:
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/ts-invariant/-/ts-invariant-0.5.1.tgz#4171fdb85f72a40381c147afd97c12154ada2abc"
   integrity sha512-k3UpDNrBZpqJFnAAkAHNmSHtNuCxcU6xLiziPgalHRKZHme6T6jnKC8CcXDmk1zbHLQM8pc+rNC1Q6FvXMAl+g==
