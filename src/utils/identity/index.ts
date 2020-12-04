@@ -1,1 +1,1 @@
-export { IdentityConfigType, Identity } from './identity';
+export { Identity } from './identity';

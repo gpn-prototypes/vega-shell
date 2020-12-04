@@ -1,4 +1,5 @@
-import { APIClient, UserDataType } from '../api-client';
+import { APIClient } from '../api-client';
+import { UserDataType } from '../api-client/api-client';
 
 export type IdentityConfigType = {
   apiUrl: string;

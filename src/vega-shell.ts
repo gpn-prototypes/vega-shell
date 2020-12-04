@@ -3,7 +3,8 @@ import { constructApplications, constructLayoutEngine, constructRoutes } from 's
 
 import { getAppConfig } from '../app-config';
 
-import { createGraphqlClient, Error } from './utils/graphql-client';
+import { createGraphqlClient } from './utils/graphql-client';
+import type { Error } from './utils/graphql-client/graphql-client';
 import { Identity } from './utils/identity';
 import { Notifications } from './utils/notifications';
 import { loaderLifecycles, SnackbarLifecycles } from './components';

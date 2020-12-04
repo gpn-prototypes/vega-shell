@@ -123,6 +123,9 @@ const singleSpaConfig = (webpackConfigEnv) => {
           use: [
             {
               loader: 'file-loader',
+              query: {
+                name: `assets/img/[name]${NODE_ENV === 'production' ? '.[hash]' : ''}.[ext]`,
+              },
             },
           ],
         },
@@ -139,7 +142,7 @@ const singleSpaConfig = (webpackConfigEnv) => {
         ...envKeys,
       }),
       new HtmlWebpackPlugin({
-        inject: false,
+        favicon: 'src/assets/img/favicon.png',
         template: 'src/index.ejs',
         templateParameters: {
           isLocal: webpackConfigEnv && webpackConfigEnv.isLocal === 'true',
