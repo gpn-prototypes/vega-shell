@@ -56,7 +56,7 @@
   -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self' data: https: localhost:* <%= baseApiUrl %> <%= hostname %>; script-src 'unsafe-inline' https: localhost:* <%= hostname %>; connect-src https: localhost:* ws://localhost:* <%= baseApiUrl %> <%= hostname %>; style-src 'unsafe-inline' blob: https:; object-src 'none';"
+      content="default-src 'self' data: https: localhost:* <%= baseApiUrl %> <%= cspHostname %>; script-src 'unsafe-inline' https: localhost:* <%= cspHostname %>; connect-src https: localhost:* ws://localhost:* <%= baseApiUrl %> <%= cspHostname %>; style-src 'unsafe-inline' blob: https:; object-src 'none';"
     />
     <meta name="importmap-type" content="systemjs-importmap" />
     <!-- If you wish to turn off import-map-overrides for specific environments (prod), uncomment the line below -->
