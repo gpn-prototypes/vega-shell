@@ -39,6 +39,7 @@ jobs:
         working-directory: vega
         env:
           BASE_URL: http://${{ steps.gh.outputs.releaseID }}.vega.csssr.cloud
+          BASE_API_URL: http://integration-csssr-vega-builder.code013.org:38080
 
       - uses: ./actions/upload-static/v1beta1
         with:
