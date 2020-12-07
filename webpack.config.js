@@ -95,13 +95,17 @@ const singleSpaConfig = (webpackConfigEnv) => {
     return prev;
   }, {});
 
+  if (!process.env.BASE_API_URL) {
+    throw new Error('env.BASE_API_URL is empty');
+  }
+
   const config = webpackMerge.smart(defaultConfig, {
     // modify the webpack config however you'd like to by adding to this object
     name: 'single-spa',
     devServer: {
       historyApiFallback: true,
       proxy: {
-        '/graphql': 'http://outsourcing.nat.tepkom.ru:38300/',
+        '/graphql': process.env.BASE_API_URL,
       },
     },
     entry: {
@@ -141,6 +145,8 @@ const singleSpaConfig = (webpackConfigEnv) => {
           isLocal: webpackConfigEnv && webpackConfigEnv.isLocal === 'true',
           isYc: YC_DEPLOYMENT,
           baseUrl: BASE_URL,
+          baseApiUrl: process.env.BASE_API_URL,
+          hostname: process.env.HOST_NAME || '',
           orgName,
         },
       }),
