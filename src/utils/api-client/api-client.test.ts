@@ -7,7 +7,7 @@ beforeEach(() => {
 });
 
 describe('APIClient', () => {
-  test('возвращается token при auth', async () => {
+  test.skip('возвращается token при auth', async () => {
     const AUTH_URL = 'http://localhost/auth';
     const TOKEN = { token: 'token' };
     const AUTH_REQUEST = {
@@ -25,7 +25,7 @@ describe('APIClient', () => {
     expect(token).toEqual(TOKEN);
   });
 
-  test('возвращается errors при неверных данных', async () => {
+  test.skip('возвращается errors при неверных данных', async () => {
     const AUTH_URL = 'http://localhost/auth';
     const ERROR = { Error: { code: 'INVALID_JSON' } };
     const AUTH_REQUEST = {

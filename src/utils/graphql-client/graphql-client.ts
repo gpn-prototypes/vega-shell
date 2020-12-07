@@ -55,8 +55,9 @@ export function normalizeUri(uri: string): string {
 }
 
 export const createAuthLink = (identity: Identity): ApolloLink => {
-  return setContext((_, { headers }) => {
-    const token = identity.getToken();
+  return setContext(async (_, { headers }) => {
+    const token = await identity.getToken();
+
     return {
       headers: {
         ...headers,
