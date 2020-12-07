@@ -6,6 +6,7 @@ declare module 'single-spa-react/lib/esm/parcel' {
     config:
       | (() => Promise<Lifecycles>)
       | (() => Promise<System.Module>)
+      | Promise<System.Module>
       | Lifecycles
       | Promise<Lifecycles>;
     mountParcel?: typeof mountRootParcel;

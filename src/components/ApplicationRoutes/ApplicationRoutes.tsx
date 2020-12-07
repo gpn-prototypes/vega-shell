@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
 import { useMount, useOnChange, usePreviousRef } from '@gpn-prototypes/vega-ui';
-import qs from 'query-string';
 
 import { useAppContext } from '../../app-context';
 import { ServerError } from '../../utils/graphql-client';
@@ -68,8 +67,8 @@ export const ApplicationRoutes = (): React.ReactElement => {
   };
 
   const getLoginRedirectPath = (): string => {
-    const query = qs.parse(location.search) as { redirectTo?: string };
-    return query.redirectTo ?? '/projects';
+    const query = new URLSearchParams(location.search);
+    return query.get('redirectTo') ?? '/projects';
   };
 
   return (
@@ -80,20 +79,14 @@ export const ApplicationRoutes = (): React.ReactElement => {
         {isLoggedIn && <Redirect from="/" to="/projects" exact />}
         <Route exact path={AUTH_PATH}>
           {isLoggedIn && <Redirect to={getLoginRedirectPath()} />}
-          {/* TODO: https://jira.csssr.io/browse/VEGA-694 */}
-          <div>
-            <Application name="@vega/auth" />
-          </div>
+          <Application name="@vega/auth" />
         </Route>
         <Route path="/projects">
           <Application name="@vega/header" wrapWith="header" wrapClassName="header" />
           <main className="main">
             <Switch>
               <Route exact path={['/projects/show/:projectId/rb']}>
-                {/* TODO: https://jira.csssr.io/browse/VEGA-694 */}
-                <div className="RB-Wrapper">
-                  <Application name="@vega/rb" />
-                </div>
+                <Application name="@vega/rb" />
               </Route>
               <Route exact path={['/projects', '/projects/create', '/projects/show/:projectId']}>
                 <Application name="@vega/sp" />

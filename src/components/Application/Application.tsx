@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { mountRootParcel } from 'single-spa';
 import ParcelComponent from 'single-spa-react/lib/esm/parcel';
 
@@ -24,7 +24,7 @@ export const Application: React.FC<Props> = ({ name, wrapClassName, wrapWith }) 
     }
   };
 
-  const loadConfig = (url: string): (() => Promise<System.Module>) => () => System.import(url);
+  const config = useMemo(() => System.import(name), [name]);
 
   const handleServiceError = (): void => {
     setError({
@@ -42,7 +42,8 @@ export const Application: React.FC<Props> = ({ name, wrapClassName, wrapWith }) 
       {isLoading && <RootLoader />}
       {error && <ErrorView {...error} />}
       <ParcelComponent
-        config={loadConfig(name)}
+        key={name}
+        config={config}
         handleError={handleServiceError}
         mountParcel={mountRootParcel}
         wrapClassName={wrapClassName}
