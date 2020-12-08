@@ -57,9 +57,9 @@ export const ApplicationRoutes = (): React.ReactElement => {
       if (serverError !== null) {
         setServerError(null);
       }
-      if (identity.isLoggedIn() !== isLoggedIn) {
-        setIsLoggedIn(identity.isLoggedIn());
-      }
+    }
+    if (identity.isLoggedIn() !== isLoggedIn) {
+      setIsLoggedIn(identity.isLoggedIn());
     }
   });
 
