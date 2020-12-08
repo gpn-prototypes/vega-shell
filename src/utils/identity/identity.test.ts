@@ -87,5 +87,5 @@ describe('Identity', () => {
     expect(identity.getToken()).toEqual('token3');
   });
 
-  test.todo('выбрасывается ошибка');
+  test.todo('тесты на tokenHandlers.ts');
 });

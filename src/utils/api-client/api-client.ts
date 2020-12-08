@@ -22,7 +22,7 @@ type AuthDestroyResponse = {
 };
 
 type ErrorType = {
-  code: string;
+  code: number;
   message: string;
 };
 
@@ -30,8 +30,23 @@ type FailedResponseType = {
   Error: ErrorType;
 };
 
-const getDefaultErrorMessage = (error: string): string => {
-  return `При входе в систему возникла ошибка: ${error}. Попробуйте снова или обратитесь в Службу технической поддержки`;
+const getDefaultError = (response: Response): ErrorType => {
+  const message = `При входе в систему возникла ошибка: ${response.statusText}. Попробуйте снова или обратитесь в Службу технической поддержки`;
+  const error = {
+    code: response.status,
+    message,
+  };
+
+  return error;
+};
+
+const handleError = async <T>(response: Response): Promise<T> => {
+  try {
+    const { Error }: FailedResponseType = await response.json();
+    return Promise.reject(Error);
+  } catch {
+    return Promise.reject(getDefaultError(response));
+  }
 };
 
 export class APIClient {
@@ -57,16 +72,7 @@ export class APIClient {
       return data;
     }
 
-    try {
-      const { Error }: FailedResponseType = await response.json();
-      return Promise.reject(Error);
-    } catch {
-      const error = {
-        code: response.status,
-        message: getDefaultErrorMessage(response.statusText),
-      };
-      return Promise.reject(error);
-    }
+    return handleError(response);
   };
 
   public authSSO = async (): Promise<AuthObtainResponse> => {
@@ -83,16 +89,7 @@ export class APIClient {
       return data;
     }
 
-    try {
-      const { Error }: FailedResponseType = await response.json();
-      return Promise.reject(Error);
-    } catch {
-      const error = {
-        code: response.status,
-        message: getDefaultErrorMessage(response.statusText),
-      };
-      return Promise.reject(error);
-    }
+    return handleError(response);
   };
 
   public refresh = async (refreshToken: string): Promise<AuthRefreshResponse> => {
@@ -111,16 +108,7 @@ export class APIClient {
       return data;
     }
 
-    try {
-      const { Error }: FailedResponseType = await response.json();
-      return Promise.reject(Error);
-    } catch {
-      const error = {
-        code: response.status,
-        message: getDefaultErrorMessage(response.statusText),
-      };
-      return Promise.reject(error);
-    }
+    return handleError(response);
   };
 
   public destroy = async (accessToken: string): Promise<AuthDestroyResponse> => {
@@ -139,15 +127,6 @@ export class APIClient {
       return data;
     }
 
-    try {
-      const { Error }: FailedResponseType = await response.json();
-      return Promise.reject(Error);
-    } catch {
-      const error = {
-        code: response.status,
-        message: getDefaultErrorMessage(response.statusText),
-      };
-      return Promise.reject(error);
-    }
+    return handleError(response);
   };
 }
