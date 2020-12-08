@@ -17,6 +17,13 @@ export const queries = {
       }
     }
   `,
+  sample: gql`
+    query SampleQuery {
+      stub {
+        id
+      }
+    }
+  `,
 };
 
 const internalServerError = new ApolloError({

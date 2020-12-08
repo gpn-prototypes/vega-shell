@@ -3,6 +3,7 @@ import {
   ApolloLink,
   createHttpLink as createApolloHttpLink,
   from,
+  HttpOptions,
   InMemoryCache,
   NormalizedCacheObject,
 } from '@apollo/client';
@@ -29,6 +30,25 @@ type Config = {
 type ResponseLinkConfig = {
   handleError: ErrorHandler;
 };
+
+export function normalizeUri(uri: string): string {
+  const trimSlashRegxp = /^\/|\/$/g;
+  const trimmed = uri.replace(trimSlashRegxp, '').trim();
+  let protocol = '';
+  let path = trimmed;
+
+  if (trimmed.startsWith('http')) {
+    [protocol, path] = trimmed.split('://');
+  }
+
+  path = path.replace(/\/{2,}/g, '/').replace(trimSlashRegxp, '');
+
+  if (protocol !== '') {
+    return `${protocol}://${path}`;
+  }
+
+  return `/${path}`;
+}
 
 export const createAuthLink = (identity: Identity): ApolloLink => {
   return setContext((_, { headers }) => {
@@ -70,9 +90,19 @@ export const createResponseLink = (config: ResponseLinkConfig): ApolloLink =>
     });
   });
 
-export const createHttpLink = (uri: string): ApolloLink =>
-  createApolloHttpLink({
-    uri,
+export const createHttpLink = (options?: HttpOptions): ApolloLink => {
+  return createApolloHttpLink(options);
+};
+
+export const createSwitchUriLink = (uri: string): ApolloLink =>
+  new ApolloLink((operation, forward) => {
+    const { projectVid } = operation.getContext();
+
+    operation.setContext({
+      uri: normalizeUri(`/${uri}/${projectVid || ''}`),
+    });
+
+    return forward(operation);
   });
 
 export function createGraphqlClient(config: Config): GraphQLClient {
@@ -129,7 +159,9 @@ export function createGraphqlClient(config: Config): GraphQLClient {
     link: from([
       createResponseLink({ handleError }),
       createErrorLink({ handleError }),
-      createAuthLink(identity).concat(createHttpLink(uri)),
+      createSwitchUriLink(uri),
+      createAuthLink(identity),
+      createHttpLink(),
     ]),
   });
 }
