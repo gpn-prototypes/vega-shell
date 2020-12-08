@@ -108,6 +108,16 @@ layoutEngine.activate();
 singleSpa.addErrorHandler((err) => {
   if (singleSpa.getAppStatus(err.appOrParcelName) === singleSpa.LOAD_ERROR) {
     System.delete(System.resolve(err.appOrParcelName));
+    const appName = err.appOrParcelName;
+    const key = `${appName}-load-error`;
+    notifications.add({
+      key,
+      message: `Ошибка загрузки модуля «${appName}»`,
+      status: 'alert',
+      onClose: () => {
+        notifications.remove(key);
+      },
+    });
   }
 });
 

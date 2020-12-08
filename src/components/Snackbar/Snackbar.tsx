@@ -33,7 +33,7 @@ const Snackbar: React.FC<SnackBarProps> = (props) => {
 
   return renderPortalWithTheme(
     <div className={styles.container}>
-      <BaseSnackbar items={notifications} className={styles.snackbar} />
+      <BaseSnackbar items={notifications} className={styles.snackbar} data-testid="Notifications" />
     </div>,
     document.body,
   );
