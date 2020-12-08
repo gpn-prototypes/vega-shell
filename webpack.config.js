@@ -146,6 +146,7 @@ const singleSpaConfig = (webpackConfigEnv) => {
           isYc: YC_DEPLOYMENT,
           baseUrl: BASE_URL,
           baseApiUrl: process.env.BASE_API_URL,
+          cspHostname: process.env.CSP_HOST_NAME || process.env.HOST_NAME || '',
           hostname: process.env.HOST_NAME || '',
           orgName,
         },
