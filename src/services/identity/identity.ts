@@ -13,8 +13,10 @@ export type IdentityConfigType = {
   cbOnLogout?(): void;
 };
 
-const ACCESS_TOKEN = 'access-token';
-const REFRESH_TOKEN = 'refresh-token';
+const LS_ACCESS_TOKEN_KEY = 'access-token';
+const LS_REFRESH_TOKEN_KEY = 'refresh-token';
+const LS_USER_FIRST_NAME_KEY = 'user-first-name';
+const LS_USER_LAST_NAME_KEY = 'user-last-name';
 
 const noop = () => {};
 
@@ -48,46 +50,45 @@ export class Identity {
     }
   }
 
-  public auth = async ({ login, password }: UserDataType): Promise<string | null> => {
+  public auth = async (userData: UserDataType): Promise<string | null> => {
     try {
-      const { jwt_for_access, jwt_for_refresh } = await this.apiClient.auth({
-        login,
-        password,
-      });
+      const res = await this.apiClient.auth(userData);
 
-      if (jwt_for_access && jwt_for_refresh) {
+      if (res) {
         if (typeof this.cbOnAuth === 'function') {
           this.cbOnAuth();
         }
 
-        this.setTokens(jwt_for_access, jwt_for_refresh);
+        this.setTokens(res.jwt_for_access, res.jwt_for_refresh);
+        this.setUserName(res.first_name, res.last_name);
 
-        return jwt_for_access;
+        return res.jwt_for_access;
       }
 
       return null;
-    } catch (err) {
-      return Promise.reject(err);
+    } catch (error) {
+      return Promise.reject(error);
     }
   };
 
   public authSSO = async (): Promise<string | null> => {
     try {
-      const { jwt_for_access, jwt_for_refresh } = await this.apiClient.authSSO();
+      const res = await this.apiClient.authSSO();
 
-      if (jwt_for_access && jwt_for_refresh) {
+      if (res) {
         if (typeof this.cbOnAuth === 'function') {
           this.cbOnAuth();
         }
 
-        this.setTokens(jwt_for_access, jwt_for_refresh);
+        this.setTokens(res.jwt_for_access, res.jwt_for_refresh);
+        this.setUserName(res.first_name, res.last_name);
 
-        return jwt_for_access;
+        return res.jwt_for_access;
       }
 
       return null;
-    } catch (err) {
-      return Promise.reject(err);
+    } catch (error) {
+      return Promise.reject(error);
     }
   };
 
@@ -104,14 +105,14 @@ export class Identity {
         this.refreshPromise = this.apiClient.refresh(refreshToken);
       }
 
-      const response = await this.refreshPromise;
+      const res = await this.refreshPromise;
 
       this.refreshIsActive = false;
 
-      if (response && response.jwt_for_access && response.jwt_for_refresh) {
-        this.setTokens(response.jwt_for_access, response.jwt_for_refresh);
+      if (res) {
+        this.setTokens(res.jwt_for_access, res.jwt_for_refresh);
 
-        return response.jwt_for_access;
+        return res.jwt_for_access;
       }
 
       return null;
@@ -159,16 +160,17 @@ export class Identity {
     return null;
   };
 
-  public logout = (shouldDestroyTokens = true): void => {
+  public logout = ({ destroyTokens } = { destroyTokens: true }): void => {
     if (typeof this.cbOnLogout === 'function') {
       this.cbOnLogout();
     }
 
-    if (shouldDestroyTokens) {
+    if (destroyTokens) {
       this.destroyTokens();
     }
 
     this.removeTokens();
+    this.removeUserName();
   };
 
   public isLoggedIn(): boolean {
@@ -188,22 +190,32 @@ export class Identity {
   }
 
   public getAccessToken = (): string | null => {
-    const token = localStorage.getItem(ACCESS_TOKEN);
+    const token = localStorage.getItem(LS_ACCESS_TOKEN_KEY);
     return token || null;
   };
 
   public getRefreshToken = (): string | null => {
-    const token = localStorage.getItem(REFRESH_TOKEN);
+    const token = localStorage.getItem(LS_REFRESH_TOKEN_KEY);
     return token || null;
   };
 
   public setTokens = (accessToken: string, refreshToken: string): void => {
-    localStorage.setItem(ACCESS_TOKEN, accessToken);
-    localStorage.setItem(REFRESH_TOKEN, refreshToken);
+    localStorage.setItem(LS_ACCESS_TOKEN_KEY, accessToken);
+    localStorage.setItem(LS_REFRESH_TOKEN_KEY, refreshToken);
   };
 
   public removeTokens = (): void => {
-    localStorage.removeItem(ACCESS_TOKEN);
-    localStorage.removeItem(REFRESH_TOKEN);
+    localStorage.removeItem(LS_ACCESS_TOKEN_KEY);
+    localStorage.removeItem(LS_REFRESH_TOKEN_KEY);
+  };
+
+  public setUserName = (firstName: string, lastName: string): void => {
+    localStorage.setItem(LS_USER_FIRST_NAME_KEY, firstName);
+    localStorage.setItem(LS_USER_LAST_NAME_KEY, lastName);
+  };
+
+  public removeUserName = (): void => {
+    localStorage.removeItem(LS_USER_FIRST_NAME_KEY);
+    localStorage.removeItem(LS_USER_LAST_NAME_KEY);
   };
 }

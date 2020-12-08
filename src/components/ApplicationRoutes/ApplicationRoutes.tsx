@@ -45,7 +45,7 @@ export const ApplicationRoutes = (): React.ReactElement => {
         }
 
         if (payload.code === 401) {
-          identity.logout(false);
+          identity.logout({ destroyTokens: false });
         }
       },
     );
