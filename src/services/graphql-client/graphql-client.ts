@@ -13,6 +13,8 @@ import { onError } from '@apollo/client/link/error';
 
 import { Identity } from '../identity/identity';
 
+import { ProjectDiffResolverLink } from './project-diff-resolver';
+
 export type GraphQLClient = ApolloClient<NormalizedCacheObject>;
 
 export type ServerError = {
@@ -133,6 +135,19 @@ export const createSwitchUriLink = (uri: string): ApolloLink =>
     return forward(operation);
   });
 
+export const createProjectDiffResolverLink = (): ApolloLink => {
+  return new ProjectDiffResolverLink({
+    maxAttempts: 20,
+    errorTypename: 'UpdateProjectDiff',
+    projectAccessor: {
+      fromDiffError: (mutation) => ({
+        remote: mutation.result.remoteProject,
+        local: mutation.result.localProject,
+      }),
+    },
+  });
+};
+
 export function createGraphqlClient(config: Config): GraphQLClient {
   const { uri, identity, onError: handleError } = config;
   return new ApolloClient({
@@ -188,6 +203,7 @@ export function createGraphqlClient(config: Config): GraphQLClient {
       createResponseLink({ handleError }),
       createErrorLink({ handleError }),
       createSwitchUriLink(uri),
+      createProjectDiffResolverLink(),
       createAuthLink(identity),
       createHttpLink(),
     ]),

@@ -3,13 +3,13 @@ module.exports = {
   rules: {
     '@typescript-eslint/no-empty-function': 'off',
     '@typescript-eslint/no-explicit-any': 'error',
-    'no-use-before-define': 'off',
-    '@typescript-eslint/no-use-before-define': ['error'],
-    'no-redeclare': 'off',
     '@typescript-eslint/no-redeclare': ['error'],
-    'no-shadow': 'off',
     '@typescript-eslint/no-shadow': ['error'],
-    'no-useless-constructor': 'off',
+    '@typescript-eslint/no-use-before-define': ['error'],
     '@typescript-eslint/no-useless-constructor': 'error',
+    'no-redeclare': 'off',
+    'no-shadow': 'off',
+    'no-use-before-define': 'off',
+    'no-useless-constructor': 'off',
   },
 };

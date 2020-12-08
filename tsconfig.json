@@ -6,7 +6,7 @@
   "exclude": ["node_modules", "**/dist/**/*"],
   "compilerOptions": {
     "moduleResolution": "node",
-    "target": "es6",
-    "lib": ["dom", "webworker", "es6", "scripthost"]
+    "target": "ES2020",
+    "lib": ["dom", "webworker", "esnext", "scripthost"]
   }
 }
