@@ -13,13 +13,13 @@ import {
 } from '@gpn-prototypes/vega-ui';
 import cn from 'bem-cn';
 
-import { ShellServerError } from '../../utils/graphql-client';
+import { ServerError } from '../../utils/graphql-client';
 
 import { GazpromLogo } from './GazpromLogo';
 
 import './Error.css';
 
-type ErrorViewProps = ShellServerError;
+type ErrorViewProps = ServerError;
 
 const TIME_TO_RELOAD = 60;
 

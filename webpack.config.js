@@ -109,7 +109,7 @@ const singleSpaConfig = (webpackConfigEnv) => {
       },
     },
     entry: {
-      'vega-shell': defaultConfig.entry,
+      'vega-shell': './src/vega-shell.tsx',
       ...sharedDependencies[NODE_ENV],
     },
     output: {
