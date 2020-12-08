@@ -27,10 +27,11 @@
     }
   },
   "dependencies": {
-    "@apollo/client": "^3.2.2",
+    "@apollo/client": "^3.3.3",
     "@gpn-prototypes/vega-ui": "^2.15.11",
     "graphql": "^15.3.0",
     "import-map-overrides": "^2.1.0",
+    "jsondiffpatch": "^0.4.1",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-router-dom": "^5.2.0",
@@ -41,7 +42,7 @@
     "systemjs": "^6.7.1"
   },
   "devDependencies": {
-    "@gpn-prototypes/frontend-configs": "^1.2.12",
+    "@gpn-prototypes/frontend-configs": "^1.2.13",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.2.2",
     "@types/jest": "^26.0.15",
