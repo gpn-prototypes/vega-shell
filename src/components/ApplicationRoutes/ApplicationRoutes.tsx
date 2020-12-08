@@ -53,12 +53,13 @@ export const ApplicationRoutes = (): React.ReactElement => {
   const previousPathname = usePreviousRef(location.pathname).current;
 
   useOnChange(location.pathname, () => {
-    if (
-      previousPathname !== null &&
-      previousPathname !== location.pathname &&
-      serverError !== null
-    ) {
-      setServerError(null);
+    if (previousPathname !== null && previousPathname !== location.pathname) {
+      if (serverError !== null) {
+        setServerError(null);
+      }
+      if (identity.isLoggedIn() !== isLoggedIn) {
+        setIsLoggedIn(identity.isLoggedIn());
+      }
     }
   });
 
@@ -87,6 +88,9 @@ export const ApplicationRoutes = (): React.ReactElement => {
             <Switch>
               <Route exact path={['/projects/show/:projectId/rb']}>
                 <Application name="@vega/rb" />
+              </Route>
+              <Route exact path={['/projects/show/:projectId/lc']}>
+                <Application name="@vega/lc" />
               </Route>
               <Route exact path={['/projects', '/projects/create', '/projects/show/:projectId']}>
                 <Application name="@vega/sp" />
