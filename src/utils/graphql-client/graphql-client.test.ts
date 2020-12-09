@@ -17,6 +17,7 @@ import {
   createResponseLink,
   createSwitchUriLink,
   normalizeUri,
+  notFoundErrorUserMessage,
 } from './graphql-client';
 import { mocks, queries } from './mocks';
 
@@ -54,7 +55,11 @@ describe('responseLink', () => {
       }),
     );
 
-    expect(handleError).toBeCalledWith({ code: 404, message: 'project-not-found' });
+    expect(handleError).toBeCalledWith({
+      code: 404,
+      message: 'project-not-found',
+      userMessage: notFoundErrorUserMessage,
+    });
   });
 });
 
@@ -76,7 +81,10 @@ describe('errorLink', () => {
         }),
       );
     } catch {
-      expect(handleError).toBeCalledWith({ code: 500, message: 'internal-server-error' });
+      expect(handleError).toBeCalledWith({
+        code: 500,
+        message: 'internal-server-error',
+      });
     }
   });
 });

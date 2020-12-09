@@ -37,7 +37,7 @@ const internalServerError = new ApolloError({
 
 export const projectNotFoundError = {
   data: {
-    data: {
+    project: {
       details: null,
       payload: null,
       message: 'Проект не найден',

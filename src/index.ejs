@@ -6,40 +6,6 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>VEGA 2.0</title>
     <link rel="shortcut icon" href="/assets/img/favicon.png">
-    <style>
-      body,
-      html {
-        margin: 0;
-        padding: 0;
-        height: 100%;
-        background-color: #22272b;
-      }
-
-      body {
-        display: flex;
-        flex-direction: column;
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      .header {
-        position: relative;
-        z-index: 1;
-      }
-
-      .main {
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .main > div:not(:empty) {
-        flex-grow: 1;
-        display: flex;
-      }
-    </style>
     <!--
     Remove this if you only support browsers that support async/await.
     This is needed by babel to share largeish helper code for compiling async/await in older
@@ -127,30 +93,9 @@
     <script src="<%= baseUrl %>/systemjs-named-exports.js"></script>
     <% } %>
 
-    <template id="single-spa-layout">
-      <single-spa-router>
-        <route path="/login">
-          <application name="@vega/auth" loader="main" props="identity,notifications"></application>
-        </route>
-        <route path="/projects">
-          <div class="header">
-            <application name="@vega/header" loader="main" props="graphqlClient,identity"></application>
-          </div>
-          <main class="main">
-            <application name="@vega/sp" loader="main" props="graphqlClient,identity,notifications"></application>
-            <route path="show/:project_id/rb">
-              <application name="@vega/rb" loader="main" props="graphqlClient,identity"></application>
-            </route>
-            <route path="show/:project_id/lc">
-              <application name="@vega/lc" loader="main" props="graphqlClient,identity"></application>
-            </route>
-          </main>
-        </route>
-      </single-spa-router>
-      <application name="@vega-shell/notifications" props="bus,notifications"></application>
-    </template>
   </head>
   <body>
+    <div id="root" />
     <script>
       System.import('@vega/shell');
     </script>

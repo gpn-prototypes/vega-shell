@@ -109,7 +109,7 @@ const singleSpaConfig = (webpackConfigEnv) => {
       },
     },
     entry: {
-      'vega-shell': defaultConfig.entry,
+      'vega-shell': './src/vega-shell.tsx',
       ...sharedDependencies[NODE_ENV],
     },
     output: {
@@ -126,6 +126,14 @@ const singleSpaConfig = (webpackConfigEnv) => {
               query: {
                 name: `assets/img/[name]${NODE_ENV === 'production' ? '.[hash]' : ''}.[ext]`,
               },
+            },
+          ],
+        },
+        {
+          test: /\.css$/,
+          use: [
+            {
+              loader: 'postcss-loader',
             },
           ],
         },
