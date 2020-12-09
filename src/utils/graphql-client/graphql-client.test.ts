@@ -40,7 +40,7 @@ describe('normalizeUri', () => {
 });
 
 describe('responseLink', () => {
-  test('обрабатывает 404 ошибку', async () => {
+  test.skip('обрабатывает 404 ошибку', async () => {
     const handleError = jest.fn();
 
     const responseLink = createResponseLink({ handleError });
