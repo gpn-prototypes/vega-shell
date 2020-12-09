@@ -126,7 +126,7 @@ export class Identity {
     }
   };
 
-  public destroyTokens = async (): Promise<string> => {
+  private destroyTokens = async (): Promise<string> => {
     try {
       const accessToken = this.getAccessToken();
 
@@ -169,8 +169,7 @@ export class Identity {
       this.destroyTokens();
     }
 
-    this.removeTokens();
-    this.removeUserName();
+    this.clear();
   };
 
   public isLoggedIn(): boolean {
@@ -199,22 +198,19 @@ export class Identity {
     return token || null;
   };
 
-  public setTokens = (accessToken: string, refreshToken: string): void => {
+  private setTokens = (accessToken: string, refreshToken: string): void => {
     localStorage.setItem(LS_ACCESS_TOKEN_KEY, accessToken);
     localStorage.setItem(LS_REFRESH_TOKEN_KEY, refreshToken);
   };
 
-  public removeTokens = (): void => {
-    localStorage.removeItem(LS_ACCESS_TOKEN_KEY);
-    localStorage.removeItem(LS_REFRESH_TOKEN_KEY);
-  };
-
-  public setUserName = (firstName: string, lastName: string): void => {
+  private setUserName = (firstName: string, lastName: string): void => {
     localStorage.setItem(LS_USER_FIRST_NAME_KEY, firstName);
     localStorage.setItem(LS_USER_LAST_NAME_KEY, lastName);
   };
 
-  public removeUserName = (): void => {
+  public clear = (): void => {
+    localStorage.removeItem(LS_ACCESS_TOKEN_KEY);
+    localStorage.removeItem(LS_REFRESH_TOKEN_KEY);
     localStorage.removeItem(LS_USER_FIRST_NAME_KEY);
     localStorage.removeItem(LS_USER_LAST_NAME_KEY);
   };
