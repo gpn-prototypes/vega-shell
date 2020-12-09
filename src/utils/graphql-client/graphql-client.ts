@@ -85,18 +85,10 @@ export const createErrorLink = (config: ResponseLinkConfig): ApolloLink =>
 export const createResponseLink = (config: ResponseLinkConfig): ApolloLink =>
   new ApolloLink((operation, forward) => {
     return forward(operation).map((response) => {
-      if (response.data && response.data.project) {
-        const { code, __typename: typename } = response.data.project;
-
-        if (typename === 'Error' && code === 'PROJECT_NOT_FOUND') {
-          config.handleError({
-            code: 404,
-            message: 'project-not-found',
-            userMessage: notFoundErrorUserMessage,
-          });
-        }
-      }
-
+      config.handleError({
+        code: 500,
+        message: 'internal-server-error',
+      });
       return response;
     });
   });
