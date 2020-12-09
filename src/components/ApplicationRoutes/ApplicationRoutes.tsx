@@ -37,7 +37,7 @@ export const ApplicationRoutes = (): React.ReactElement => {
       },
     );
 
-    const errorUnsub = context.bus.subscribe<ServerError>(
+    const errorUnsub = bus.subscribe<ServerError>(
       { channel: 'error', topic: 'server-error' },
       ({ payload }) => {
         if ([404, 500].includes(payload.code)) {

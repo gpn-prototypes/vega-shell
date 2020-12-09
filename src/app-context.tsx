@@ -16,13 +16,13 @@ export type AppContextProps = {
   notifications: Notifications;
 };
 
-const defaultIdentity = new Identity({ apiUrl: '/api' });
+const identity = new Identity({ apiUrl: '/api' });
 
 export const AppContext = createContext<AppContextProps>({
   history: createBrowserHistory(),
-  identity: defaultIdentity,
+  identity,
   graphqlClient: createGraphqlClient({
-    identity: defaultIdentity,
+    identity,
     uri: '/graphql',
     onError: () => {},
   }),

@@ -7,7 +7,7 @@ import { getAppConfig } from '../app-config';
 import { createGraphqlClient, ServerError } from './utils/graphql-client';
 import { Identity } from './utils/identity';
 import { Notifications } from './utils/notifications';
-import { Applications } from './applications';
+import { Applications } from './Applications';
 import { BrowserMessageBus } from './message-bus';
 
 const bus = BrowserMessageBus.create();

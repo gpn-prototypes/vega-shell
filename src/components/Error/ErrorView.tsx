@@ -21,7 +21,7 @@ import './Error.css';
 
 type ErrorViewProps = ServerError;
 
-const TIME_TO_RELOAD = 60;
+const TIME_TO_RELOAD_SEC = 60;
 
 const cnErrorView = cn('ErrorView');
 
@@ -58,7 +58,7 @@ const ErrorViewButton = (props: ErrorViewButtonProps): React.ReactElement => {
 
 export const ErrorView: React.FC<ErrorViewProps> = (props) => {
   const { userMessage, code } = props;
-  const [timeLeft, setTimeLeft] = useState(TIME_TO_RELOAD);
+  const [timeLeft, setTimeLeft] = useState(TIME_TO_RELOAD_SEC);
 
   const IS_INTERNAL_SERVER_ERROR = code === 500;
 
