@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { createBrowserHistory } from 'history';
+import { start } from 'single-spa';
 
 import { getAppConfig } from '../app-config';
 
@@ -48,3 +49,5 @@ ReactDOM.render(
   />,
   document.getElementById('root'),
 );
+
+start();

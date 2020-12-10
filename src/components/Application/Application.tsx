@@ -3,8 +3,6 @@ import { mountRootParcel } from 'single-spa';
 import ParcelComponent from 'single-spa-react/lib/esm/parcel';
 
 import { useAppContext } from '../../app-context';
-import { ServerError } from '../../utils/graphql-client';
-import { ErrorView } from '../Error';
 import { RootLoader } from '../Loader';
 
 type Props = {
@@ -15,7 +13,6 @@ type Props = {
 
 export const Application: React.FC<Props> = ({ name, wrapClassName, wrapWith }) => {
   const context = useAppContext();
-  const [error, setError] = useState<ServerError | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const handleParcelMount = (): void => {
@@ -27,9 +24,15 @@ export const Application: React.FC<Props> = ({ name, wrapClassName, wrapWith }) 
   const config = useMemo(() => System.import(name), [name]);
 
   const handleServiceError = (): void => {
-    setError({
-      code: 500,
-      message: 'service-error',
+    System.delete(System.resolve(name));
+    const key = `${name}-load-error`;
+    context.notifications.add({
+      key,
+      message: `Ошибка загрузки модуля «${name}»`,
+      status: 'alert',
+      onClose: () => {
+        context.notifications.remove(key);
+      },
     });
 
     if (isLoading) {
@@ -40,7 +43,6 @@ export const Application: React.FC<Props> = ({ name, wrapClassName, wrapWith }) 
   return (
     <>
       {isLoading && <RootLoader />}
-      {error && <ErrorView {...error} />}
       <ParcelComponent
         key={name}
         config={config}
