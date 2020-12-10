@@ -65,7 +65,7 @@ export const ErrorView: React.FC<ErrorViewProps> = (props) => {
   const getMessage = (): string => {
     if (IS_INTERNAL_SERVER_ERROR) {
       return `Ошибка 500. Сервер недоступен
-        Повторное подключение через ${timeLeft} секунд`;
+        Повторное подключение через ${timeLeft} сек`;
     }
 
     return userMessage ?? '';
