@@ -50,4 +50,10 @@
 
     transform: unset;
   }
+
+  &__Loader::before,
+  &__Loader > .Loader-Dot,
+  &__Loader::after {
+    top: unset;
+  }
 }
