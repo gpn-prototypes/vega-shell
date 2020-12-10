@@ -107,10 +107,10 @@ export const createHttpLink = (options?: HttpOptions): ApolloLink => {
 
 export const createSwitchUriLink = (uri: string): ApolloLink =>
   new ApolloLink((operation, forward) => {
-    const { projectVid } = operation.getContext();
+    const { projectVid, uri: contextUri } = operation.getContext();
 
     operation.setContext({
-      uri: normalizeUri(`/${uri}/${projectVid || ''}`),
+      uri: contextUri ?? normalizeUri(`/${uri}/${projectVid || ''}`),
     });
 
     return forward(operation);
