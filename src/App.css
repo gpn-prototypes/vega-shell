@@ -1,4 +1,7 @@
 .AppParcel {
+  display: flex;
+  flex-direction: column;
+
   height: 100%;
 }
 
@@ -8,11 +11,8 @@ html {
   padding: 0;
 
   height: 100%;
-}
 
-body {
-  display: flex;
-  flex-direction: column;
+  background-color: #22272b;
 }
 
 * {
@@ -32,12 +32,10 @@ body {
 .main {
   display: flex;
   flex-direction: column;
-
-  height: 100%;
   flex-grow: 1;
 }
 
-.main > div {
+.main > div:not(:empty) {
   flex-grow: 1;
 
   display: flex;
