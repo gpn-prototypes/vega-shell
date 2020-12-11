@@ -94,7 +94,14 @@ export const ApplicationRoutes = (): React.ReactElement => {
               <Route exact path={['/projects/show/:projectId/lc']}>
                 <Application name="@vega/lc" />
               </Route>
-              <Route exact path={['/projects/show/:projectId/fem']}>
+              <Route
+                exact
+                path={[
+                  '/projects/show/:projectId/fem',
+                  '/projects/show/:projectId/fem/OPEX',
+                  '/projects/show/:projectId/fem/CAPEX',
+                ]}
+              >
                 <Application name="@vega/fem" />
               </Route>
               <Route exact path={['/projects', '/projects/create', '/projects/show/:projectId']}>
