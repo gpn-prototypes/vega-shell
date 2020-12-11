@@ -6,6 +6,43 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>VEGA 2.0</title>
     <link rel="shortcut icon" href="/assets/img/favicon.png">
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+
+        height: 100%;
+
+        background-color: #22272b;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      #root {
+        height: 100%;
+      }
+
+      .header {
+        position: sticky;
+        z-index: 1;
+        top: 0;
+      }
+
+      .main {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+      }
+
+      .main > div:not(:empty) {
+        flex-grow: 1;
+
+        display: flex;
+      }
+    </style>
     <!--
     Remove this if you only support browsers that support async/await.
     This is needed by babel to share largeish helper code for compiling async/await in older
