@@ -151,4 +151,29 @@ describe('client', () => {
     const [uri] = fetchMock.lastCall()!;
     expect(uri).toBe('/graphql');
   });
+
+  it('если uri передан в контексте, то projectVid не учитывается', async () => {
+    fetchMock.post('/context-graphql-uri', makePromise(data));
+
+    const URI = 'graphql';
+    const CONFIG = { apiUrl: '/auth', token: 'test-token' };
+
+    const uriLink = createSwitchUriLink(URI);
+
+    const identity = new Identity(CONFIG);
+    const authLink = createAuthLink(identity);
+
+    const link = ApolloLink.from([authLink, uriLink, createHttpLink()]);
+
+    await toPromise(
+      execute(link, {
+        query: queries.sample,
+        context: { projectVid: 'test-vid', uri: '/context-graphql-uri' },
+      }),
+    );
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const [uri] = fetchMock.lastCall()!;
+    expect(uri).toBe('/context-graphql-uri');
+  });
 });
