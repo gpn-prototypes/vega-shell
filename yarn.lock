@@ -1174,10 +1174,10 @@
   dependencies:
     "@consta/uikit" "^1.10.9"
 
-"@gpn-prototypes/vega-canvas@^0.1.8":
-  version "0.1.8"
-  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-canvas/0.1.8/252fa057272f4b926810115a379a4db9492560772b88e68381c52da6e074fa72#a22516a58c5690e651bc265cf3acb406d95df107"
-  integrity sha512-FehHI5rN4r6DnMdDXlOHbWhU4aa2N9vZ3LPmURgF691gSO4Ui8x98+Oh+PlOBiD2LoGIDKGj8d9QjZLlxuEBGQ==
+"@gpn-prototypes/vega-canvas@^0.1.10":
+  version "0.1.10"
+  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-canvas/0.1.10/85696a58decda0fecec3550a7030fe8d6ec2b7e58f029757f1c3b467f14f2d77#19b7c1a58ec820afbe048e94f5dfdc12bd2bfd7e"
+  integrity sha512-mQVHNTMyrudThSMs4XFYSBbvDPABWRAUimrWfC1X1BZVgfxFSdVCghq3odiNG2GX/GLHpYkzh4gfYKW7QQIOiQ==
   dependencies:
     "@gpn-prototypes/vega-button" "^0.2.5"
     "@gpn-prototypes/vega-dropdown" "^1.2.15"
@@ -1233,19 +1233,19 @@
     bem-cn "^3.0.1"
     react-popper "^2.2.3"
 
-"@gpn-prototypes/vega-dropzone@^0.1.10":
-  version "0.1.10"
-  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-dropzone/0.1.10/beb19ad05d2de86de1e1afc83ab5778ecf7c9d80fe403974cd3e06a5cf41d9cb#d74580c3f974620c419827d3aaee36d170700013"
-  integrity sha512-XolDSPVstpfkfiW6LccbQcF1MN57ObfkLVAVLqELfLT7KlP4gFJpWY+ICvusggEdYbXuYIDcciLtv5bdPrXrzw==
+"@gpn-prototypes/vega-dropzone@^0.1.12":
+  version "0.1.12"
+  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-dropzone/0.1.12/0ad1b6c29ba72eb9ef80708aed5497e09bc6d88923f493df9f1714cb8c71d5e8#8d79111862b641af615d48c24e85acc770f53a9d"
+  integrity sha512-T2Xbe47HYrzNqDG57YoTg5sOJ2pnISXBAoMVwYf6g1FGtPGZKDYZioJ9o0fAkBzmfaj3nml3JqBHCAoFIh0IbQ==
   dependencies:
-    "@gpn-prototypes/vega-file-input" "^0.1.5"
+    "@gpn-prototypes/vega-file-input" "^0.1.7"
     "@gpn-prototypes/vega-hooks" "^0.5.6"
     bem-cn "^3.0.1"
 
-"@gpn-prototypes/vega-file-input@^0.1.5":
-  version "0.1.5"
-  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-file-input/0.1.5/cfa5d586fed4b585b009b7bd25e577ae1c36ce3cfc7da30626c6884e071882b1#6d249eef5982e06ae4242a9a5c1bacffd7f9b117"
-  integrity sha512-kAOfHla7XRiXbhhiDfXHGItOdCH3WiEri7D0dRmd82SSLd97WzcuNKcCBj4JvFJ8BTYueW56/LVhfatqFddarQ==
+"@gpn-prototypes/vega-file-input@^0.1.7":
+  version "0.1.7"
+  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-file-input/0.1.7/c937d5a946ec1df9181609bd1fe5c6b3ed717393cc80da5439b78b9499eab7f1#0dbc57df9dcffa1d4d085b3aad2828cfd542015e"
+  integrity sha512-JLBG1hVzai7YNvtTj0ZNUH4wsgJefMkTVwfSg3drspABAnuYlZGr0wReLxFESlTBZdFbTAutuUJg8+H1tvc1qw==
   dependencies:
     "@gpn-prototypes/vega-button" "^0.2.5"
     bem-cn "^3.0.1"
@@ -1509,10 +1509,10 @@
     "@gpn-prototypes/vega-tooltip" "^0.0.5"
     bem-cn "^3.0.1"
 
-"@gpn-prototypes/vega-ui@^2.15.11":
-  version "2.15.11"
-  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-ui/2.15.11/065b952e5335559167ad862ff516d7170714a1f4636b148de529306ab998adb6#59bce15a41815110a6ee950a5cd847724ced7d17"
-  integrity sha512-gFKN/RFrEBKmwVvAq/Ojhb34LaMaaWxAgI3S/kTA+9M5QeZRQMitRqn29RwiXhzYd61FEKmszj/qQMm0pnq0Cw==
+"@gpn-prototypes/vega-ui@^2.15.13":
+  version "2.15.13"
+  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-ui/2.15.13/2c57cf300262b7faa219c68fbf349cd7726ab5f2af53b4ff348c283f0db1c311#ea79b5c5d27b124e412c757561e3bdf9a29e3813"
+  integrity sha512-TZrAvlhIjCXnxP7e8+P7K/+DZTehE7rFk3F1Vq6qCAIpslX/uGfIn5cCFC0wsqNIKUrc/63wWGaXsVY0Gh1CIw==
   dependencies:
     "@gpn-prototypes/vega-animation" "^0.0.3"
     "@gpn-prototypes/vega-attach" "^0.1.8"
@@ -1520,15 +1520,15 @@
     "@gpn-prototypes/vega-badge" "^0.1.11"
     "@gpn-prototypes/vega-basic-select" "^0.0.4"
     "@gpn-prototypes/vega-button" "^0.2.5"
-    "@gpn-prototypes/vega-canvas" "^0.1.8"
+    "@gpn-prototypes/vega-canvas" "^0.1.10"
     "@gpn-prototypes/vega-carousel" "^0.0.16"
     "@gpn-prototypes/vega-checkbox" "^0.1.10"
     "@gpn-prototypes/vega-choice-group" "^0.1.13"
     "@gpn-prototypes/vega-combobox" "^0.1.2"
     "@gpn-prototypes/vega-dropdown" "^1.2.15"
-    "@gpn-prototypes/vega-dropzone" "^0.1.10"
+    "@gpn-prototypes/vega-dropzone" "^0.1.12"
     "@gpn-prototypes/vega-file" "^0.1.10"
-    "@gpn-prototypes/vega-file-input" "^0.1.5"
+    "@gpn-prototypes/vega-file-input" "^0.1.7"
     "@gpn-prototypes/vega-form" "^0.1.9"
     "@gpn-prototypes/vega-header" "^0.1.15"
     "@gpn-prototypes/vega-hooks" "^0.5.6"
