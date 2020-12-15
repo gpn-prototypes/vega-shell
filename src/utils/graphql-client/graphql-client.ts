@@ -6,6 +6,7 @@ import {
   HttpOptions,
   InMemoryCache,
   NormalizedCacheObject,
+  ServerParseError,
 } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
@@ -55,8 +56,9 @@ export function normalizeUri(uri: string): string {
 }
 
 export const createAuthLink = (identity: Identity): ApolloLink => {
-  return setContext((_, { headers }) => {
-    const token = identity.getToken();
+  return setContext(async (_, { headers }) => {
+    const token = await identity.getToken();
+
     return {
       headers: {
         ...headers,
@@ -66,8 +68,23 @@ export const createAuthLink = (identity: Identity): ApolloLink => {
   });
 };
 
+const isServerParseError = (
+  error: Error | ServerError | ServerParseError | undefined,
+): error is ServerParseError => {
+  return error !== undefined && 'name' in error && error.name === 'ServerParseError';
+};
+
 export const createErrorLink = (config: ResponseLinkConfig): ApolloLink =>
   onError((error) => {
+    if (isServerParseError(error.networkError)) {
+      try {
+        JSON.parse(error.networkError.bodyText);
+      } catch (e) {
+        // eslint-disable-next-line no-param-reassign
+        error.networkError.message = error.networkError.bodyText;
+      }
+    }
+
     if (error.networkError && 'statusCode' in error.networkError) {
       if (error.networkError.statusCode === 500) {
         config.handleError({

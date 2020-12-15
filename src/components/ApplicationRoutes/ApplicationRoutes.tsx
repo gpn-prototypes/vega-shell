@@ -43,6 +43,10 @@ export const ApplicationRoutes = (): React.ReactElement => {
         if ([404, 500].includes(payload.code)) {
           setServerError(payload);
         }
+
+        if (payload.code === 401) {
+          identity.logout({ destroyTokens: false });
+        }
       },
     );
 
