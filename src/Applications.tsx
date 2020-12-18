@@ -8,7 +8,7 @@ import { ApplicationRoutes, Snackbar } from './components';
 
 import './App.css';
 
-type Props = AppContextProps;
+type Props = Omit<AppContextProps, 'serverError' | 'setServerError'>;
 
 export const Applications = (props: Props): React.ReactElement => {
   const [serverError, setServerError] = React.useState<ServerError | null>(null);
