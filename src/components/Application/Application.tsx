@@ -12,7 +12,7 @@ type Props = {
 };
 
 export const Application: React.FC<Props> = ({ name, wrapClassName, wrapWith }) => {
-  const context = useAppContext();
+  const { serverError, ...context } = useAppContext();
   const [isLoading, setIsLoading] = useState(true);
 
   const handleParcelMount = (): void => {
@@ -39,6 +39,10 @@ export const Application: React.FC<Props> = ({ name, wrapClassName, wrapWith }) 
       setIsLoading(false);
     }
   };
+
+  if (serverError !== null) {
+    return null;
+  }
 
   return (
     <>

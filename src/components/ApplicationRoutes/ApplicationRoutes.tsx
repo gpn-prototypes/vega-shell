@@ -21,9 +21,8 @@ const NotFoundView = () => (
 
 export const ApplicationRoutes = (): React.ReactElement => {
   const context = useAppContext();
+  const { serverError, setServerError } = context;
   const { bus, identity } = context;
-
-  const [serverError, setServerError] = useState<ServerError | null>(null);
 
   const location = useLocation();
 

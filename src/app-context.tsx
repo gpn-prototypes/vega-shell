@@ -14,6 +14,8 @@ export type AppContextProps = {
   graphqlClient: GraphQLClient;
   bus: BrowserMessageBus;
   notifications: Notifications;
+  serverError: ServerError | null;
+  setServerError: (serverError: ServerError | null) => void;
 };
 
 const identity = new Identity({ apiUrl: '/api' });
@@ -28,6 +30,8 @@ export const AppContext = createContext<AppContextProps>({
   }),
   bus: BrowserMessageBus.create(),
   notifications: new Notifications(),
+  serverError: null,
+  setServerError: () => {},
 });
 
 export const useAppContext = (): AppContextProps => useContext(AppContext);
