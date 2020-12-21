@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { v4 as uuidv4 } from 'uuid';
 
-import { MessageBus } from '../message-bus/types';
+import { MessageBus } from '../message-bus';
 
 import { Notification, NotificationProps } from './notification/notification';
 import { Notifications } from './notifications/notifications';

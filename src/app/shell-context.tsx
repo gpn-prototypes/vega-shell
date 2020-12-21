@@ -5,7 +5,7 @@ import type { History } from 'history';
 import type { GraphQLClient, ServerError } from '../services/graphql-client';
 import type { Identity } from '../services/identity';
 import type { MessageBus } from '../services/message-bus';
-import type { Notifications } from '../services/notifications';
+import type { NotificationCenter } from '../services/notifications';
 
 import type { Shell } from './shell';
 
@@ -20,7 +20,7 @@ interface ShellAPI {
   identity: Identity;
   graphqlClient: GraphQLClient;
   bus: MessageBus;
-  notifications: Notifications;
+  notificationCenter: NotificationCenter;
   serverError: ServerError | null;
   setServerError: (serverError: ServerError | null) => void;
 }
@@ -36,7 +36,7 @@ export const ShellProvider: React.FC<ShellProps> = (props) => {
     () => ({
       history: shell.history,
       identity: shell.identity,
-      notifications: shell.notifications,
+      notificationCenter: shell.notificationCenter,
       bus: shell.messageBus,
       graphqlClient: shell.graphQLClient,
       serverError,

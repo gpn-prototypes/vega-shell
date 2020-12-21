@@ -5,7 +5,7 @@ import type { GraphQLClient, GraphQLClientConfig } from '../services/graphql-cli
 import { createGraphqlClient, ServerError } from '../services/graphql-client';
 import { Identity } from '../services/identity';
 import { MessageBus } from '../services/message-bus';
-import { Notifications } from '../services/notifications';
+import { NotificationCenter } from '../services/notifications';
 
 interface Config {
   baseApiUrl: string;
@@ -17,7 +17,7 @@ export class Shell {
 
   readonly messageBus: MessageBus;
 
-  readonly notifications: Notifications;
+  readonly notificationCenter: NotificationCenter;
 
   readonly identity: Identity;
 
@@ -26,7 +26,7 @@ export class Shell {
   constructor(config: Config) {
     this.history = createBrowserHistory();
     this.messageBus = MessageBus.create();
-    this.notifications = new Notifications();
+    this.notificationCenter = new NotificationCenter({ bus: this.messageBus });
 
     this.identity = new Identity({
       apiUrl: config.baseApiUrl,
