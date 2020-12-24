@@ -11,6 +11,8 @@ import { DocumentNode, visit } from 'graphql';
 import type { Config as DiffPatcherConfig } from 'jsondiffpatch';
 import * as jsonDiffPatch from 'jsondiffpatch';
 
+import { omitTypename } from '../utils';
+
 import { ProjectDiffResolverError } from './error';
 
 export type Data = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -42,7 +44,6 @@ interface Options<V = OperationVariables, D = Data> {
   projectAccessor: ProjectAccessor<V, D>;
   mergeStrategy: MergeStrategy;
 }
-
 export class ProjectDiffResolvingOperation {
   readonly errorTypename: string;
 
@@ -132,7 +133,7 @@ export class ProjectDiffResolvingOperation {
 
     this.getMutationNames()
       .map((name) => [data[name], name])
-      .filter(([value]) => value !== undefined && value?.result?.__typename !== this.errorTypename)
+      .filter(([value]) => value !== undefined && !this.hasDiffError(value))
       .forEach(([, name]) => {
         this.successMutationFieldNames.add(name);
       });
@@ -140,6 +141,10 @@ export class ProjectDiffResolvingOperation {
 
   private getMutationNames(): string[] {
     return Array.from(this.mutationFieldNames);
+  }
+
+  private hasDiffError(data: Data): boolean {
+    return this.errorTypename === (data.result ?? data)?.__typename;
   }
 
   private getMutationsWithDiffErrors(fetchResult: FetchResult): MutationResult[] {
@@ -151,7 +156,7 @@ export class ProjectDiffResolvingOperation {
 
     return this.getMutationNames()
       .map((name) => data[name])
-      .filter((value) => value !== undefined && value?.result?.__typename === this.errorTypename);
+      .filter((value) => value !== undefined && this.hasDiffError(value));
   }
 
   private combineFetchResults(incoming: FetchResult): void {
@@ -289,9 +294,9 @@ export class ProjectDiffResolvingOperation {
       const diff = this.resolver.diff(local, localChanges);
 
       if (diff !== undefined) {
-        const patch = this.resolver.patch({ ...affectedRemote }, diff);
+        const patched = this.resolver.patch({ ...affectedRemote }, diff);
 
-        const updatedVars = this.projectAccessor.toVariables(variables, patch);
+        const updatedVars = this.projectAccessor.toVariables(variables, omitTypename(patched));
 
         this.updateOperation(updatedVars);
         return;
