@@ -1495,10 +1495,10 @@
   dependencies:
     "@consta/uikit" "^1.10.9"
 
-"@gpn-prototypes/vega-tree@^0.0.14":
-  version "0.0.14"
-  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-tree/0.0.14/30f126294a99502a70255fcb9e1c62676fa12b445a187f0df017445f94b4bcf6#deaf1f2412b5b698eaf57c4d81fc1e6d84c6fa49"
-  integrity sha512-AXlVazsalovt7POTvIoDT43z2zIUyCRqPMRvGysgVuicJyGz4MvbBdZPixQrkd9XQltbGKYd39zk9vK5GiL0Yw==
+"@gpn-prototypes/vega-tree@^0.0.13":
+  version "0.0.13"
+  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-tree/0.0.13/4a1ea70636be4817f0ded8583647b36cdbafc853d603698ff18179d9fed55bbb#9b561e19d563908ec2c868a6349159b5e608ddfb"
+  integrity sha512-egaU1lK/Mf4QCneFZDDqJMYSp87Rtp5bDHy79qdfPMjE6U+JVlBXiAyv5UqITL/6M1JcJohl+XDLM8jPOOcz/Q==
   dependencies:
     "@gpn-prototypes/vega-button" "^0.2.5"
     "@gpn-prototypes/vega-hooks" "^0.5.7"
@@ -1508,10 +1508,10 @@
     "@gpn-prototypes/vega-tooltip" "^0.0.5"
     bem-cn "^3.0.1"
 
-"@gpn-prototypes/vega-ui@^2.16.1":
-  version "2.16.1"
-  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-ui/2.16.1/7518bee3a78f92ba328131a0b58281d69d3a9fe208c038c7baa8f9cf636bcded#3522c645cd4cf51cd5f76817f68eae21280e08d0"
-  integrity sha512-xF7QiCtODyR0xbQB8K+9OvcZfQveMrneNqge5LFsQFHXS08LnsexG7OamK2uT8UG2N94DCa0Qzc/sNXYtpJCew==
+"@gpn-prototypes/vega-ui@^2.15.16":
+  version "2.15.16"
+  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-ui/2.15.16/b2cf05cd2139929df6e9febf64845278c4a06f05be204b5eb9b2c4fe75cc788b#2078649e19ea8fcc5b2effb5246200ccefd0932a"
+  integrity sha512-/xvwyUJkc42dMF5K1vXGjZYxCyU3jXNulromsuWw38PPNxrPDe7PMA4MBPbA4X8ahZK0FHjg0Nsl7Qg5leu89Q==
   dependencies:
     "@gpn-prototypes/vega-animation" "^0.0.3"
     "@gpn-prototypes/vega-attach" "^0.1.8"
@@ -1519,7 +1519,7 @@
     "@gpn-prototypes/vega-badge" "^0.1.11"
     "@gpn-prototypes/vega-basic-select" "^0.0.4"
     "@gpn-prototypes/vega-button" "^0.2.5"
-    "@gpn-prototypes/vega-canvas" "^0.2.0"
+    "@gpn-prototypes/vega-canvas" "^0.1.11"
     "@gpn-prototypes/vega-carousel" "^0.0.16"
     "@gpn-prototypes/vega-checkbox" "^0.1.10"
     "@gpn-prototypes/vega-choice-group" "^0.1.13"
@@ -1558,7 +1558,7 @@
     "@gpn-prototypes/vega-theme" "^0.0.9"
     "@gpn-prototypes/vega-timer" "^0.1.8"
     "@gpn-prototypes/vega-tooltip" "^0.0.5"
-    "@gpn-prototypes/vega-tree" "^0.0.14"
+    "@gpn-prototypes/vega-tree" "^0.0.13"
     "@gpn-prototypes/vega-user" "^0.1.10"
 
 "@gpn-prototypes/vega-user@^0.1.10":
