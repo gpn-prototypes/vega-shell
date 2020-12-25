@@ -1495,10 +1495,10 @@
   dependencies:
     "@consta/uikit" "^1.10.9"
 
-"@gpn-prototypes/vega-tree@^0.0.12":
-  version "0.0.12"
-  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-tree/0.0.12/3d0002da1d77314f1ac8f42b908bccf950732ddd080a78fd917ea562a1532aa2#8e3a84885712940eed2d1300f2a3cc8414391aa1"
-  integrity sha512-PIgBV+8nbw+cEhJALneqxeHE4NqZAELoSVNlX6hkFXXkay0rnv7LWzNYexUzqCdDR164yAiLcCH1DUNeiT7ZxQ==
+"@gpn-prototypes/vega-tree@^0.0.13":
+  version "0.0.13"
+  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-tree/0.0.13/4a1ea70636be4817f0ded8583647b36cdbafc853d603698ff18179d9fed55bbb#9b561e19d563908ec2c868a6349159b5e608ddfb"
+  integrity sha512-egaU1lK/Mf4QCneFZDDqJMYSp87Rtp5bDHy79qdfPMjE6U+JVlBXiAyv5UqITL/6M1JcJohl+XDLM8jPOOcz/Q==
   dependencies:
     "@gpn-prototypes/vega-button" "^0.2.5"
     "@gpn-prototypes/vega-hooks" "^0.5.7"
@@ -1508,10 +1508,10 @@
     "@gpn-prototypes/vega-tooltip" "^0.0.5"
     bem-cn "^3.0.1"
 
-"@gpn-prototypes/vega-ui@^2.15.15":
-  version "2.15.15"
-  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-ui/2.15.15/d8390133bff4b053bf3ea98d424141899d9a23824930ec47b95237ae9b618909#0a901b97aa536b2e156dc5e7273adbe61e8bdff1"
-  integrity sha512-BGrHR5u0eELMD/Wu2D5kxr9AfZ9+8I/chzswkBid0LMAJGKS+9UlNYu3JdJ+pZJTcdRorOMRrYKRme0JD7qxbg==
+"@gpn-prototypes/vega-ui@^2.15.16":
+  version "2.15.16"
+  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-ui/2.15.16/b2cf05cd2139929df6e9febf64845278c4a06f05be204b5eb9b2c4fe75cc788b#2078649e19ea8fcc5b2effb5246200ccefd0932a"
+  integrity sha512-/xvwyUJkc42dMF5K1vXGjZYxCyU3jXNulromsuWw38PPNxrPDe7PMA4MBPbA4X8ahZK0FHjg0Nsl7Qg5leu89Q==
   dependencies:
     "@gpn-prototypes/vega-animation" "^0.0.3"
     "@gpn-prototypes/vega-attach" "^0.1.8"
@@ -1558,7 +1558,7 @@
     "@gpn-prototypes/vega-theme" "^0.0.9"
     "@gpn-prototypes/vega-timer" "^0.1.8"
     "@gpn-prototypes/vega-tooltip" "^0.0.5"
-    "@gpn-prototypes/vega-tree" "^0.0.12"
+    "@gpn-prototypes/vega-tree" "^0.0.13"
     "@gpn-prototypes/vega-user" "^0.1.10"
 
 "@gpn-prototypes/vega-user@^0.1.10":
