@@ -8,6 +8,7 @@ export interface Message<P = any> {
 }
 interface MessageParams {
   self: boolean;
+  broadcast: boolean;
 }
 
 export type MessageInput<P = any> = Message<P> & Partial<MessageParams>;
