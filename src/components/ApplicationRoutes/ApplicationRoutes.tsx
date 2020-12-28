@@ -22,7 +22,7 @@ const NotFoundView = () => (
 export const ApplicationRoutes = (): React.ReactElement => {
   const context = useAppContext();
   const { serverError, setServerError } = context;
-  const { bus, identity } = context;
+  const { bus, identity, notifications } = context;
 
   const location = useLocation();
 
@@ -45,6 +45,15 @@ export const ApplicationRoutes = (): React.ReactElement => {
 
         if (payload.code === 401) {
           identity.logout({ destroyTokens: false });
+          notifications.add({
+            key: `auth-error`,
+            status: 'alert',
+            message:
+              'Что-то пошло не так. Для повторного входа в\u00A0систему введите свои e-mail и\u00A0пароль',
+            onClose(item) {
+              notifications.remove(item.key);
+            },
+          });
         }
       },
     );
