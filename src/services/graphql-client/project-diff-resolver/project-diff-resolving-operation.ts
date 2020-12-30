@@ -283,21 +283,11 @@ export class ProjectDiffResolvingOperation {
 
     const localChanges = this.projectAccessor.fromVariables(variables);
 
-    const affectedRemote: Data = {
-      version: remote.version,
-    };
-
-    Object.keys(localChanges).forEach((key) => {
-      if (remote[key] !== undefined) {
-        affectedRemote[key] = remote[key];
-      }
-    });
-
     if (this.mergeStrategy.default === 'smart') {
       const diff = this.resolver.diff(local, localChanges);
 
       if (diff !== undefined) {
-        const patched = this.resolver.patch({ ...affectedRemote }, diff);
+        const patched = this.resolver.patch(remote, diff);
 
         const updatedVars = this.projectAccessor.toVariables(variables, omitTypename(patched));
 
