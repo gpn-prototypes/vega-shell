@@ -34,9 +34,9 @@ export class PubSub {
 }
 
 export class Notifications {
-  public notifications: Array<Notification>;
+  public notifications: Notification[];
 
-  protected listeners: PubSub;
+  public listeners: PubSub;
 
   constructor() {
     this.notifications = [];
@@ -48,17 +48,21 @@ export class Notifications {
 
     this.notifications = [...this.notifications, notification];
 
-    this.triggerChange();
-  }
-
-  public triggerChange(): void {
-    this.listeners.publish('notifications:change', { notifications: this.notifications });
+    this.publish<{ notifications: Array<Notification> }>('change', {
+      notifications: this.notifications,
+    });
   }
 
   public remove(id: string): void {
     this.notifications = this.notifications.filter((i) => i.id !== id);
 
-    this.triggerChange();
+    this.publish<{ notifications: Array<Notification> }>('change', {
+      notifications: this.notifications,
+    });
+  }
+
+  public publish<T = any>(topic: string, payload: T): void {
+    this.listeners.publish(`notifications:${topic}`, payload);
   }
 
   public subscribe(topic: Topic, cb: Callback): Unsubscribe {

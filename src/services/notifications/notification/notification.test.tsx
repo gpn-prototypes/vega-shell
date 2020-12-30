@@ -10,7 +10,7 @@ describe('Notification', () => {
       notification = new Notification({
         id: 'text',
         body,
-        maxBodyLength: 5,
+        truncatedLength: 5,
       });
     });
 
@@ -29,10 +29,9 @@ describe('Notification', () => {
     const notification = new Notification({
       id: 'text',
       body,
-      maxBodyLength: 50,
+      truncatedLength: 50,
     });
     expect(notification.body).toEqual('Lorem ipsum dolor sit amet');
-    expect(notification.canSliceBody).toBe(false);
   });
   it('отображается весь текст, если withShowMore=false', () => {
     const text = 'Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet Lorem ipsum dolor sit amet';

@@ -4,6 +4,7 @@ import { SnackBar as BaseSnackbar, usePortalRender } from '@gpn-prototypes/vega-
 
 import { useShell } from '../../app/shell-context';
 import { Notification, View } from '../../services/notifications/notification/notification';
+import { ACTION_DELIMITER } from '../../services/notifications/notificationCenter';
 import { Action } from '../../services/notifications/types';
 
 import './Snackbar.css';
@@ -66,13 +67,18 @@ export const Snackbar = (): React.ReactElement => {
               })
             : [];
 
-          if (item.canSliceBody) {
+          const visibleActionShowMore =
+            item.withShowMore && item.rawBody.length > item.truncatedLength;
+
+          if (visibleActionShowMore) {
             actions = [
               {
                 label: !item.visibleMore ? 'Показать' : 'Свернуть',
                 onClick() {
                   item.toggleShowMore();
-                  shell.notificationCenter.triggerChange();
+                  shell.notificationCenter.publish<{ notifications: Notification[] }>('change', {
+                    notifications: shell.notificationCenter.notifications.notifications,
+                  });
                 },
               },
               ...actions,
@@ -86,10 +92,19 @@ export const Snackbar = (): React.ReactElement => {
             autoClose: item.autoClose,
             actions,
             onClose: () => {
-              shell.notificationCenter.remove(item.id);
+              shell.notificationCenter.dispatchAction<string>(
+                {
+                  namespace: item.namespace,
+                  action: 'close',
+                  delimiter: ACTION_DELIMITER.system,
+                  shared: false,
+                },
+                item.id,
+              );
             },
           });
         });
+
         setNotifications(items);
       },
     );

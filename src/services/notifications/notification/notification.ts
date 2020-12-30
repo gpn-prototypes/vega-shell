@@ -14,7 +14,7 @@ export type NotificationProps = {
   actions?: Action[];
   icon?: string;
   withShowMore?: boolean;
-  maxBodyLength?: number;
+  truncatedLength?: number;
   autoClose?: number;
 };
 
@@ -33,9 +33,7 @@ export class Notification {
 
   public visibleMore: boolean;
 
-  public readonly maxBodyLength: number;
-
-  public readonly canSliceBody: boolean;
+  public readonly truncatedLength: number;
 
   public readonly namespace;
 
@@ -55,28 +53,27 @@ export class Notification {
       shared = false,
       closable = true,
       withShowMore = true,
-      maxBodyLength = TWO_ROW_SYMBOLS,
+      truncatedLength = TWO_ROW_SYMBOLS,
       namespace = 'common',
     } = props;
 
-    const canSliceBody = withShowMore && body.length > maxBodyLength;
+    const canTruncateBody = withShowMore && body.length > truncatedLength;
 
     this.id = id;
     this.rawBody = body;
-    this.body = canSliceBody ? Notification.sliceText(body, maxBodyLength) : body;
+    this.body = canTruncateBody ? Notification.truncate(body, truncatedLength) : body;
     this.actions = actions;
     this.shared = shared;
     this.namespace = namespace;
     this.closable = closable;
-    this.canSliceBody = canSliceBody;
     this.withShowMore = withShowMore;
     this.visibleMore = false;
-    this.maxBodyLength = maxBodyLength;
+    this.truncatedLength = truncatedLength;
     this.view = view;
     this.autoClose = autoClose;
   }
 
-  static sliceText(text: string, length: number): string {
+  static truncate(text: string, length: number): string {
     return `${text.slice(0, length)}...`;
   }
 
@@ -84,7 +81,7 @@ export class Notification {
     if (!this.visibleMore) {
       this.body = this.rawBody;
     } else {
-      this.body = Notification.sliceText(this.rawBody, this.maxBodyLength);
+      this.body = Notification.truncate(this.rawBody, this.truncatedLength);
     }
 
     this.visibleMore = !this.visibleMore;

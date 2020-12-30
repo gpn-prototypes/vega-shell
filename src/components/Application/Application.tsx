@@ -25,8 +25,8 @@ export const Application: React.FC<Props> = ({ name, wrapClassName, wrapWith }) 
 
   const handleServiceError = (): void => {
     System.delete(System.resolve(name));
-    shell.notifications.add({
-      message: `Ошибка загрузки модуля «${name}»`,
+    shell.notificationCenter.add({
+      body: `Ошибка загрузки модуля «${name}»`,
       view: 'alert',
     });
 
