@@ -90,6 +90,9 @@ export class ProjectDiffResolvingOperation {
     this.mergeStrategy = options.mergeStrategy;
 
     this.resolver = jsonDiffPatch.create({
+      objectHash(item, index) {
+        return item?.vid || `$$index:${index}`;
+      },
       textDiff: {
         minLength: Infinity,
       },
