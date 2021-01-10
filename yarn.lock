@@ -1173,10 +1173,10 @@
   dependencies:
     "@consta/uikit" "^1.10.9"
 
-"@gpn-prototypes/vega-canvas@^0.2.0":
-  version "0.2.0"
-  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-canvas/0.2.0/89eef75654aca1dd27085e32ade32cf073295792a2f22827a697894407c9022e#1555409e752f10091dfc6ce4e1450cc8955859a2"
-  integrity sha512-Q99AK6a22z/oBwikVetmfdpwd4ih8mB53DwPxIEDeZ+W0i8pjvqTz1sfVbp00NqRP/7P+uy/g2Q8I2dmoQp3Rg==
+"@gpn-prototypes/vega-canvas@^0.1.11":
+  version "0.1.11"
+  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-canvas/0.1.11/5412af08d3aa68b5896ac466068d533cf79a31c9d49dc717a28b38844f960ca9#f73c4ce51fc5bd3b85854dd3124f9dfb7d908158"
+  integrity sha512-QZ9tOhx9Nx0O2c2xI0eIDNcldAOkLILYszM2PUW7sAs1KYbkL6cLlCfxS6Vr9Ol1mBc03YgYjp0rlhoGHw80VQ==
   dependencies:
     "@gpn-prototypes/vega-button" "^0.2.5"
     "@gpn-prototypes/vega-dropdown" "^1.2.16"
