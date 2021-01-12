@@ -1,5 +1,7 @@
 .vega-shell-snackbar {
   width: 400px;
+
+  word-break: break-word;
 }
 
 .vega-shell-snackbar-container {
