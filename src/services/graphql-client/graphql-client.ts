@@ -97,8 +97,10 @@ export const createErrorLink = (config: ResponseLinkConfig): ApolloLink =>
 
       if (error.networkError.statusCode === 401) {
         config.handleError({ code: 401, message: 'unauthorized' });
+        return error.forward(error.operation);
       }
     }
+    return undefined;
   });
 
 export const createResponseLink = (config: ResponseLinkConfig): ApolloLink =>
