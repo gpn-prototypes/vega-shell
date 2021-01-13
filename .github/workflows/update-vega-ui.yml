@@ -1,7 +1,5 @@
 name: Обновлении vega-ui
 on:
-  # schedule:
-  #   - cron: "*/10 * * * *" # Каждую среду в 00:00
   workflow_dispatch:
 
 jobs:
