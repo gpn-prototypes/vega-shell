@@ -15,14 +15,17 @@ const bus = BrowserMessageBus.create();
 
 const history = createBrowserHistory();
 
-const authMessage = { channel: 'auth', topic: 'login', self: true };
-
 const handleLoggedInChange = (data: { isLoggedIn: boolean }) => {
-  bus.send({ ...authMessage, payload: { loggedIn: data.isLoggedIn } });
+  bus.send({
+    channel: 'auth',
+    topic: 'login',
+    broadcast: true,
+    payload: { loggedIn: data.isLoggedIn },
+  });
 };
 
 const handleGraphqlClientError = (err: ServerError): void => {
-  bus.send({ channel: 'error', topic: 'server-error', payload: err, self: true });
+  bus.send({ channel: 'error', topic: 'server-error', payload: err });
 };
 
 const { baseApiUrl } = getAppConfig();
