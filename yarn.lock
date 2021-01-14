@@ -1508,7 +1508,7 @@
     "@gpn-prototypes/vega-tooltip" "^0.0.6"
     bem-cn "^3.0.1"
 
-"@gpn-prototypes/vega-ui@^2.15.16":
+"@gpn-prototypes/vega-ui@^2.16.2":
   version "2.16.2"
   resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-ui/2.16.2/ca5d89ff6e0df0f9d36306773bd263970f4fb49eb825ae48a563277d5dffe7cb#13e47909a503fb7aec85fc4d9188e2a898b902ae"
   integrity sha512-thdlfB28FyK07LSDygGuQ5UaQrT3Kuduo5uAJB5UEbQaKwwsbYlKDknlfPY41aFgJPwCYqhceaGY9Viccq6Fzg==
