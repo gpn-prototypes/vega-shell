@@ -1,0 +1,35 @@
+name: Проверка покрытия
+on:
+  pull_request:
+    types: [unlabeled, opened, synchronize, reopened, ready_for_review]
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Скачивание репозитория
+        uses: actions/checkout@v2
+
+      - name: Установка ноды
+        uses: actions/setup-node@v2.1.4
+        with:
+          node-version: 12
+          registry-url: 'https://npm.pkg.github.com'
+
+      - name: Установка зависимостей
+        run: yarn install --frozen-lockfile
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Создание отчета покрытия
+        run: yarn coverage:changes
+        if: always()
+
+      - name: Проверка покрытия
+        uses: Inzephirum/gha-test-coverage-check@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          min_threshold: '100'
+          report_file_path: './coverage/lcov.info'
+
