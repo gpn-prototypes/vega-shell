@@ -33,11 +33,13 @@
   "dependencies": {
     "@apollo/client": "^3.3.3",
     "@gpn-prototypes/vega-ui": "^3.0.7",
+    "final-form": "^4.20.1",
     "graphql": "^15.3.0",
     "import-map-overrides": "^2.1.0",
     "jsondiffpatch": "^0.4.1",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
+    "react-final-form": "^6.5.2",
     "react-router-dom": "^5.2.0",
     "regenerator-runtime": "^0.13.7",
     "single-spa": "^5.8.0",
