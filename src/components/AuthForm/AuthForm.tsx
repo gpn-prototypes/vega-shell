@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Form as FinalForm } from 'react-final-form';
 import { Button, Form, Logo, Text } from '@gpn-prototypes/vega-ui';
 
 import { useAppContext } from '../../app-context';
+import { UserDataType } from '../../services/api-client';
 
 import { cnAuthForm } from './cn-auth-form';
 import { GazpromLogo } from './GazpromLogo';
@@ -11,16 +12,14 @@ import { createValidate, validators } from './validation';
 
 import './AuthForm.css';
 
+type Error = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
+};
+
 export type State = {
   login: string;
   password: string;
-};
-
-export type AuthFormProps = {
-  onLogin: (state: State) => Promise<void>;
-  isFetching?: boolean;
-  containerClassName?: string;
-  formClassName?: string;
 };
 
 const validator = createValidate<Partial<State>>({
@@ -29,6 +28,7 @@ const validator = createValidate<Partial<State>>({
 });
 
 type ValidateMap = ReturnType<typeof validator>;
+
 const testId = {
   logo: 'AuthForm:logo:gpn',
   logoVega: 'AuthForm:logo:vega',
@@ -41,23 +41,28 @@ const testId = {
   support: 'AuthForm:text:support',
 };
 
-type AuthFormComponent = React.FC<AuthFormProps> & {
-  testID: typeof testId;
+export type AuthFormProps = {
+  onLogin: (state: UserDataType) => Promise<string | null>;
+  containerClassName?: string;
 };
 
-type Error = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any;
+type AuthFormComponent = React.FC<AuthFormProps> & {
+  testId: typeof testId;
 };
 
 const authErrorMessage =
   'Неверный e-mail или пароль. Проверьте введенные данные и повторите попытку.';
 
 export const AuthForm: AuthFormComponent = (props) => {
-  const { onLogin, isFetching, containerClassName, formClassName } = props;
+  const { onLogin, containerClassName } = props;
+
   const { notifications } = useAppContext();
 
+  const [isFetching, setIsFetching] = useState(false);
+
   const handleAuthSubmit = (values: State): void => {
+    setIsFetching(true);
+
     onLogin(values).catch((error: Error) => {
       const key = `${error.code}-alert`;
       const message = error.code === 'AUTH_ERROR' ? authErrorMessage : error.message;
@@ -72,6 +77,8 @@ export const AuthForm: AuthFormComponent = (props) => {
           },
         });
       }
+
+      setIsFetching(false);
     });
   };
 
@@ -87,8 +94,8 @@ export const AuthForm: AuthFormComponent = (props) => {
           <Form
             noValidate
             onSubmit={handleSubmit}
+            className={cnAuthForm('Form')}
             data-testid={testId.form}
-            className={cnAuthForm('Form').mix(formClassName)}
           >
             <Logo className={cnAuthForm('Logo')} data-testid={testId.logoVega} />
             <Form.Row>
@@ -99,14 +106,14 @@ export const AuthForm: AuthFormComponent = (props) => {
                   </Text>
                 </Form.Label>
                 <TextField
-                  name="login"
                   id="login"
                   type="email"
+                  name="login"
                   size="l"
-                  data-testid={testId.loginInput}
                   width="full"
                   maxLength={128}
                   validateOnTouched
+                  data-testid={testId.loginInput}
                 />
               </Form.Field>
             </Form.Row>
@@ -123,9 +130,9 @@ export const AuthForm: AuthFormComponent = (props) => {
                   name="password"
                   size="l"
                   width="full"
-                  data-testid={testId.passwordInput}
                   maxLength={200}
                   validateOnTouched
+                  data-testid={testId.passwordInput}
                 />
               </Form.Field>
             </Form.Row>
@@ -159,4 +166,4 @@ export const AuthForm: AuthFormComponent = (props) => {
   );
 };
 
-AuthForm.testID = testId;
+AuthForm.testId = testId;

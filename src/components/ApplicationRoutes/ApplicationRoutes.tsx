@@ -97,7 +97,6 @@ export const ApplicationRoutes = (): React.ReactElement => {
         {isLoggedIn && <Redirect from="/" to="/projects" exact />}
         <Route exact path={AUTH_PATH}>
           {isLoggedIn && <Redirect to={getLoginRedirectPath()} />}
-          {/* <Application name="@vega/auth" /> */}
           <AuthPage />
         </Route>
         <Route path="/projects">

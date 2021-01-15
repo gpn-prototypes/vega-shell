@@ -7,18 +7,16 @@ function renderComponent(props: AuthFormProps): RenderResult {
   return render(<AuthForm {...props} />);
 }
 
-const onLogin = jest.fn(() => Promise.resolve());
-
 function findLoginInput(): HTMLElement {
-  return screen.getByTestId(AuthForm.testID.loginInput);
+  return screen.getByTestId(AuthForm.testId.loginInput);
 }
 
 function findPasswordInput(): HTMLElement {
-  return screen.getByTestId(AuthForm.testID.passwordInput);
+  return screen.getByTestId(AuthForm.testId.passwordInput);
 }
 
 function findSubmitButton(): HTMLElement {
-  return screen.getByTestId(AuthForm.testID.submit);
+  return screen.getByTestId(AuthForm.testId.submit);
 }
 
 function getInputs(): ChildNode[] {
@@ -44,13 +42,28 @@ function submitIncorrectData(): void {
   fireEvent.click(findSubmitButton());
 }
 
-describe('AuthForm', () => {
-  test('рендерится без ошибок', () => {
-    expect(renderComponent).not.toThrow();
-  });
+const onLogin = jest.fn(() => Promise.resolve(''));
 
+jest.mock('../../app-context', () => {
+  return {
+    useAppContext: () => {
+      return {
+        notifications: {
+          add: () => {},
+          remove: () => {},
+        },
+      };
+    },
+  };
+});
+
+describe('AuthForm', () => {
   beforeEach(() => {
     onLogin.mockClear();
+  });
+
+  test('рендерится без ошибок', () => {
+    expect(renderComponent).not.toThrow();
   });
 
   test('если ввести корректные данные и засабмитить форму, то вызовется onLogin', () => {
@@ -91,8 +104,15 @@ describe('AuthForm', () => {
     expect(findPasswordInput().classList.contains('TextField_state_alert')).toBe(true);
   });
 
-  test('если isFetching = true, то в кнопке рендерится лоадер', () => {
-    renderComponent({ onLogin, isFetching: true });
+  test('если засабмитить форму, то в кнопке рендерится лоадер', () => {
+    renderComponent({ onLogin });
+
+    const [loginInput, passwordInput] = getInputs();
+
+    fireEvent.change(loginInput, { target: { value: 'test@gpn.ru' } });
+    fireEvent.change(passwordInput, { target: { value: '12345678' } });
+
+    fireEvent.click(findSubmitButton());
 
     const submitButton = findSubmitButton();
 

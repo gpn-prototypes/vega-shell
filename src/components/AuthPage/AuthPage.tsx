@@ -11,12 +11,12 @@ import { cnAuthPage } from './cn-auth-page';
 
 import './AuthPage.css';
 
-type Slide = {
+type SlideType = {
   caption: string;
   img: string;
 };
 
-const slides: Slide[] = [
+const slides: SlideType[] = [
   { caption: 'Быстрое создание проекта', img: imgCreate },
   { caption: 'Удобное заполнение Ресурсной Базы и рисков', img: imgRb },
   { caption: 'Наглядный результат расчёта Ресурсной Базы ', img: imgTotal },
@@ -31,9 +31,9 @@ type AuthPageType = React.FC & {
 };
 
 export const AuthPage: AuthPageType = () => {
-  const [idx, setIdx] = useState(0);
   const { identity, notifications } = useAppContext();
 
+  const [slideIdx, setSlideIdx] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -41,18 +41,19 @@ export const AuthPage: AuthPageType = () => {
 
     if (useUnstableAuthSSO === 'true') {
       identity?.authSSO().catch(() => {
-        setIsLoading(false);
-
         const key = 'sso-error-alert';
+        const message = 'При входе возникла ошибка, войдите с помощью учетной записи';
 
         notifications.add({
           key,
-          message: 'При входе возникла ошибка, войдите с помощью учетной записи',
+          message,
           status: 'alert',
           onClose: () => {
             notifications.remove(key);
           },
         });
+
+        setIsLoading(false);
       });
     } else {
       setIsLoading(false);
@@ -67,17 +68,11 @@ export const AuthPage: AuthPageType = () => {
 
   return (
     <div className={cnAuthPage()}>
-      <AuthForm
-        isFetching={false}
-        // @ts-expect-error: ожидает типы
-        onLogin={identity?.auth}
-        containerClassName={cnAuthPage('FormContainer')}
-        formClassName={cnAuthPage('Form')}
-      />
+      <AuthForm onLogin={identity.auth} containerClassName={cnAuthPage('FormContainer')} />
       <div className={cnAuthPage('Teaser')}>
         <Carousel
-          currentIdx={idx}
-          onChange={setIdx}
+          currentIdx={slideIdx}
+          onChange={setSlideIdx}
           className={cnAuthPage('TeaserCarousel')}
           testId={testId.carousel}
         >
