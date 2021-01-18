@@ -11,6 +11,7 @@
     "dev": "webpack-dev-server --mode=development --port 9000 --env.isLocal=true --env.port=9000",
     "test": "cross-env BABEL_ENV=test jest --passWithNoTests",
     "coverage": "jest --all --coverage",
+    "coverage:changes": "jest --coverage --onlyChanged",
     "format": "prettier --write {src,types,scripts}/**/*.{json,{j,t}s{,x},css,}",
     "build": "rimraf dist && cross-env NODE_ENV=production webpack --mode=production",
     "lint": "npm-run-all lint:*",
