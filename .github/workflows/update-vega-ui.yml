@@ -1,0 +1,34 @@
+name: Обновлении vega-ui
+on:
+  workflow_dispatch:
+
+jobs:
+  update:
+    name: Update
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@gpn-prototypes'
+
+      - name: Upgrade dependencies
+        run: |
+          yarn
+          yarn upgrade @gpn-prototypes/vega-ui --latest
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3.5.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: Обновление версии vega-ui
+          title: Обновление vega-ui
+          body: |
+            Обновление vega-ui до актуальной версии
+          labels: dependencies
+          branch: upgrade--dependencies
