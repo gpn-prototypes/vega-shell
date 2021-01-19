@@ -23,7 +23,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Создание отчета покрытия
-        run: yarn coverage:changes
+        run: yarn coverage
         if: always()
 
       - name: Проверка покрытия
