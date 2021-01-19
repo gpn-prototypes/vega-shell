@@ -5,7 +5,3 @@ export interface NavLinkType extends NavItemType {
   routes?: string[];
   testId: string;
 }
-
-export type Params = {
-  projectId?: string;
-};
