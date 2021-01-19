@@ -1173,10 +1173,10 @@
   dependencies:
     "@consta/uikit" "^1.10.13"
 
-"@gpn-prototypes/vega-canvas@^0.2.1":
-  version "0.2.1"
-  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-canvas/0.2.1/341f2c811d83d3d4ee68f4d40a3816f6205a083737e25fe664175f6dfddbf18d#ae294610c5f34d33d101780512cb2c2f12d4234b"
-  integrity sha512-s6O/Agl/mJnFSHHGlC0iabrggCuggPIBoV4sbu1JniI5X4NqgOKYFnAbshjBzN/+6K5aI3JYwBO82IS2ZSecnA==
+"@gpn-prototypes/vega-canvas@^0.2.2":
+  version "0.2.2"
+  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-canvas/0.2.2/da8ddcfe70729a6b517766ac73ede2022ead04e26d1c77b183f8bf29959649d0#21800d232c266e57c02825ec067d4979efc938df"
+  integrity sha512-WcdwKf2kZBOENJXPYUTH4yqVz2lObsUbG3IfDI7DD1gPR744rR3ybRbdOsAUJLAsMCaPD3t+yvr6s2XXrTQq0A==
   dependencies:
     "@gpn-prototypes/vega-button" "^0.2.6"
     "@gpn-prototypes/vega-dropdown" "^1.2.17"
@@ -1331,6 +1331,13 @@
     "@gpn-prototypes/vega-icons" "^0.2.9"
     "@gpn-prototypes/vega-root" "^0.2.13"
     bem-cn "^3.0.1"
+
+"@gpn-prototypes/vega-multi-combobox@^0.1.0":
+  version "0.1.0"
+  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-multi-combobox/0.1.0/fa122d885a74cdf08618142900f40be3951ee8526d361db8ac0814039f5ffc10#5ffceb42f571524630cec80f7a93e6139c672570"
+  integrity sha512-Di2Ha4taLEYTYSxDLIJiHYMOmZu+onRXBWaQ8+YXZrYSSSGRCbz39aaLesQY4FTqxhd19y15BWDdFgY/q/VGwQ==
+  dependencies:
+    "@consta/uikit" "^1.10.13"
 
 "@gpn-prototypes/vega-navigation-list@^1.0.1", "@gpn-prototypes/vega-navigation-list@^1.0.4":
   version "1.0.4"
@@ -1508,10 +1515,10 @@
     "@gpn-prototypes/vega-tooltip" "^0.0.6"
     bem-cn "^3.0.1"
 
-"@gpn-prototypes/vega-ui@^2.16.2":
-  version "2.16.2"
-  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-ui/2.16.2/ca5d89ff6e0df0f9d36306773bd263970f4fb49eb825ae48a563277d5dffe7cb#13e47909a503fb7aec85fc4d9188e2a898b902ae"
-  integrity sha512-thdlfB28FyK07LSDygGuQ5UaQrT3Kuduo5uAJB5UEbQaKwwsbYlKDknlfPY41aFgJPwCYqhceaGY9Viccq6Fzg==
+"@gpn-prototypes/vega-ui@^2.17.0":
+  version "2.17.0"
+  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-ui/2.17.0/5fec7928310160e888f927b5605ac4ae52ff06752b7ecc9b033704518e683b9a#b7d0c7e6a54bf88a931c25e27f63817e0a81307c"
+  integrity sha512-sRwwVw4EREfXWCBL9m5fTr7MJJpj1pKagt2Ux8//Ws7eizQ3cL2InrfvzJ8E+lFHhJlHkQC/0dcgPgqScOEg7Q==
   dependencies:
     "@gpn-prototypes/vega-animation" "^0.0.3"
     "@gpn-prototypes/vega-attach" "^0.1.9"
@@ -1519,7 +1526,7 @@
     "@gpn-prototypes/vega-badge" "^0.1.12"
     "@gpn-prototypes/vega-basic-select" "^0.0.5"
     "@gpn-prototypes/vega-button" "^0.2.6"
-    "@gpn-prototypes/vega-canvas" "^0.2.1"
+    "@gpn-prototypes/vega-canvas" "^0.2.2"
     "@gpn-prototypes/vega-carousel" "^0.0.17"
     "@gpn-prototypes/vega-checkbox" "^0.1.11"
     "@gpn-prototypes/vega-choice-group" "^0.1.14"
@@ -1537,6 +1544,7 @@
     "@gpn-prototypes/vega-loader" "^0.1.10"
     "@gpn-prototypes/vega-logo" "^0.0.10"
     "@gpn-prototypes/vega-modal" "^0.3.20"
+    "@gpn-prototypes/vega-multi-combobox" "^0.1.0"
     "@gpn-prototypes/vega-navigation-list" "^1.0.4"
     "@gpn-prototypes/vega-page-banner" "^0.2.5"
     "@gpn-prototypes/vega-page-footer" "^0.2.7"
