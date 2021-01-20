@@ -1,49 +1,128 @@
 import { Logger } from './logger';
-import { BrowserMessageWorker } from './message-worker';
-import { Sink } from './sink';
-import { MessageBus, MessageInput, QueueListener, QueueMessage, QueuePattern } from './types';
+import { MessageBusSession } from './message-bus-session';
+import type { Message, MessageInput, QueueListener, QueuePattern, WorkerOutput } from './types';
 
-export class BrowserMessageBus implements MessageBus {
-  private logger = new Logger('MessageBus');
+interface MessageBusParams {
+  debug?: boolean;
+  sameSession: boolean;
+}
+export class MessageBus {
+  private static session: MessageBusSession | null = null;
 
-  private worker = new BrowserMessageWorker();
-
-  private sink = new Sink();
-
-  static create(): BrowserMessageBus {
-    return new BrowserMessageBus();
+  static getSession(): MessageBusSession {
+    MessageBus.session ??= new MessageBusSession();
+    return MessageBus.session;
   }
 
-  private constructor() {
-    this.worker.listen((output) => {
-      if (output.type === 'message') {
-        this.logger.log('Получено сообщение из воркера', output);
-        this.sink.push(output);
-      }
+  private id: string;
 
-      if (output.type === 'reply') {
-        this.logger.log(`Команда "${output.meta.command}" выполнена`, {
-          result: output.payload,
-          input: output.meta,
-        });
-      }
+  private debug: boolean;
+
+  readonly session: MessageBusSession;
+
+  private logger = new Logger('MessageBus');
+
+  static create(params?: Partial<MessageBusParams>): MessageBus {
+    return new MessageBus(params);
+  }
+
+  constructor(params?: Partial<MessageBusParams>) {
+    const { sameSession = true, debug = false } = params ?? {};
+
+    this.debug = debug;
+
+    if (!sameSession) {
+      this.session = new MessageBusSession();
+    } else {
+      this.session = MessageBus.getSession();
+    }
+
+    this.id = MessageBusSession.createUuid();
+    this.session.worker.setOutputListener((output) => {
+      this.handleOutput(output);
     });
   }
 
-  send(message: MessageInput): void {
-    this.worker.send({ command: 'process-message', payload: message });
-    this.logger.log('Отправлено сообщение', message);
+  private handleOutput(output: WorkerOutput<Message>): void {
+    // istanbul ignore next
+    if (this.debug) {
+      this.logger.log('Получено сообщение из воркера', output);
+    }
+
+    // istanbul ignore else
+    if (output.type === 'message') {
+      const message = output.detail;
+
+      const pattern: QueuePattern = {
+        channel: message.channel,
+        topic: message.topic,
+      };
+
+      this.session.sink.push(pattern, this.identifySelfMessage(message));
+    }
   }
 
-  peek(pattern: QueuePattern): QueueMessage | void {
-    return this.sink.peek(pattern);
+  private identifySelfMessage(message: Message): Message {
+    return {
+      ...message,
+      params: {
+        ...message.params,
+        self: this.id === message.params.from.bid,
+      },
+    };
   }
 
-  log(pattern: QueuePattern): QueueMessage[] {
-    return this.sink.log(pattern);
+  private createMessage(input: MessageInput): Message {
+    return {
+      channel: input.channel,
+      topic: input.topic,
+      payload: input.payload,
+      params: {
+        broadcast: input.broadcast ?? false,
+        self: input.self ?? true,
+        from: {
+          bid: this.id,
+          sid: this.session.id,
+        },
+      },
+    };
+  }
+
+  dispose(): void {
+    this.session.kill();
+  }
+
+  send(input: MessageInput): void {
+    const message = this.createMessage(input);
+    const pattern = { channel: message.channel, topic: message.topic };
+
+    this.session.sink.push(pattern, message);
+
+    if (message.params.broadcast) {
+      this.session.worker.send({ command: 'process-message', data: message });
+    }
+
+    // istanbul ignore next
+    if (this.debug) {
+      this.logger.log('Отправлено сообщение', message);
+    }
+  }
+
+  peek<P>(pattern: QueuePattern): Message<P> | void {
+    return this.session.sink.peek(pattern);
+  }
+
+  log<P>(pattern: QueuePattern): Message<P>[] {
+    return this.session.sink.log(pattern);
   }
 
   subscribe<P>(pattern: QueuePattern, cb: QueueListener<P>): VoidFunction {
-    return this.sink.subscribe<P>(pattern, cb);
+    return this.session.sink.subscribe(pattern, (message) => {
+      if (message.params.from.bid === this.id && !message.params.self) {
+        return;
+      }
+
+      cb(this.identifySelfMessage(message));
+    });
   }
 }

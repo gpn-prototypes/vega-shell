@@ -1,29 +1,33 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export type ClientUID = string;
+export type UUID = string;
 
 export interface Message<P = any> {
   channel: string;
   topic: string;
-  payload?: P;
-}
-interface MessageParams {
-  self: boolean;
-  broadcast: boolean;
+  payload: P;
+  params: MessageParams;
 }
 
-export type MessageInput<P = any> = Message<P> & Partial<MessageParams>;
+interface MessageParams {
+  broadcast: boolean;
+  self: boolean;
+  from: { sid: UUID; bid: UUID };
+}
+
+export interface MessageInput<P = any> {
+  channel: string;
+  topic: string;
+  payload?: P;
+  broadcast?: boolean;
+  self?: boolean;
+}
 
 export interface Unsubscribe {
   (): void;
 }
 
-export interface QueueMessage<P = any> {
-  payload: P;
-  params: MessageParams;
-}
-
 export interface QueueListener<P = any> {
-  (message: QueueMessage<P>): void;
+  (message: Message<P>): void;
 }
 
 export interface QueuePattern {
@@ -31,52 +35,27 @@ export interface QueuePattern {
   topic: string;
 }
 
-export interface Producer {
-  send(message: MessageInput): void;
-}
+type Command<Name extends string, D = void> = D extends void
+  ? { command: Name }
+  : { command: Name; data: D };
 
-export interface Consumer {
-  subscribe<P = any>(pattern: QueuePattern, listener: QueueListener<P>): Unsubscribe;
-}
-
-export interface MessageBus extends Producer, Consumer {
-  log(pattern: QueuePattern): QueueMessage[];
-  peek(pattern: QueuePattern): QueueMessage | void;
-}
-
-type Command<N extends string, P = void> = (P extends void
-  ? { command: N }
-  : { command: N; payload: P }) & {
-  responseWithStatus?: boolean;
-};
-
-export type WorkerInput =
-  | Command<'process-message', MessageInput>
-  | Command<'setup-socket', { uri: string; cid: string }>
-  | Command<'close'>;
+export type WorkerInput<M = unknown> = Command<'process-message', M> | Command<'close'>;
 
 export interface WorkerMessageEvent extends MessageEvent {
   data: Message;
 }
 
-export interface WorkerInputMessageEvent extends MessageEvent {
-  data: WorkerInput;
+export interface WorkerInputMessageEvent<M = unknown> extends MessageEvent {
+  data: WorkerInput<M>;
 }
 
-interface WorkerEvent<T extends string, P = any, M = any> {
+interface WorkerEvent<T extends string, D = any> {
   type: T;
-  payload: P;
-  meta: M;
+  detail: D;
 }
 
-export type WorkerOutput =
-  | WorkerEvent<'message', Message, MessageParams>
-  | WorkerEvent<'reply', any, WorkerInput>;
+export type WorkerOutput<M = unknown> = WorkerEvent<'message', M>;
 
-export interface WorkerOutputMessageEvent extends MessageEvent {
-  data: WorkerOutput;
-}
-
-export interface WorkerExtendableEvent extends ExtendableEvent {
-  data: WorkerInput;
+export interface WorkerOutputMessageEvent<M = unknown> extends MessageEvent {
+  data: WorkerOutput<M>;
 }

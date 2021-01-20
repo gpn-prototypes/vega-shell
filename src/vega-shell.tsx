@@ -7,11 +7,11 @@ import { getAppConfig } from '../app-config';
 
 import { createGraphqlClient, ServerError } from './services/graphql-client';
 import { Identity } from './services/identity';
-import { BrowserMessageBus } from './services/message-bus';
+import { MessageBus } from './services/message-bus';
 import { Notifications } from './services/notifications';
 import { Applications } from './Applications';
 
-const bus = BrowserMessageBus.create();
+const bus = MessageBus.create();
 
 const history = createBrowserHistory();
 

@@ -1,9 +1,7 @@
-import { QueueMessage } from './types';
-
-export class Queue {
+export class Queue<Message> {
   private max: number;
 
-  private messages: QueueMessage[];
+  private messages: Message[];
 
   constructor(maxSize: number) {
     this.max = maxSize;
@@ -11,7 +9,7 @@ export class Queue {
   }
 
   // LIFO queue
-  enqueue(message: QueueMessage): void {
+  enqueue(message: Message): void {
     if (this.messages.length === this.max) {
       this.messages.pop();
     }
@@ -19,7 +17,7 @@ export class Queue {
     this.messages.unshift(message);
   }
 
-  peek(): QueueMessage | void {
+  peek(): Message | void {
     return this.messages[0];
   }
 
@@ -27,7 +25,7 @@ export class Queue {
     this.messages = [];
   }
 
-  toArray(): QueueMessage[] {
+  toArray(): Message[] {
     return this.messages.slice();
   }
 }
