@@ -28,7 +28,7 @@ export const notFoundErrorUserMessage = `Ошибка 404. Страница не
 
 type ErrorHandler = (error: ServerError) => void;
 
-type Config = {
+export type Config = {
   uri: string;
   identity: Identity;
   onError: ErrorHandler;
@@ -60,7 +60,6 @@ export function normalizeUri(uri: string): string {
 export const createAuthLink = (identity: Identity): ApolloLink => {
   return setContext(async (_, { headers }) => {
     const token = await identity.getToken();
-
     return {
       headers: {
         ...headers,
@@ -70,7 +69,7 @@ export const createAuthLink = (identity: Identity): ApolloLink => {
   });
 };
 
-const isServerParseError = (
+export const isServerParseError = (
   error: Error | ServerError | ServerParseError | undefined,
 ): error is ServerParseError => {
   return error !== undefined && 'name' in error && error.name === 'ServerParseError';
