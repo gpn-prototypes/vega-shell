@@ -10,7 +10,7 @@ import defaultAvatar from './default-avatar.svg';
 import { NavLinkType } from './types';
 
 export type HeaderViewProps = {
-  isLoading: boolean;
+  isLoading?: boolean;
   projectName?: string | null;
   pathname: string;
   onChangeActive: (item: NavLinkType) => void;
