@@ -12,7 +12,7 @@ import { createValidate, validators } from './validation';
 
 import './AuthForm.css';
 
-type Error = {
+type LoginError = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 };
@@ -63,7 +63,7 @@ export const AuthForm: AuthFormComponent = (props) => {
   const handleAuthSubmit = (values: State): void => {
     setIsFetching(true);
 
-    onLogin(values).catch((error: Error) => {
+    onLogin(values).catch((error: LoginError) => {
       const key = `${error.code}-alert`;
       const message = error.code === 'AUTH_ERROR' ? authErrorMessage : error.message;
 

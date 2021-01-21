@@ -131,7 +131,6 @@ const singleSpaConfig = (webpackConfigEnv) => {
         },
         {
           test: /\.css$/,
-          exclude: /node_modules/,
           use: [
             {
               loader: 'postcss-loader',
