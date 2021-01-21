@@ -10,16 +10,17 @@ import defaultAvatar from './default-avatar.svg';
 import { NavLinkType } from './types';
 
 export type HeaderViewProps = {
+  isLoading: boolean;
   projectName?: string | null;
-  isLoading?: boolean;
-  onChangeActive: (item: NavLinkType) => void;
   pathname: string;
+  onChangeActive: (item: NavLinkType) => void;
 };
 
 const cnHeader = cn('Header');
 
 const LS_USER_FIRST_NAME_KEY = 'user-first-name';
 const LS_USER_LAST_NAME_KEY = 'user-last-name';
+
 const testId = {
   logout: 'Header:button:logout',
   menuItemProject: 'Header:link:project',
@@ -32,7 +33,7 @@ const testId = {
 };
 
 export const HeaderView = (props: HeaderViewProps): React.ReactElement => {
-  const { projectName, onChangeActive, isLoading, pathname } = props;
+  const { isLoading, projectName, pathname, onChangeActive } = props;
   const { identity } = useAppContext();
 
   const [userName, setUserName] = useState<string | null>(null);
@@ -94,15 +95,11 @@ export const HeaderView = (props: HeaderViewProps): React.ReactElement => {
     { name: 'Помощь', disabled: true, testId: testId.menuItemHelp },
   ];
 
-  const handleChangeActive = (item: NavLinkType): void => {
-    onChangeActive(item);
-  };
-
   const [isCreateProjectPage, isProjectsPage] = ['/projects/create', '/projects'].map(
     (path) => matchPath(pathname, { path, exact: true }) !== null,
   );
 
-  const title = (): string | null | undefined => {
+  const getTitle = (): string | null | undefined => {
     if (isCreateProjectPage) {
       return 'Создание проекта';
     }
@@ -159,7 +156,7 @@ export const HeaderView = (props: HeaderViewProps): React.ReactElement => {
 
   const cnHeaderMenu = cnHeader('Menu', { disabled: !shouldRenderNavItems });
 
-  const menuTitle = title() ?? '';
+  const menuTitle = getTitle() ?? '';
 
   const renderMenu = isLoading ? null : (
     <BaseHeader.Menu
@@ -199,7 +196,7 @@ export const HeaderView = (props: HeaderViewProps): React.ReactElement => {
         <BaseHeader.Nav
           activeItem={isActiveNavItem}
           navItems={navItems}
-          onChangeItem={handleChangeActive}
+          onChangeItem={onChangeActive}
         />
       )}
     </BaseHeader>

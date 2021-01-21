@@ -99,7 +99,6 @@ export const ApplicationRoutes = (): React.ReactElement => {
           <Application name="@vega/auth" />
         </Route>
         <Route path="/projects">
-          {/* <Application name="@vega/header" wrapWith="header" wrapClassName="header" /> */}
           <ApolloProvider client={graphqlClient}>
             <Header />
           </ApolloProvider>

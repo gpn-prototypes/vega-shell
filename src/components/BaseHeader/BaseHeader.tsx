@@ -13,12 +13,12 @@ type BaseHeaderProps = {
 
 const testId = {
   wrapper: 'Header',
-};
+} as const;
 
 type BaseHeaderType = React.FC<BaseHeaderProps> & {
   Menu: typeof BaseHeaderMenu;
   Nav: typeof BaseHeaderNav;
-  testId: Record<string, string>;
+  testId: typeof testId;
 };
 
 export const BaseHeader: BaseHeaderType = ({ className, children }) => {

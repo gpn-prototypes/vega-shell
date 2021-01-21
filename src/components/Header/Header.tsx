@@ -9,7 +9,6 @@ import './Header.css';
 
 export const Header = (): React.ReactElement => {
   const history = useHistory();
-
   const location = useLocation();
 
   const params = location.pathname.match(/\/projects\/show\/([\w|-]*)/);
@@ -20,7 +19,7 @@ export const Header = (): React.ReactElement => {
     variables: { vid: projectId },
   });
 
-  const getTitle = (): string | undefined | null => {
+  const getProjectName = (): string | undefined | null => {
     if (data?.project?.__typename === 'Project') {
       return data.project.name;
     }
@@ -36,10 +35,10 @@ export const Header = (): React.ReactElement => {
 
   return (
     <HeaderView
+      isLoading={loading}
+      projectName={getProjectName()}
       pathname={location.pathname}
       onChangeActive={handleChangeActiveLink}
-      projectName={getTitle()}
-      isLoading={loading}
     />
   );
 };
