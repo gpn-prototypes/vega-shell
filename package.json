@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.3.3",
-    "@gpn-prototypes/vega-ui": "^3.0.6",
+    "@gpn-prototypes/vega-ui": "^3.0.7",
     "graphql": "^15.3.0",
     "import-map-overrides": "^2.1.0",
     "jsondiffpatch": "^0.4.1",
