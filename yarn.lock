@@ -1053,10 +1053,10 @@
   resolved "https://registry.yarnpkg.com/@commitlint/types/-/types-11.0.0.tgz#719cf05fcc1abb6533610a2e0f5dd1e61eac14fe"
   integrity sha512-VoNqai1vR5anRF5Tuh/+SWDFk7xi7oMwHrHrbm1BprYXjB2RJsWLhUrStMssDxEl5lW/z3EUdg8RvH/IUBccSQ==
 
-"@consta/uikit@^1.11.1":
-  version "1.11.1"
-  resolved "https://registry.yarnpkg.com/@consta/uikit/-/uikit-1.11.1.tgz#3572d516f73f152a48fb3740cdbdb7b332ef9887"
-  integrity sha512-bqtAivFHTPw65oLegjZnpNkWRS7UYIxFrj+pDuVIiN984wujmSxnTMPBnQUImhPw6lAD2H1hJeFkrA/lSsVHBw==
+"@consta/uikit@^1.11.2":
+  version "1.11.2"
+  resolved "https://registry.yarnpkg.com/@consta/uikit/-/uikit-1.11.2.tgz#3308e4351291c0a771d30bdb15ece7594dfadec0"
+  integrity sha512-qHYxGkTk01Olmmd/VUPENlZvdhWiOX6XwMqeEEN9EJHlojtvI40btGloS1xNLX2nOzJSrcA8iuy/5fnHsiFvyQ==
   dependencies:
     "@bem-react/classname" "^1.5.8"
     "@bem-react/classnames" "^1.3.9"
@@ -1131,12 +1131,12 @@
     webpack "^4.42.1"
     webpack-bundle-analyzer "^3.9.0"
 
-"@gpn-prototypes/vega-ui@^3.0.6":
-  version "3.0.6"
-  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-ui/3.0.6/b383ae960ba2d8fcd253cd3bde0d7269f07e30a5ada25a258664d1a1178519e5#b9483ad107fbaa219dc2ec94c59aeee3b419e074"
-  integrity sha512-uyB2vS2MdjwVTxNFi033uGdJbLgvipZnCoWTZSyTRBizAttsMPU0mllyaarEcWaE6j1CQphCmvHOnZ0wmpu7eA==
+"@gpn-prototypes/vega-ui@^3.0.7":
+  version "3.0.7"
+  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-ui/3.0.7/79ff7be908bb751275875d9540d9c2bd64a5cb623495c379925f0bd86257a490#1bb2c1b18457738d6b029e60c0b33eb561133160"
+  integrity sha512-kFAdtv57cyBi9VPC5UVYmrN3nYwmgmO8ppiLenM4xqfLtjqkr1yfoYlGOnTe1ASkV//6LgSwlzF8zx8UYyWTrg==
   dependencies:
-    "@consta/uikit" "^1.11.1"
+    "@consta/uikit" "^1.11.2"
     "@popperjs/core" "^2.6.0"
     bem-cn "^3.0.1"
     konva "^7.0.6"
