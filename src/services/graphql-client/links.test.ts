@@ -18,12 +18,31 @@ import {
   createHttpLink,
   createResponseLink,
   createSwitchUriLink,
+  ErrorHandler,
+  isServerParseError,
   normalizeUri,
   notFoundErrorUserMessage,
 } from './graphql-client';
 import { mocks, queries } from './mocks';
 
 const validToken = mockValidToken();
+
+const makeErrorLink = (error: {
+  status: number;
+  message: string;
+}): { link: ApolloLink; handler: ErrorHandler } => {
+  const handleError = jest.fn();
+
+  const errorLink = createErrorLink({ handleError });
+
+  const stub = jest.fn(() =>
+    throwServerError({ status: error.status, ok: false } as Response, {}, error.message),
+  ) as never;
+
+  const link = ApolloLink.from([errorLink, stub]);
+
+  return { link, handler: handleError };
+};
 
 const tokens = {
   'access-token': validToken,
@@ -71,7 +90,7 @@ describe('responseLink', () => {
 
     expect(handleError).toBeCalledWith({
       code: 404,
-      message: 'project-not-found',
+      message: 'not-found',
       userMessage: notFoundErrorUserMessage,
     });
   });
@@ -97,14 +116,10 @@ describe('responseLink', () => {
 
 describe('errorLink', () => {
   test('обрабатывает 500 ошибку', async () => {
-    const handleError = jest.fn();
-    const errorLink = createErrorLink({ handleError });
-
-    const stub = jest.fn(() =>
-      throwServerError({ status: 500, ok: false } as Response, {}, 'Internal server error'),
-    ) as never;
-
-    const link = ApolloLink.from([errorLink, stub]);
+    const { link, handler: handleError } = makeErrorLink({
+      status: 500,
+      message: 'Internal server error',
+    });
 
     await expect(
       toPromise(
@@ -120,16 +135,26 @@ describe('errorLink', () => {
     });
   });
 
+  test('обрабатывает 404 ошибку', async () => {
+    const { link, handler: handleError } = makeErrorLink({ status: 404, message: 'Not found' });
+
+    try {
+      await toPromise(
+        execute(link, {
+          query: queries.GET_PROJECT,
+        }),
+      );
+    } catch {
+      expect(handleError).toBeCalledWith({
+        code: 404,
+        message: 'not-found',
+        userMessage: notFoundErrorUserMessage,
+      });
+    }
+  });
+
   test('обрабатывает 401 ошибку', async () => {
-    const handleError = jest.fn();
-
-    const errorLink = createErrorLink({ handleError });
-
-    const stub = jest.fn(() =>
-      throwServerError({ status: 401, ok: false } as Response, {}, 'Unauthorized'),
-    );
-
-    const link = ApolloLink.from([errorLink, stub]);
+    const { link, handler: handleError } = makeErrorLink({ status: 401, message: 'Unauthorized' });
 
     await expect(
       toPromise(
