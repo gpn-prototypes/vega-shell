@@ -1131,10 +1131,10 @@
     webpack "^4.42.1"
     webpack-bundle-analyzer "^3.9.0"
 
-"@gpn-prototypes/vega-ui@^3.0.5":
-  version "3.0.5"
-  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-ui/3.0.5/f35c6fb1ed3b609b59448fce3b000ec515ed3a53ed1f61ed0a151b55beeaa317#c0ead1329768663037db9a84410e4234a90a610e"
-  integrity sha512-52F05cU7Li2J4y7OlvDOpKNswohQPO3U6fNxB5IL4apXeVHntxR6e0tkIr5XYEKS0BU24ByzV0KGIGGsY4QJjw==
+"@gpn-prototypes/vega-ui@^3.0.6":
+  version "3.0.6"
+  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-ui/3.0.6/b383ae960ba2d8fcd253cd3bde0d7269f07e30a5ada25a258664d1a1178519e5#b9483ad107fbaa219dc2ec94c59aeee3b419e074"
+  integrity sha512-uyB2vS2MdjwVTxNFi033uGdJbLgvipZnCoWTZSyTRBizAttsMPU0mllyaarEcWaE6j1CQphCmvHOnZ0wmpu7eA==
   dependencies:
     "@consta/uikit" "^1.11.1"
     "@popperjs/core" "^2.6.0"
