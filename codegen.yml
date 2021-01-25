@@ -1,0 +1,33 @@
+overwrite: true
+schema:
+  - ${VEGA_SCHEMA_PATH}:
+      headers:
+        Authorization: Bearer ${AUTH_TOKEN}
+documents: 'src/**/*.graphql'
+generates:
+  src/__generated__/types.ts:
+    plugins:
+      - typescript
+      - named-operations-object
+  ./graphql.schema.json:
+    plugins:
+      - 'introspection'
+  src/:
+    preset: near-operation-file
+    presetConfig:
+      folder: __generated__
+      extension: .tsx
+      baseTypesPath: __generated__/types.ts
+    plugins:
+      - typescript-operations
+      - typescript-react-apollo
+    config:
+      documentMode: 'documentNodeImportFragments'
+      namingConvention: keep
+      nonOptionalTypename: true
+      dedupeOperationSuffix: true
+      omitOperationSuffix: true
+      withComponent: false
+      withHooks: true
+      withHOC: false
+      reactApolloVersion: 3

@@ -1,0 +1,57 @@
+.Header {
+  &__Menu {
+    &::after {
+      content: '';
+
+      width: 1px;
+      height: 18px;
+
+      background: var(--color-control-bg-border-default);
+    }
+
+    &_disabled {
+      &::after {
+        content: none;
+      }
+    }
+  }
+
+  &__Dropdown {
+    margin-left: calc(var(--space-3xs) + var(--space-s));
+  }
+
+  &__MenuItems .VegaBaseHeader__MenuItem:not(:last-child) {
+    margin-bottom: var(--space-l);
+  }
+
+  &__MenuItem {
+    &_disabled {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+
+  &__Avatar {
+    padding-right: var(--space-s);
+    padding-left: var(--space-s);
+    padding-bottom: var(--space-2xs);
+
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+
+    &-img {
+      margin-right: var(--space-xs);
+
+      width: 40px;
+      height: 40px;
+    }
+
+    &-name {
+      min-width: 0;
+
+      word-wrap: break-word;
+    }
+  }
+}

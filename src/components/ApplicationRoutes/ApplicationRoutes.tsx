@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
+import { ApolloProvider } from '@apollo/client';
 import { useMount, useOnChange, usePreviousRef } from '@gpn-prototypes/vega-ui';
 
 import { useAppContext } from '../../app-context';
 import { ServerError } from '../../services/graphql-client';
 import { Application } from '../Application';
 import { ErrorView } from '../Error';
+import { Header } from '../Header';
 
 const AUTH_PATH = '/login';
 
@@ -22,7 +24,7 @@ const NotFoundView = () => (
 export const ApplicationRoutes = (): React.ReactElement => {
   const context = useAppContext();
   const { serverError, setServerError } = context;
-  const { bus, identity, notifications } = context;
+  const { bus, identity, notifications, graphqlClient } = context;
 
   const location = useLocation();
 
@@ -97,7 +99,9 @@ export const ApplicationRoutes = (): React.ReactElement => {
           <Application name="@vega/auth" />
         </Route>
         <Route path="/projects">
-          <Application name="@vega/header" wrapWith="header" wrapClassName="header" />
+          <ApolloProvider client={graphqlClient}>
+            <Header />
+          </ApolloProvider>
           <main className="main">
             <Switch>
               <Route exact path={['/projects/show/:projectId/rb']}>
