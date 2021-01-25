@@ -6,6 +6,7 @@ import { useMount, useOnChange, usePreviousRef } from '@gpn-prototypes/vega-ui';
 import { useAppContext } from '../../app-context';
 import { ServerError } from '../../services/graphql-client';
 import { Application } from '../Application';
+import { AuthPage } from '../AuthPage';
 import { ErrorView } from '../Error';
 import { Header } from '../Header';
 
@@ -96,7 +97,7 @@ export const ApplicationRoutes = (): React.ReactElement => {
         {isLoggedIn && <Redirect from="/" to="/projects" exact />}
         <Route exact path={AUTH_PATH}>
           {isLoggedIn && <Redirect to={getLoginRedirectPath()} />}
-          <Application name="@vega/auth" />
+          <AuthPage />
         </Route>
         <Route path="/projects">
           <ApolloProvider client={graphqlClient}>

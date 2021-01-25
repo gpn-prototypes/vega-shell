@@ -1,0 +1,69 @@
+.VegaAuthPage {
+  display: flex;
+
+  background-color: var(--color-bg-default);
+
+  &__FormContainer {
+    --gpn-logo-height: 54px;
+    position: relative;
+
+    padding: calc(var(--space-2xl) + var(--gpn-logo-height) + var(--space-3xl)) 0;
+
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+
+    min-height: 100vh;
+
+    background-color: var(--color-bg-secondary);
+
+    @media (min-width: 1200px) {
+      width: 40%;
+    }
+  }
+
+  &__Teaser {
+    display: none;
+
+    @media (min-width: 1200px) {
+      padding: 50px var(--space-5xl);
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      width: 60%;
+    }
+  }
+
+  &__TeaserCarousel {
+    max-width: calc(900px + calc(2 * (var(--control-height-l))));
+  }
+
+  &__Slide {
+    position: relative;
+
+    padding-bottom: 49%;
+
+    max-width: 900px;
+  }
+
+  &__Image {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background-position: center;
+    background-size: cover;
+  }
+
+  .VegaCarousel__Caption {
+    min-height: calc(var(--line-height-text-xs) * 2);
+  }
+}
