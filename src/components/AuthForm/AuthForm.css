@@ -1,0 +1,33 @@
+.VegaAuthForm {
+  &__GazpromLogo {
+    position: absolute;
+    top: var(--space-2xl);
+    left: 50%;
+
+    transform: translateX(-50%);
+  }
+
+  &__Form {
+    width: 320px;
+  }
+
+  &__Desc {
+    margin-top: var(--space-4xl);
+
+    text-align: center;
+  }
+
+  &__Logo {
+    margin: 0 auto var(--space-3xl);
+
+    display: block;
+  }
+
+  &__Link {
+    color: var(--color-typo-secondary);
+
+    &:hover {
+      color: var(--color-typo-primary);
+    }
+  }
+}
