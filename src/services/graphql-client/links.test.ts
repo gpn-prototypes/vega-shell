@@ -18,7 +18,6 @@ import {
   createHttpLink,
   createResponseLink,
   createSwitchUriLink,
-  isServerParseError,
   normalizeUri,
   notFoundErrorUserMessage,
 } from './graphql-client';
@@ -107,18 +106,18 @@ describe('errorLink', () => {
 
     const link = ApolloLink.from([errorLink, stub]);
 
-    try {
-      await toPromise(
+    await expect(
+      toPromise(
         execute(link, {
           query: queries.GET_PROJECT,
         }),
-      );
-    } catch {
-      expect(handleError).toBeCalledWith({
-        code: 500,
-        message: 'internal-server-error',
-      });
-    }
+      ),
+    ).rejects.toThrow();
+
+    expect(handleError).toBeCalledWith({
+      code: 500,
+      message: 'internal-server-error',
+    });
   });
 
   test('обрабатывает 401 ошибку', async () => {
@@ -132,18 +131,18 @@ describe('errorLink', () => {
 
     const link = ApolloLink.from([errorLink, stub]);
 
-    try {
-      await toPromise(
+    await expect(
+      toPromise(
         execute(link, {
           query: queries.GET_PROJECT,
         }),
-      );
-    } catch {
-      expect(handleError).toBeCalledWith({
-        code: 401,
-        message: 'unauthorized',
-      });
-    }
+      ),
+    ).rejects.toThrow();
+
+    expect(handleError).toBeCalledWith({
+      code: 401,
+      message: 'unauthorized',
+    });
   });
 });
 
@@ -251,29 +250,5 @@ describe('authLink', () => {
     expect(request?.headers).toMatchObject({
       Authorization: `Bearer ${tokens['access-token']}`,
     });
-  });
-});
-
-describe('isServerParseError', () => {
-  test('возвращает true, если в имени ошибки содержится ServerParseError', () => {
-    expect(
-      isServerParseError({
-        name: 'ServerParseError',
-        message: 'server-parse-error',
-      }),
-    ).toBeTruthy();
-  });
-
-  test('возвращает false, если ошибка равна undefined', () => {
-    expect(isServerParseError(undefined)).not.toBeTruthy();
-  });
-
-  test('возвращает false, если имя ошибки не ServerParseError', () => {
-    expect(
-      isServerParseError({
-        name: 'ValidationError',
-        message: 'validation-error',
-      }),
-    ).not.toBeTruthy();
   });
 });
