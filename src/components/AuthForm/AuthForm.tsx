@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Form as FinalForm } from 'react-final-form';
 import { Button, Form, Logo, Text } from '@gpn-prototypes/vega-ui';
 
-import { useAppContext } from '../../app-context';
+import { useAppContext } from '../../app/app-context';
 import { UserDataType } from '../../services/api-client';
 
 import { cnAuthForm } from './cn-auth-form';

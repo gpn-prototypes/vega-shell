@@ -5,11 +5,11 @@ import { start } from 'single-spa';
 
 import { getAppConfig } from '../app-config';
 
+import { Applications } from './app/Applications';
 import { createGraphqlClient, ServerError } from './services/graphql-client';
 import { Identity } from './services/identity';
 import { MessageBus } from './services/message-bus';
 import { Notifications } from './services/notifications';
-import { Applications } from './Applications';
 
 const bus = MessageBus.create();
 

@@ -3,7 +3,7 @@ import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/client';
 import { useMount, useOnChange, usePreviousRef } from '@gpn-prototypes/vega-ui';
 
-import { useAppContext } from '../../app-context';
+import { useAppContext } from '../../app/app-context';
 import { ServerError } from '../../services/graphql-client';
 import { Application } from '../Application';
 import { AuthPage } from '../AuthPage';

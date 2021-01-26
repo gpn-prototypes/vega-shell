@@ -2,9 +2,10 @@ import React from 'react';
 import { Router } from 'react-router-dom';
 import { Root } from '@gpn-prototypes/vega-ui';
 
-import { ServerError } from './services/graphql-client';
+import { ApplicationRoutes, Snackbar } from '../components';
+import { ServerError } from '../services/graphql-client';
+
 import { AppContext, AppContextProps } from './app-context';
-import { ApplicationRoutes, Snackbar } from './components';
 
 import './App.css';
 

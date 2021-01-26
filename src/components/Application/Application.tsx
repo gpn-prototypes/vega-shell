@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { mountRootParcel } from 'single-spa';
 import ParcelComponent from 'single-spa-react/lib/esm/parcel';
 
-import { useAppContext } from '../../app-context';
+import { useAppContext } from '../../app/app-context';
 import { RootLoader } from '../Loader';
 
 type Props = {

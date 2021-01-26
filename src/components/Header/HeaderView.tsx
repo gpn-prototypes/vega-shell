@@ -3,7 +3,7 @@ import { Link, matchPath } from 'react-router-dom';
 import { Badge, Text, useMount } from '@gpn-prototypes/vega-ui';
 import cn from 'bem-cn';
 
-import { useAppContext } from '../../app-context';
+import { useAppContext } from '../../app/app-context';
 import { BaseHeader } from '../BaseHeader';
 
 import defaultAvatar from './default-avatar.svg';

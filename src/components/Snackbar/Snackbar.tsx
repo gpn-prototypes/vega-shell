@@ -2,7 +2,7 @@ import React from 'react';
 import { Item } from '@consta/uikit/SnackBar';
 import { SnackBar as BaseSnackbar, usePortalRender } from '@gpn-prototypes/vega-ui';
 
-import { useAppContext } from '../../app-context';
+import { useAppContext } from '../../app/app-context';
 
 import './Snackbar.css';
 

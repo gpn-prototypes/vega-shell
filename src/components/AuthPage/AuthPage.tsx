@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Carousel, Loader } from '@gpn-prototypes/vega-ui';
 
-import { useAppContext } from '../../app-context';
+import { useAppContext } from '../../app/app-context';
 import { AuthForm } from '../AuthForm';
 
 import imgCreate from './images/carousel-create-project.png';
