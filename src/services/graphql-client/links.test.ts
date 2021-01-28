@@ -19,7 +19,6 @@ import {
   createResponseLink,
   createSwitchUriLink,
   ErrorHandler,
-  isServerParseError,
   normalizeUri,
   notFoundErrorUserMessage,
 } from './graphql-client';
