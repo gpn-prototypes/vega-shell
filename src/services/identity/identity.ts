@@ -9,8 +9,8 @@ export type IdentityConfigType = {
   apiUrl: string;
   accessToken?: string;
   refreshToken?: string;
-  cbOnAuth?(): void;
-  cbOnLogout?(): void;
+  onAuth?: () => void;
+  onLogout?: () => void;
 };
 
 const LS_ACCESS_TOKEN_KEY = 'access-token';
@@ -18,110 +18,88 @@ const LS_REFRESH_TOKEN_KEY = 'refresh-token';
 const LS_USER_FIRST_NAME_KEY = 'user-first-name';
 const LS_USER_LAST_NAME_KEY = 'user-last-name';
 
-const noop = () => {};
-
 export class Identity {
   private apiClient: APIClient;
 
-  private cbOnAuth?(): void;
+  private onAuth?: () => void;
 
-  private cbOnLogout?(): void;
+  private onLogout?: () => void;
+
+  private refreshPromise: ReturnType<APIClient['refresh']> | null = null;
 
   private refreshIsActive = false;
 
-  private refreshPromise: ReturnType<APIClient['refresh']> | null;
-
   constructor(config: IdentityConfigType) {
-    const {
-      apiUrl,
-      accessToken = null,
-      refreshToken = null,
-      cbOnAuth = noop,
-      cbOnLogout = noop,
-    } = config;
+    const { apiUrl, accessToken = null, refreshToken = null, onAuth, onLogout } = config;
 
     this.apiClient = new APIClient(apiUrl);
-    this.cbOnAuth = cbOnAuth;
-    this.cbOnLogout = cbOnLogout;
-    this.refreshPromise = null;
+    this.onAuth = onAuth;
+    this.onLogout = onLogout;
 
     if (accessToken && refreshToken) {
       this.setTokens(accessToken, refreshToken);
     }
   }
 
-  public auth = async (userData: UserDataType): Promise<string | null> => {
+  public auth = async (userData: UserDataType): Promise<string> => {
     try {
       const res = await this.apiClient.auth(userData);
 
-      if (res) {
-        if (typeof this.cbOnAuth === 'function') {
-          this.cbOnAuth();
-        }
+      this.setTokens(res.jwt_for_access, res.jwt_for_refresh);
+      this.setUserName(res.first_name, res.last_name);
 
-        this.setTokens(res.jwt_for_access, res.jwt_for_refresh);
-        this.setUserName(res.first_name, res.last_name);
-
-        return res.jwt_for_access;
+      if (this.onAuth) {
+        this.onAuth();
       }
 
-      return null;
+      return res.jwt_for_access;
     } catch (error) {
       return Promise.reject(error);
     }
   };
 
-  public authSSO = async (): Promise<string | null> => {
+  public authSSO = async (): Promise<string> => {
     try {
       const res = await this.apiClient.authSSO();
 
-      if (res) {
-        if (typeof this.cbOnAuth === 'function') {
-          this.cbOnAuth();
-        }
+      this.setTokens(res.jwt_for_access, res.jwt_for_refresh);
+      this.setUserName(res.first_name, res.last_name);
 
-        this.setTokens(res.jwt_for_access, res.jwt_for_refresh);
-        this.setUserName(res.first_name, res.last_name);
-
-        return res.jwt_for_access;
+      if (this.onAuth) {
+        this.onAuth();
       }
 
-      return null;
+      return res.jwt_for_access;
     } catch (error) {
       return Promise.reject(error);
     }
   };
 
-  public refresh = async (): Promise<string | null> => {
+  private refresh = async (): Promise<string | null> => {
     try {
       const refreshToken = this.getRefreshToken();
 
       if (refreshToken === null) {
+        // istanbul ignore next
         throw new Error('RefreshToken не найден');
       }
 
       if (!this.refreshIsActive) {
-        this.refreshIsActive = true;
         this.refreshPromise = this.apiClient.refresh(refreshToken);
+        this.refreshIsActive = true;
       }
 
       const res = await this.refreshPromise;
-
       this.refreshIsActive = false;
 
       if (res) {
         this.setTokens(res.jwt_for_access, res.jwt_for_refresh);
-
         return res.jwt_for_access;
       }
 
+      // istanbul ignore next
       return null;
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Произошла ошибка при обновлении токена');
-      // eslint-disable-next-line no-console
-      console.error(error);
-
       return null;
     }
   };
@@ -131,6 +109,7 @@ export class Identity {
       const accessToken = this.getAccessToken();
 
       if (accessToken === null) {
+        // istanbul ignore next
         throw new Error('AccessToken не найден');
       }
 
@@ -138,6 +117,7 @@ export class Identity {
 
       return ok;
     } catch (err) {
+      // istanbul ignore next
       return Promise.reject(err);
     }
   };
@@ -153,7 +133,6 @@ export class Identity {
 
     if (refreshToken && isTokenValid(refreshToken)) {
       const freshAccessToken = await this.refresh();
-
       return freshAccessToken;
     }
 
@@ -161,25 +140,25 @@ export class Identity {
   };
 
   public logout = ({ destroyTokens } = { destroyTokens: true }): void => {
-    if (typeof this.cbOnLogout === 'function') {
-      this.cbOnLogout();
-    }
-
     if (destroyTokens) {
       this.destroyTokens();
     }
 
     this.clear();
+
+    if (this.onLogout) {
+      this.onLogout();
+    }
   };
+
+  /*
+    Для получения валидного accessToken достаточно валидного refreshToken
+    Если accessToken был удален из ls (accessToken === null), то все равно лучше перелогиниться
+  */
 
   public isLoggedIn(): boolean {
     const accessToken = this.getAccessToken();
     const refreshToken = this.getRefreshToken();
-
-    /*
-      Для получения валидного accessToken достаточно валидного refreshToken
-      Если accessToken был удален из ls (accessToken === null), то все равно лучше перелогиниться
-    */
 
     if (accessToken !== null && refreshToken !== null && isTokenValid(refreshToken)) {
       return true;
@@ -188,24 +167,35 @@ export class Identity {
     return false;
   }
 
-  public getAccessToken = (): string | null => {
-    const token = localStorage.getItem(LS_ACCESS_TOKEN_KEY);
-    return token || null;
-  };
-
-  public getRefreshToken = (): string | null => {
-    const token = localStorage.getItem(LS_REFRESH_TOKEN_KEY);
-    return token || null;
-  };
-
   private setTokens = (accessToken: string, refreshToken: string): void => {
     localStorage.setItem(LS_ACCESS_TOKEN_KEY, accessToken);
     localStorage.setItem(LS_REFRESH_TOKEN_KEY, refreshToken);
   };
 
+  public getAccessToken = (): string | null => {
+    const accessToken = localStorage.getItem(LS_ACCESS_TOKEN_KEY);
+    return accessToken;
+  };
+
+  public getRefreshToken = (): string | null => {
+    const refreshToken = localStorage.getItem(LS_REFRESH_TOKEN_KEY);
+    return refreshToken;
+  };
+
   private setUserName = (firstName: string, lastName: string): void => {
     localStorage.setItem(LS_USER_FIRST_NAME_KEY, firstName);
     localStorage.setItem(LS_USER_LAST_NAME_KEY, lastName);
+  };
+
+  public getUserName = (): { firstName: string; lastName: string } | null => {
+    const firstName = localStorage.getItem(LS_USER_FIRST_NAME_KEY);
+    const lastName = localStorage.getItem(LS_USER_LAST_NAME_KEY);
+
+    if (firstName && lastName) {
+      return { firstName, lastName };
+    }
+
+    return null;
   };
 
   public clear = (): void => {

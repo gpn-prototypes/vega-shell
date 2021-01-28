@@ -31,8 +31,8 @@ const handleGraphqlClientError = (err: ServerError): void => {
 const { baseApiUrl } = getAppConfig();
 const identity = new Identity({
   apiUrl: baseApiUrl,
-  cbOnAuth: () => handleLoggedInChange({ isLoggedIn: true }),
-  cbOnLogout: () => handleLoggedInChange({ isLoggedIn: false }),
+  onAuth: () => handleLoggedInChange({ isLoggedIn: true }),
+  onLogout: () => handleLoggedInChange({ isLoggedIn: false }),
 });
 const graphqlClient = createGraphqlClient({
   uri: `${baseApiUrl}/graphql`,

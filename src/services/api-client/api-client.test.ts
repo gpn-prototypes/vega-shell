@@ -1,46 +1,248 @@
 import fetchMock from 'fetch-mock';
 
-import { APIClient } from './api-client';
+import { APIClient, ERROR_MESSAGE_FUNCTIONS } from './api-client';
 
 beforeEach(() => {
   fetchMock.reset();
 });
 
+const BASE_URL = 'http://test.path';
+
 describe('APIClient', () => {
-  test.skip('возвращается token при auth', async () => {
-    const AUTH_URL = 'http://localhost/auth';
-    const TOKEN = { token: 'token' };
-    const AUTH_REQUEST = {
-      login: 'foo',
-      password: 'bar',
+  describe('auth', () => {
+    const mockOptions = {
+      url: `${BASE_URL}/auth/jwt/obtain`,
+      method: 'POST',
+    };
+    const userData = {
+      login: 'login',
+      password: 'password',
     };
 
-    fetchMock.mock(AUTH_URL, {
-      status: 200,
-      body: TOKEN,
+    test('обработка успешной авторизации', async () => {
+      const responseBody = {
+        first_name: 'firstName',
+        last_name: 'lastName',
+        jwt_for_access: 'accessToken',
+        jwt_for_refresh: 'accessTokem',
+      };
+
+      fetchMock.mock(mockOptions, {
+        status: 200,
+        body: JSON.stringify(responseBody),
+      });
+
+      const client = new APIClient(BASE_URL);
+      const response = await client.auth(userData);
+
+      expect(response).toEqual(responseBody);
     });
 
-    const client = new APIClient(AUTH_URL);
-    const token = await client.auth(AUTH_REQUEST);
-    expect(token).toEqual(TOKEN);
+    test('обработка стандартной ошибки', async () => {
+      const responseBody = {
+        Error: {
+          code: 'Код ошибки',
+          message: 'Описание ошибки',
+        },
+      };
+
+      fetchMock.mock(mockOptions, {
+        status: 401,
+        body: JSON.stringify(responseBody),
+      });
+
+      const client = new APIClient(BASE_URL);
+      await expect(client.auth(userData)).rejects.toEqual(responseBody.Error);
+    });
+
+    test('обработка не стандартной ошибки', async () => {
+      const responseBody = '401: Unauthorized';
+      const error = {
+        code: 401,
+        message: ERROR_MESSAGE_FUNCTIONS.AUTH('Unauthorized'),
+      };
+
+      fetchMock.mock(mockOptions, {
+        status: 401,
+        body: responseBody,
+      });
+
+      const client = new APIClient(BASE_URL);
+      await expect(client.auth(userData)).rejects.toEqual(error);
+    });
   });
 
-  test.skip('возвращается errors при неверных данных', async () => {
-    const AUTH_URL = 'http://localhost/auth';
-    const ERROR = { Error: { code: 'INVALID_JSON' } };
-    const AUTH_REQUEST = {
-      login: 'foo',
-      password: 'bar',
+  describe('authSSO', () => {
+    const mockOptions = {
+      url: `${BASE_URL}/auth/sso/login`,
+      method: 'GET',
     };
 
-    fetchMock.mock(AUTH_URL, {
-      status: 401,
-      body: {
-        Error: ERROR,
-      },
+    test('обработка успешной авторизации', async () => {
+      const responseBody = {
+        first_name: 'firstName',
+        last_name: 'lastName',
+        jwt_for_access: 'accessToken',
+        jwt_for_refresh: 'accessTokem',
+      };
+
+      fetchMock.mock(mockOptions, {
+        status: 200,
+        body: JSON.stringify(responseBody),
+      });
+
+      const client = new APIClient(BASE_URL);
+      const response = await client.authSSO();
+
+      expect(response).toEqual(responseBody);
     });
 
-    const client = new APIClient(AUTH_URL);
-    await expect(client.auth(AUTH_REQUEST)).rejects.toEqual(ERROR);
+    test('обработка стандартной ошибки', async () => {
+      const responseBody = {
+        Error: {
+          code: 'Код ошибки',
+          message: 'Описание ошибки',
+        },
+      };
+
+      fetchMock.mock(mockOptions, {
+        status: 401,
+        body: JSON.stringify(responseBody),
+      });
+
+      const client = new APIClient(BASE_URL);
+      await expect(client.authSSO()).rejects.toEqual(responseBody.Error);
+    });
+
+    test('обработка не стандартной ошибки', async () => {
+      const responseBody = '401: Unauthorized';
+      const error = {
+        code: 401,
+        message: ERROR_MESSAGE_FUNCTIONS.AUTH('Unauthorized'),
+      };
+
+      fetchMock.mock(mockOptions, {
+        status: 401,
+        body: responseBody,
+      });
+
+      const client = new APIClient(BASE_URL);
+      await expect(client.authSSO()).rejects.toEqual(error);
+    });
+  });
+
+  describe('refresh', () => {
+    const mockOptions = {
+      url: `${BASE_URL}/auth/jwt/refresh`,
+      method: 'POST',
+    };
+    const refreshToken = 'refreshToken';
+
+    test('обработка успешного обновления токена', async () => {
+      const responseBody = {
+        jwt_for_access: 'accessToken',
+        jwt_for_refresh: 'refreshToken',
+      };
+
+      fetchMock.mock(mockOptions, {
+        status: 200,
+        body: JSON.stringify(responseBody),
+      });
+
+      const client = new APIClient(BASE_URL);
+      const response = await client.refresh(refreshToken);
+
+      expect(response).toEqual(responseBody);
+    });
+
+    test('обработка стандартной ошибки', async () => {
+      const responseBody = {
+        Error: {
+          code: 'Код ошибки',
+          message: 'Описание ошибки',
+        },
+      };
+
+      fetchMock.mock(mockOptions, {
+        status: 401,
+        body: JSON.stringify(responseBody),
+      });
+
+      const client = new APIClient(BASE_URL);
+      await expect(client.refresh(refreshToken)).rejects.toEqual(responseBody.Error);
+    });
+
+    test('обработка не стандартной ошибки', async () => {
+      const responseBody = '401: Unauthorized';
+      const error = {
+        code: 401,
+        message: ERROR_MESSAGE_FUNCTIONS.DEFAULT('Unauthorized'),
+      };
+
+      fetchMock.mock(mockOptions, {
+        status: 401,
+        body: responseBody,
+      });
+
+      const client = new APIClient(BASE_URL);
+      await expect(client.refresh(refreshToken)).rejects.toEqual(error);
+    });
+  });
+
+  describe('destroy', () => {
+    const mockOptions = {
+      url: `${BASE_URL}/auth/jwt/destroy`,
+      method: 'POST',
+    };
+    const accessToken = 'accessToken';
+
+    test('обработка успешного удаления токена', async () => {
+      const responseBody = {
+        ok: 'ok',
+      };
+
+      fetchMock.mock(mockOptions, {
+        status: 200,
+        body: JSON.stringify(responseBody),
+      });
+
+      const client = new APIClient(BASE_URL);
+      const response = await client.destroy(accessToken);
+
+      expect(response).toEqual(responseBody);
+    });
+
+    test('обработка стандартной ошибки', async () => {
+      const responseBody = {
+        Error: {
+          code: 'Код ошибки',
+          message: 'Описание ошибки',
+        },
+      };
+
+      fetchMock.mock(mockOptions, {
+        status: 401,
+        body: JSON.stringify(responseBody),
+      });
+
+      const client = new APIClient(BASE_URL);
+      await expect(client.destroy(accessToken)).rejects.toEqual(responseBody.Error);
+    });
+
+    test('обработка не стандартной ошибки', async () => {
+      const responseBody = '401: Unauthorized';
+      const error = {
+        code: 401,
+        message: ERROR_MESSAGE_FUNCTIONS.DEFAULT('Unauthorized'),
+      };
+
+      fetchMock.mock(mockOptions, {
+        status: 401,
+        body: responseBody,
+      });
+
+      const client = new APIClient(BASE_URL);
+      await expect(client.destroy(accessToken)).rejects.toEqual(error);
+    });
   });
 });

@@ -109,7 +109,7 @@ describe('client', () => {
 
     const URI = 'graphql';
     const PROJECT_VID = 'projectVid1';
-    const CONFIG = { apiUrl: '/auth', token: 'test-token' };
+    const CONFIG = { apiUrl: '/auth' };
 
     const uriLink = createSwitchUriLink(URI);
 
@@ -136,7 +136,7 @@ describe('client', () => {
     fetchMock.post('/graphql', makePromise(data));
 
     const URI = 'graphql';
-    const CONFIG = { apiUrl: '/auth', token: 'test-token' };
+    const CONFIG = { apiUrl: '/auth' };
 
     const uriLink = createSwitchUriLink(URI);
 
@@ -156,7 +156,7 @@ describe('client', () => {
     fetchMock.post('/context-graphql-uri', makePromise(data));
 
     const URI = 'graphql';
-    const CONFIG = { apiUrl: '/auth', token: 'test-token' };
+    const CONFIG = { apiUrl: '/auth' };
 
     const uriLink = createSwitchUriLink(URI);
 
