@@ -24,7 +24,7 @@ export const queries = {
       }
     }
   `,
-};
+} as const;
 
 const internalServerError = new ApolloError({
   graphQLErrors: [],
@@ -47,7 +47,16 @@ export const projectNotFoundError = {
   },
 };
 
+export const projectResponse = {
+  data: {
+    project: {
+      name: 'project-name',
+    },
+  },
+};
+
 export const mocks = {
   projectNotFoundError,
   internalServerError,
-};
+  projectResponse,
+} as const;
