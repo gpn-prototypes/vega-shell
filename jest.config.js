@@ -12,9 +12,10 @@ module.exports = {
   coveragePathIgnorePatterns: [
     ...config.coveragePathIgnorePatterns,
     '/e2e-tests/',
-    './src/test-utils/MockLocalStorage.ts',
+    '/testing/',
+    '/test-utils/',
   ],
-  collectCoverageFrom: ['**/*.{ts,tsx}', '!**/*.d.ts'],
+  collectCoverageFrom: ['**/*.{ts,tsx}', '!**/*.d.ts', '!**/__generated__/**'],
   transformIgnorePatterns: ['node_modules/?!(@gpn-prototypes)/'],
   coverageReporters: ['lcov', 'json-summary', 'text', 'text-summary'],
 };
