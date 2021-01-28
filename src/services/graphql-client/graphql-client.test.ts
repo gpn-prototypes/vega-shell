@@ -221,6 +221,20 @@ describe('createGraphqlClient', () => {
 
     expect(result).toEqual(expectedResponse);
   });
+
+  test('корректно парсит ошибку', async () => {
+    fetchMock.mock(URI, { status: 404, body: 'not-found' });
+
+    const client = createMockClient();
+
+    try {
+      await client.query({
+        query: queries.sample,
+      });
+    } catch (err) {
+      expect(err.networkError.bodyText).toBe('not-found');
+    }
+  });
 });
 
 const __typename = 'TestType';
