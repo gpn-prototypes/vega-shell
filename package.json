@@ -13,6 +13,7 @@
     "generate:dev:types": "yarn generate:types --require dotenv/config",
     "generate:dev:types:watch": "yarn generate:dev:types --watch",
     "test": "cross-env BABEL_ENV=test jest --passWithNoTests",
+    "test:watch": "yarn test --watch",
     "coverage": "jest --all --coverage",
     "coverage:changes": "jest --coverage --onlyChanged",
     "format": "prettier --write {src,types,scripts}/**/*.{json,{j,t}s{,x},css,}",

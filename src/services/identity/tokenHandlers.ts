@@ -10,6 +10,16 @@ type DecodedToken = {
   };
 };
 
+export function mockValidToken(): string {
+  return `${btoa(JSON.stringify({ type: 'JWT', alg: 'HS256' }))}.${btoa(
+    JSON.stringify({
+      jti: 'b8d9b6d3ebac4599b0b2194cc3862d0f',
+      exp: Date.now(),
+      login: 'vega2-test@gpndt.test',
+    }),
+  )}`;
+}
+
 function decodeToken(token: string): DecodedToken | null {
   try {
     const parts = token.split('.');
