@@ -1,2 +1,1 @@
-export * from './types';
-export * from './message-bus';
+export { MessageBus } from './message-bus';

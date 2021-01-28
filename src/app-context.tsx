@@ -3,7 +3,7 @@ import { createBrowserHistory, History } from 'history';
 
 import { createGraphqlClient, GraphQLClient, ServerError } from './services/graphql-client';
 import { Identity } from './services/identity';
-import { BrowserMessageBus } from './services/message-bus';
+import { MessageBus } from './services/message-bus';
 import { Notifications } from './services/notifications';
 
 export type ServerErrorListener = (error: ServerError) => void;
@@ -12,7 +12,7 @@ export type AppContextProps = {
   history: History;
   identity: Identity;
   graphqlClient: GraphQLClient;
-  bus: BrowserMessageBus;
+  bus: MessageBus;
   notifications: Notifications;
   serverError: ServerError | null;
   setServerError: (serverError: ServerError | null) => void;
@@ -28,7 +28,7 @@ export const AppContext = createContext<AppContextProps>({
     uri: '/graphql',
     onError: () => {},
   }),
-  bus: BrowserMessageBus.create(),
+  bus: MessageBus.create(),
   notifications: new Notifications(),
   serverError: null,
   setServerError: () => {},
