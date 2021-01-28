@@ -22,31 +22,47 @@ type AuthDestroyResponse = {
 };
 
 type ErrorType = {
-  code: number;
+  code: string | number;
   message: string;
 };
 
-type FailedResponseType = {
+type FailedResponse = {
   Error: ErrorType;
 };
 
-const getDefaultError = (response: Response): ErrorType => {
-  const message = `При входе в систему возникла ошибка: ${response.statusText}. Попробуйте снова или обратитесь в Службу технической поддержки`;
-  const error = {
-    code: response.status,
-    message,
-  };
+type ErrorMessageFunction = (statusText: string) => string;
 
-  return error;
+export const ERROR_MESSAGE_FUNCTIONS = {
+  AUTH: (statusText: string): string =>
+    `При входе в систему возникла ошибка: ${statusText}. Попробуйте снова или обратитесь в Службу технической поддержки`,
+  DEFAULT: (statusText: string): string => statusText,
 };
 
-const handleError = async <T>(response: Response): Promise<T> => {
+const handleResponseError = async <T>(
+  response: Response,
+  getErrorMessage: ErrorMessageFunction = ERROR_MESSAGE_FUNCTIONS.DEFAULT,
+): Promise<T> => {
   try {
-    const { Error }: FailedResponseType = await response.json();
+    const { Error }: FailedResponse = await response.json();
     return Promise.reject(Error);
   } catch {
-    return Promise.reject(getDefaultError(response));
+    const error = {
+      code: response.status,
+      message: getErrorMessage(response.statusText),
+    };
+
+    return Promise.reject(error);
   }
+};
+
+const HEADERS = {
+  GET: {
+    Accept: 'application/json',
+  },
+  POST: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+  },
 };
 
 export class APIClient {
@@ -60,10 +76,7 @@ export class APIClient {
     const response = await fetch(`${this.url}/auth/jwt/obtain`, {
       method: 'POST',
       mode: 'cors',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
+      headers: HEADERS.POST,
       body: JSON.stringify({ login, password }),
     });
 
@@ -72,16 +85,15 @@ export class APIClient {
       return data;
     }
 
-    return handleError(response);
+    const errorMessageFunction = ERROR_MESSAGE_FUNCTIONS.AUTH;
+    return handleResponseError(response, errorMessageFunction);
   };
 
   public authSSO = async (): Promise<AuthObtainResponse> => {
     const response = await fetch(`${this.url}/auth/sso/login`, {
       method: 'GET',
       mode: 'cors',
-      headers: {
-        Accept: 'application/json',
-      },
+      headers: HEADERS.GET,
     });
 
     if (response.status === 200) {
@@ -89,17 +101,15 @@ export class APIClient {
       return data;
     }
 
-    return handleError(response);
+    const errorMessageFunction = ERROR_MESSAGE_FUNCTIONS.AUTH;
+    return handleResponseError(response, errorMessageFunction);
   };
 
   public refresh = async (refreshToken: string): Promise<AuthRefreshResponse> => {
     const response = await fetch(`${this.url}/auth/jwt/refresh`, {
       method: 'POST',
       mode: 'cors',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
+      headers: HEADERS.POST,
       body: JSON.stringify({ jwt_for_refresh: refreshToken }),
     });
 
@@ -108,17 +118,14 @@ export class APIClient {
       return data;
     }
 
-    return handleError(response);
+    return handleResponseError(response);
   };
 
   public destroy = async (accessToken: string): Promise<AuthDestroyResponse> => {
     const response = await fetch(`${this.url}/auth/jwt/destroy`, {
       method: 'POST',
       mode: 'cors',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
+      headers: HEADERS.POST,
       body: JSON.stringify({ jwt_for_access: accessToken }),
     });
 
@@ -127,6 +134,6 @@ export class APIClient {
       return data;
     }
 
-    return handleError(response);
+    return handleResponseError(response);
   };
 }
