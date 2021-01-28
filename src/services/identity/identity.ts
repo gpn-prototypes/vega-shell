@@ -80,6 +80,7 @@ export class Identity {
       const refreshToken = this.getRefreshToken();
 
       if (refreshToken === null) {
+        // istanbul ignore next
         throw new Error('RefreshToken не найден');
       }
 
@@ -96,6 +97,7 @@ export class Identity {
         return res.jwt_for_access;
       }
 
+      // istanbul ignore next
       return null;
     } catch (error) {
       return null;
@@ -107,6 +109,7 @@ export class Identity {
       const accessToken = this.getAccessToken();
 
       if (accessToken === null) {
+        // istanbul ignore next
         throw new Error('AccessToken не найден');
       }
 
@@ -114,6 +117,7 @@ export class Identity {
 
       return ok;
     } catch (err) {
+      // istanbul ignore next
       return Promise.reject(err);
     }
   };

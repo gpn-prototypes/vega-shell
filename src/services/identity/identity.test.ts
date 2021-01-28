@@ -54,7 +54,7 @@ describe('Identity', () => {
       expect(refreshToken).toEqual(responseBody.jwt_for_refresh);
       expect(userName?.firstName).toEqual(responseBody.first_name);
       expect(userName?.lastName).toEqual(responseBody.last_name);
-      expect(onAuthCallback.mock.calls.length).toEqual(1);
+      expect(onAuthCallback).toBeCalledTimes(1);
     });
 
     test('обработка ошибки', async () => {
@@ -87,7 +87,7 @@ describe('Identity', () => {
       expect(accessToken).toEqual(null);
       expect(refreshToken).toEqual(null);
       expect(userName).toEqual(null);
-      expect(onAuthCallback.mock.calls.length).toEqual(0);
+      expect(onAuthCallback).toBeCalledTimes(0);
     });
   });
 
@@ -129,7 +129,7 @@ describe('Identity', () => {
       expect(refreshToken).toEqual(responseBody.jwt_for_refresh);
       expect(userName?.firstName).toEqual(responseBody.first_name);
       expect(userName?.lastName).toEqual(responseBody.last_name);
-      expect(onAuthCallback.mock.calls.length).toEqual(1);
+      expect(onAuthCallback).toBeCalledTimes(1);
     });
 
     test('обработка ошибки', async () => {
@@ -162,7 +162,7 @@ describe('Identity', () => {
       expect(accessToken).toEqual(null);
       expect(refreshToken).toEqual(null);
       expect(userName).toEqual(null);
-      expect(onAuthCallback.mock.calls.length).toEqual(0);
+      expect(onAuthCallback).toBeCalledTimes(0);
     });
   });
 
@@ -359,7 +359,7 @@ describe('Identity', () => {
       expect(accessToken).toEqual(null);
       expect(refreshToken).toEqual(null);
       expect(userName).toEqual(null);
-      expect(onLogoutCallback.mock.calls.length).toEqual(1);
+      expect(onLogoutCallback).toBeCalledTimes(1);
       expect(fetchMock.calls().length).toEqual(1);
     });
 
@@ -392,7 +392,7 @@ describe('Identity', () => {
       expect(accessToken).toEqual(null);
       expect(refreshToken).toEqual(null);
       expect(userName).toEqual(null);
-      expect(onLogoutCallback.mock.calls.length).toEqual(1);
+      expect(onLogoutCallback).toBeCalledTimes(1);
       expect(fetchMock.calls().length).toEqual(0);
     });
   });
