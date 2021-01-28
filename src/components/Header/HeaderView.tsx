@@ -22,6 +22,8 @@ const LS_USER_FIRST_NAME_KEY = 'user-first-name';
 const LS_USER_LAST_NAME_KEY = 'user-last-name';
 
 const testId = {
+  userInfo: 'Header:block:userInfo',
+  username: 'Header:text:username',
   logout: 'Header:button:logout',
   menuItemProject: 'Header:link:project',
   menuItemTraining: 'Header:link:training',
@@ -51,9 +53,13 @@ export const HeaderView = (props: HeaderViewProps): React.ReactElement => {
     if (userName) {
       return (
         <>
-          <div className={cnHeader('Avatar')}>
+          <div data-testid={testId.userInfo} className={cnHeader('Avatar')}>
             <img src={defaultAvatar} alt="avatar" className={cnHeader('Avatar-img')} />
-            <Text size="xs" className={cnHeader('Avatar-name').toString()}>
+            <Text
+              data-testid={testId.username}
+              size="xs"
+              className={cnHeader('Avatar-name').toString()}
+            >
               {userName}
             </Text>
           </div>
