@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+// istanbul ignore file
 export class Logger {
   private scope: string;
 
