@@ -3,7 +3,7 @@ import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/client';
 import { useMount, useOnChange, usePreviousRef } from '@gpn-prototypes/vega-ui';
 
-import { useAppContext } from '../../app/app-context';
+import { useShell } from '../../app';
 import { ServerError } from '../../services/graphql-client';
 import { Application } from '../Application';
 import { AuthPage } from '../AuthPage';
@@ -23,9 +23,9 @@ const NotFoundView = () => (
 );
 
 export const ApplicationRoutes = (): React.ReactElement => {
-  const context = useAppContext();
-  const { serverError, setServerError } = context;
-  const { bus, identity, notifications, graphqlClient } = context;
+  const shell = useShell();
+  const { serverError, setServerError } = shell;
+  const { bus, identity, notifications, graphqlClient } = shell;
 
   const location = useLocation();
 

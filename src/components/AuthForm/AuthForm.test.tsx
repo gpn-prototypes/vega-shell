@@ -1,5 +1,6 @@
 import React from 'react';
-import { fireEvent, render, RenderResult, screen } from '@testing-library/react';
+
+import { fireEvent, render, RenderResult, screen } from '../../testing';
 
 import { AuthForm, AuthFormProps } from './AuthForm';
 
@@ -43,19 +44,6 @@ function submitIncorrectData(): void {
 }
 
 const onLogin = jest.fn(() => Promise.resolve(''));
-
-jest.mock('../../app-context', () => {
-  return {
-    useAppContext: () => {
-      return {
-        notifications: {
-          add: () => {},
-          remove: () => {},
-        },
-      };
-    },
-  };
-});
 
 describe('AuthForm', () => {
   beforeEach(() => {

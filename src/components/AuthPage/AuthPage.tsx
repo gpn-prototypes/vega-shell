@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Carousel, Loader } from '@gpn-prototypes/vega-ui';
 
-import { useAppContext } from '../../app/app-context';
+import { useShell } from '../../app';
 import { AuthForm } from '../AuthForm';
 
 import imgCreate from './images/carousel-create-project.png';
@@ -31,7 +31,7 @@ type AuthPageType = React.FC & {
 };
 
 export const AuthPage: AuthPageType = () => {
-  const { identity, notifications } = useAppContext();
+  const { identity, notifications } = useShell();
 
   const [slideIdx, setSlideIdx] = useState(0);
   const [isLoading, setIsLoading] = useState(true);

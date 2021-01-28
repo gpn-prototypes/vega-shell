@@ -30,9 +30,10 @@ export const notFoundErrorUserMessage = `Ошибка 404. Страница не
 
 export type ErrorHandler = (error: ServerError) => void;
 
-export type Config = {
+export type GraphQLClientConfig = {
   uri: string;
   identity: Identity;
+  fetch?: HttpOptions['fetch'];
   onError: ErrorHandler;
 };
 
@@ -204,8 +205,8 @@ export const createProjectDiffResolverLink = (): ApolloLink => {
   });
 };
 
-export function createGraphqlClient(config: Config): GraphQLClient {
-  const { uri, identity, onError: handleError } = config;
+export function createGraphqlClient(config: GraphQLClientConfig): GraphQLClient {
+  const { uri, identity, onError: handleError, fetch } = config;
   return new ApolloClient({
     connectToDevTools: process.env.VEGA_ENV === 'development',
     cache: new InMemoryCache({
@@ -222,7 +223,7 @@ export function createGraphqlClient(config: Config): GraphQLClient {
       createSwitchUriLink(uri),
       createProjectDiffResolverLink(),
       createAuthLink(identity),
-      createHttpLink(),
+      createHttpLink({ fetch }),
     ]),
   });
 }

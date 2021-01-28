@@ -2,7 +2,7 @@ import React from 'react';
 import { Item } from '@consta/uikit/SnackBar';
 import { SnackBar as BaseSnackbar, usePortalRender } from '@gpn-prototypes/vega-ui';
 
-import { useAppContext } from '../../app/app-context';
+import { useShell } from '../../app/shell-context';
 
 import './Snackbar.css';
 
@@ -15,17 +15,17 @@ export const Snackbar = (): React.ReactElement => {
   const [notifications, setNotifications] = React.useState<Item[]>([]);
   const { renderPortalWithTheme } = usePortalRender();
 
-  const context = useAppContext();
+  const shell = useShell();
 
   React.useEffect(() => {
-    const unsubscribe = context.notifications.subscribe('change', ({ items }) => {
+    const unsubscribe = shell.notifications.subscribe('change', ({ items }) => {
       setNotifications(items);
     });
 
     return () => {
       unsubscribe();
     };
-  }, [context.notifications]);
+  }, [shell.notifications]);
 
   return renderPortalWithTheme(
     <div className={styles.container}>
