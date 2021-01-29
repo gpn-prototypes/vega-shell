@@ -3799,18 +3799,6 @@
             "deprecationReason": null
           },
           {
-            "name": "years",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "version",
             "description": null,
             "args": [],
@@ -4123,7 +4111,7 @@
               "name": null,
               "ofType": {
                 "kind": "ENUM",
-                "name": "ErrorCodes",
+                "name": "ErrorCodesEnum",
                 "ofType": null
               }
             },
@@ -4196,7 +4184,7 @@
               "name": null,
               "ofType": {
                 "kind": "ENUM",
-                "name": "ErrorCodes",
+                "name": "ErrorCodesEnum",
                 "ofType": null
               }
             },
@@ -4252,12 +4240,17 @@
             "kind": "OBJECT",
             "name": "Error",
             "ofType": null
+          },
+          {
+            "kind": "OBJECT",
+            "name": "DuplicateRoleError",
+            "ofType": null
           }
         ]
       },
       {
         "kind": "ENUM",
-        "name": "ErrorCodes",
+        "name": "ErrorCodesEnum",
         "description": "Error codes list.",
         "fields": null,
         "inputFields": null,
@@ -4289,7 +4282,7 @@
           },
           {
             "name": "INCORRECT_PROJECT_VERSION",
-            "description": "Не корректная версия проекта",
+            "description": "Некорректная версия проекта",
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -4386,6 +4379,12 @@
           {
             "name": "PROJECT_ATTENDEE_USER_ROLE_NOT_FOUND",
             "description": "Рольу участника проекта не найдена",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "PROJECT_ATTENDEE_USER_WITH_DUPLICATE_ROLES",
+            "description": "Невозможно добавить участника с дублирующимися ролями.",
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -9714,7 +9713,7 @@
             "defaultValue": null
           },
           {
-            "name": "years",
+            "name": "yearEnd",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -9988,7 +9987,7 @@
             "defaultValue": null
           },
           {
-            "name": "years",
+            "name": "yearEnd",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -10062,6 +10061,11 @@
             "kind": "OBJECT",
             "name": "Error",
             "ofType": null
+          },
+          {
+            "kind": "OBJECT",
+            "name": "DuplicateRoleError",
+            "ofType": null
           }
         ]
       },
@@ -10089,6 +10093,95 @@
         ],
         "inputFields": null,
         "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "DuplicateRoleError",
+        "description": null,
+        "fields": [
+          {
+            "name": "code",
+            "description": "Код ошибки, соответствующий человекочитаемому сообщению об ошибке",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "ErrorCodesEnum",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "message",
+            "description": "Сообщение об ошибке. Отображается в случае отсутствия соответствующего коду человекочитаемого сообщения на клиенте",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "details",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "payload",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "DictType",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "roles",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "UUID",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [
+          {
+            "kind": "INTERFACE",
+            "name": "ErrorInterface",
+            "ofType": null
+          }
+        ],
         "enumValues": null,
         "possibleTypes": null
       },
@@ -11026,11 +11119,7 @@
         "name": "skip",
         "description": "Directs the executor to skip this field or fragment when the `if` argument is true.",
         "isRepeatable": false,
-        "locations": [
-          "FIELD",
-          "FRAGMENT_SPREAD",
-          "INLINE_FRAGMENT"
-        ],
+        "locations": ["FIELD", "FRAGMENT_SPREAD", "INLINE_FRAGMENT"],
         "args": [
           {
             "name": "if",
@@ -11052,11 +11141,7 @@
         "name": "include",
         "description": "Directs the executor to include this field or fragment only when the `if` argument is true.",
         "isRepeatable": false,
-        "locations": [
-          "FIELD",
-          "FRAGMENT_SPREAD",
-          "INLINE_FRAGMENT"
-        ],
+        "locations": ["FIELD", "FRAGMENT_SPREAD", "INLINE_FRAGMENT"],
         "args": [
           {
             "name": "if",
@@ -11078,10 +11163,7 @@
         "name": "deprecated",
         "description": "Marks an element of a GraphQL schema as no longer supported.",
         "isRepeatable": false,
-        "locations": [
-          "FIELD_DEFINITION",
-          "ENUM_VALUE"
-        ],
+        "locations": ["FIELD_DEFINITION", "ENUM_VALUE"],
         "args": [
           {
             "name": "reason",
@@ -11099,9 +11181,7 @@
         "name": "specifiedBy",
         "description": "Exposes a URL that specifies the behaviour of this scalar.",
         "isRepeatable": false,
-        "locations": [
-          "SCALAR"
-        ],
+        "locations": ["SCALAR"],
         "args": [
           {
             "name": "url",
