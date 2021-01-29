@@ -55,7 +55,6 @@ export const ShellProvider: React.FC<ShellProps> = (props) => {
 export const useShell = (): ShellAPI => {
   const shell = useContext(ShellContext);
 
-  // istanbul ignore next
   if (shell === null) {
     throw new Error('useShell called outside from ShellProvider');
   }
