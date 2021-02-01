@@ -132,7 +132,7 @@ export const createAuthLink = (identity: Identity, config: ResponseLinkConfig): 
           },
         }));
 
-        const unsub = forward(operation).subscribe({
+        const sub = forward(operation).subscribe({
           next(value) {
             observer.next(value);
           },
@@ -144,7 +144,7 @@ export const createAuthLink = (identity: Identity, config: ResponseLinkConfig): 
           },
         });
 
-        subscriptions.add(unsub);
+        subscriptions.add(sub);
       });
 
       return unsubscribe;
