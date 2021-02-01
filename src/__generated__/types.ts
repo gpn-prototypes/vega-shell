@@ -511,7 +511,6 @@ export type Project = {
   status?: Maybe<ProjectStatusEnum>;
   resourceId?: Maybe<Scalars['String']>;
   yearStart?: Maybe<Scalars['Int']>;
-  years?: Maybe<Scalars['Int']>;
   version?: Maybe<Scalars['Int']>;
 };
 
@@ -572,7 +571,7 @@ export enum ProjectStatusEnum {
 export type Error = ErrorInterface & {
   __typename?: 'Error';
   /** Код ошибки, соответствующий человекочитаемому сообщению об ошибке */
-  code: ErrorCodes;
+  code: ErrorCodesEnum;
   /** Сообщение об ошибке. Отображается в случае отсутствия соответствующего коду человекочитаемого сообщения на клиенте */
   message: Scalars['String'];
   details?: Maybe<Scalars['String']>;
@@ -582,7 +581,7 @@ export type Error = ErrorInterface & {
 /** Интерфейс ошибок, отображаемых пользователю. */
 export type ErrorInterface = {
   /** Код ошибки, соответствующий человекочитаемому сообщению об ошибке */
-  code: ErrorCodes;
+  code: ErrorCodesEnum;
   /** Сообщение об ошибке. Отображается в случае отсутствия соответствующего коду человекочитаемого сообщения на клиенте */
   message: Scalars['String'];
   details?: Maybe<Scalars['String']>;
@@ -590,7 +589,7 @@ export type ErrorInterface = {
 };
 
 /** Error codes list. */
-export enum ErrorCodes {
+export enum ErrorCodesEnum {
   /** Проект не найден */
   ProjectNotFound = 'PROJECT_NOT_FOUND',
   /** Ошибка при обновлении проекта */
@@ -599,7 +598,7 @@ export enum ErrorCodes {
   ReferenceItemNotFound = 'REFERENCE_ITEM_NOT_FOUND',
   /** Ошибка */
   Error = 'ERROR',
-  /** Не корректная версия проекта */
+  /** Некорректная версия проекта */
   IncorrectProjectVersion = 'INCORRECT_PROJECT_VERSION',
   /** Расхождение версий проекта */
   ProjectVersionDiffError = 'PROJECT_VERSION_DIFF_ERROR',
@@ -633,6 +632,8 @@ export enum ErrorCodes {
   ProjectAttendeeAlreadyHasRole = 'PROJECT_ATTENDEE_ALREADY_HAS_ROLE',
   /** Рольу участника проекта не найдена */
   ProjectAttendeeUserRoleNotFound = 'PROJECT_ATTENDEE_USER_ROLE_NOT_FOUND',
+  /** Невозможно добавить участника с дублирующимися ролями. */
+  ProjectAttendeeUserWithDuplicateRoles = 'PROJECT_ATTENDEE_USER_WITH_DUPLICATE_ROLES',
   /** Невозможно сохранить проект - не найден менеджер проекта */
   ProjectManagerNotFound = 'PROJECT_MANAGER_NOT_FOUND',
   /** Проект нельзя возвращать в статус заготовки. */
@@ -1586,7 +1587,7 @@ export type ProjectInputType = {
   description?: Maybe<Scalars['String']>;
   resourceId?: Maybe<Scalars['String']>;
   yearStart?: Maybe<Scalars['Int']>;
-  years?: Maybe<Scalars['Int']>;
+  yearEnd?: Maybe<Scalars['Int']>;
 };
 
 export type DeleteProject = {
@@ -1626,7 +1627,7 @@ export type ProjectUpdateType = {
   isFavorite?: Maybe<Scalars['Boolean']>;
   resourceId?: Maybe<Scalars['String']>;
   yearStart?: Maybe<Scalars['Int']>;
-  years?: Maybe<Scalars['Int']>;
+  yearEnd?: Maybe<Scalars['Int']>;
   /** Version of the original project. */
   version: Scalars['Int'];
 };
@@ -1636,11 +1637,22 @@ export type AddAttendees = {
   result?: Maybe<AttendeeListOrError>;
 };
 
-export type AttendeeListOrError = AttendeeList | UpdateProjectDiff | Error;
+export type AttendeeListOrError = AttendeeList | UpdateProjectDiff | Error | DuplicateRoleError;
 
 export type AttendeeList = {
   __typename?: 'AttendeeList';
   attendeeList?: Maybe<Array<Maybe<Attendee>>>;
+};
+
+export type DuplicateRoleError = ErrorInterface & {
+  __typename?: 'DuplicateRoleError';
+  /** Код ошибки, соответствующий человекочитаемому сообщению об ошибке */
+  code: ErrorCodesEnum;
+  /** Сообщение об ошибке. Отображается в случае отсутствия соответствующего коду человекочитаемого сообщения на клиенте */
+  message: Scalars['String'];
+  details?: Maybe<Scalars['String']>;
+  payload?: Maybe<Scalars['DictType']>;
+  roles?: Maybe<Array<Maybe<Scalars['UUID']>>>;
 };
 
 export type AttendeeInputType = {

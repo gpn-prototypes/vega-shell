@@ -1,13 +1,16 @@
 import React from 'react';
 import { generatePath, useHistory, useLocation } from 'react-router-dom';
 
+import { useAppContext } from '../../app-context';
+
 import { useGetProjectName } from './__generated__/get-project-name';
 import { HeaderView } from './HeaderView';
 import { NavLinkType } from './types';
 
 import './Header.css';
 
-export const Header = (): React.ReactElement => {
+export const Header: React.FC = () => {
+  const { serverError } = useAppContext();
   const history = useHistory();
   const location = useLocation();
 
@@ -32,6 +35,10 @@ export const Header = (): React.ReactElement => {
       history.push(generatePath(item.url, { projectId }));
     }
   };
+
+  if (serverError !== null) {
+    return null;
+  }
 
   return (
     <HeaderView
