@@ -178,12 +178,16 @@ describe('switchUriLink', () => {
 
     const URI = 'graphql';
     const PROJECT_VID = 'projectVid1';
-    const CONFIG = { apiUrl: '/auth', token: tokens['access-token'] };
+    const CONFIG = {
+      apiUrl: '/auth',
+      accessToken: tokens['access-token'],
+      refreshToken: tokens['refresh-token'],
+    };
 
     const uriLink = createSwitchUriLink(URI);
 
     const identity = new Identity(CONFIG);
-    const authLink = createAuthLink(identity);
+    const authLink = createAuthLink(identity, { handleError: () => {} });
 
     const link = ApolloLink.from([authLink, uriLink, createHttpLink()]);
 
@@ -205,12 +209,16 @@ describe('switchUriLink', () => {
     fetchMock.post('/graphql', makePromise(data));
 
     const URI = 'graphql';
-    const CONFIG = { apiUrl: '/auth', token: tokens['access-token'] };
+    const CONFIG = {
+      apiUrl: '/auth',
+      accessToken: tokens['access-token'],
+      refreshToken: tokens['refresh-token'],
+    };
 
     const uriLink = createSwitchUriLink(URI);
 
     const identity = new Identity(CONFIG);
-    const authLink = createAuthLink(identity);
+    const authLink = createAuthLink(identity, { handleError: () => {} });
 
     const link = ApolloLink.from([authLink, uriLink, createHttpLink()]);
 
@@ -225,12 +233,16 @@ describe('switchUriLink', () => {
     fetchMock.post('/context-graphql-uri', makePromise(data));
 
     const URI = 'graphql';
-    const CONFIG = { apiUrl: '/auth', token: tokens['access-token'] };
+    const CONFIG = {
+      apiUrl: '/auth',
+      accessToken: tokens['access-token'],
+      refreshToken: tokens['refresh-token'],
+    };
 
     const uriLink = createSwitchUriLink(URI);
 
     const identity = new Identity(CONFIG);
-    const authLink = createAuthLink(identity);
+    const authLink = createAuthLink(identity, { handleError: () => {} });
 
     const link = ApolloLink.from([authLink, uriLink, createHttpLink()]);
 
@@ -259,7 +271,7 @@ describe('authLink', () => {
       refreshToken: tokens['refresh-token'],
     });
 
-    const authLink = createAuthLink(identity);
+    const authLink = createAuthLink(identity, { handleError: () => {} });
     const link = ApolloLink.from([authLink, createHttpLink()]);
 
     await toPromise(
