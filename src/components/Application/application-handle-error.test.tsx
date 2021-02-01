@@ -15,24 +15,6 @@ beforeEach(() => {
 afterEach(() => {
   delete global.System;
 });
-/*
-  Замокал, потому что в парселе асинхронная обработка ошибок и было сложно написать тесты на это.
-  Вынес в отдельный файл, так как jest не дает замокать только один тест
-*/
-jest.mock('single-spa-react/lib/esm/parcel', () => {
-  // eslint-disable-next-line global-require, @typescript-eslint/no-var-requires
-  const { useMount } = require('@gpn-prototypes/vega-ui');
-
-  return (props: { error: boolean; handleError: VoidFunction }) => {
-    useMount(() => {
-      if (props.error) {
-        props.handleError();
-      }
-    });
-
-    return null;
-  };
-});
 
 const componentProps = {
   error: true,

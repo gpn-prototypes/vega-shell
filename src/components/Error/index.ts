@@ -1,1 +1,1 @@
-export { ErrorView } from './ErrorView';
+export { ErrorView, labels as ErrorLabels } from './ErrorView';

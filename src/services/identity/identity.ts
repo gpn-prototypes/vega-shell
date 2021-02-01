@@ -18,6 +18,13 @@ const LS_REFRESH_TOKEN_KEY = 'refresh-token';
 const LS_USER_FIRST_NAME_KEY = 'user-first-name';
 const LS_USER_LAST_NAME_KEY = 'user-last-name';
 
+export const LS_KEYS = {
+  LS_ACCESS_TOKEN_KEY,
+  LS_REFRESH_TOKEN_KEY,
+  LS_USER_FIRST_NAME_KEY,
+  LS_USER_LAST_NAME_KEY,
+};
+
 export class Identity {
   private apiClient: APIClient;
 
