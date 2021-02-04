@@ -1,11 +1,18 @@
 import type { History } from 'history';
 import { createBrowserHistory } from 'history';
 
+import { CurrentProject, FindProjectResult } from '../services/current-project';
 import type { GraphQLClient, GraphQLClientConfig } from '../services/graphql-client';
 import { createGraphqlClient, ServerError } from '../services/graphql-client';
 import { Identity } from '../services/identity';
 import { MessageBus } from '../services/message-bus';
 import { Notifications } from '../services/notifications';
+
+import {
+  FindProject,
+  FindProjectDocument,
+  FindProjectVariables,
+} from './__generated__/find-project';
 
 interface Config {
   baseApiUrl: string;
@@ -22,6 +29,8 @@ export class Shell {
   readonly identity: Identity;
 
   readonly graphQLClient: GraphQLClient;
+
+  readonly currentProject: CurrentProject;
 
   constructor(config: Config) {
     this.history = createBrowserHistory();
@@ -46,6 +55,12 @@ export class Shell {
         this.handleGraphQLClientError(error);
       },
     });
+
+    this.currentProject = new CurrentProject({
+      findProject: (vid) => {
+        return this.findProject(vid);
+      },
+    });
   }
 
   private handleLoggedInChange(data: { isLoggedIn: boolean }): void {
@@ -59,6 +74,27 @@ export class Shell {
 
   private handleGraphQLClientError(error: ServerError): void {
     this.messageBus.send({ channel: 'error', topic: 'server-error', payload: error });
+  }
+
+  private async findProject(vid: string): Promise<FindProjectResult> {
+    const result = await this.graphQLClient.query<FindProject, FindProjectVariables>({
+      query: FindProjectDocument,
+      variables: {
+        vid,
+      },
+    });
+
+    const { data } = result;
+
+    if (data.project?.__typename === 'Error' && data.project.code === 'PROJECT_NOT_FOUND') {
+      return FindProjectResult.NOT_FOUND;
+    }
+
+    if (data.project?.__typename === 'Project') {
+      return FindProjectResult.SUCCESS;
+    }
+
+    return FindProjectResult.ERROR;
   }
 
   dispose(): void {

@@ -1,0 +1,16 @@
+query FindProject($vid: UUID!) {
+  project(vid: $vid) {
+    ... on Project {
+      vid
+      version
+    }
+
+    ... on Error {
+      code
+    }
+
+    ... on ErrorInterface {
+      code
+    }
+  }
+}

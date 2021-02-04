@@ -20,9 +20,13 @@ describe('CurrentProject', () => {
     const vid = uuid();
 
     findProject.mockResolvedValueOnce(FindProjectResult.SUCCESS);
-    await project.checkout(vid);
+    const checkout = project.checkout(vid);
 
-    expect(project.status()).toStrictEqual({ code: project.codes.ACTIVATED, vid });
+    expect(project.status()).toStrictEqual({ code: project.codes.CHECKOUT, vid });
+
+    await checkout;
+
+    expect(project.status()).toStrictEqual({ code: project.codes.CHECKED, vid });
   });
 
   test('проект не найден', async () => {
@@ -46,7 +50,7 @@ describe('CurrentProject', () => {
   test('ошибка в ответе', async () => {
     const vid = uuid();
 
-    findProject.mockRejectedValueOnce(FindProjectResult.ERROR);
+    findProject.mockResolvedValueOnce(FindProjectResult.ERROR);
     await project.checkout(vid);
 
     expect(project.status()).toStrictEqual({ code: project.codes.ERROR, vid });

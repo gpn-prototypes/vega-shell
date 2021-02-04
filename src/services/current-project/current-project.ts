@@ -1,7 +1,8 @@
 enum Code {
   IDLE = 'IDLE',
   NOT_FOUND = 'NOT_FOUND',
-  ACTIVATED = 'ACTIVATED',
+  CHECKOUT = 'CHECKOUT',
+  CHECKED = 'CHECKED',
   ERROR = 'ERROR',
 }
 
@@ -9,7 +10,8 @@ type ProjectVID = string;
 
 type CheckoutStatus =
   | { code: Code.IDLE }
-  | { code: Code.ACTIVATED; vid: ProjectVID }
+  | { code: Code.CHECKOUT; vid: ProjectVID }
+  | { code: Code.CHECKED; vid: ProjectVID }
   | { code: Code.NOT_FOUND; vid: ProjectVID }
   | { code: Code.ERROR; vid: ProjectVID };
 
@@ -46,9 +48,16 @@ export class CurrentProject {
     };
   }
 
-  private toSuccess(vid: ProjectVID): void {
+  private toCheckout(vid: ProjectVID): void {
     this.checkoutStatus = {
-      code: Code.ACTIVATED,
+      code: Code.CHECKOUT,
+      vid,
+    };
+  }
+
+  private toChecked(vid: ProjectVID): void {
+    this.checkoutStatus = {
+      code: Code.CHECKED,
       vid,
     };
   }
@@ -68,6 +77,8 @@ export class CurrentProject {
   }
 
   public async checkout(vid: ProjectVID): Promise<CheckoutStatus> {
+    this.toCheckout(vid);
+
     try {
       const result = await this.findProject(vid);
 
@@ -76,7 +87,7 @@ export class CurrentProject {
       } else if (result === FindProjectResult.ERROR) {
         this.toError(vid);
       } else if (result === FindProjectResult.SUCCESS) {
-        this.toSuccess(vid);
+        this.toChecked(vid);
       }
     } catch (err) {
       this.toError(vid);
