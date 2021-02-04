@@ -2,15 +2,15 @@ import { FetchResult, gql, throwServerError } from '@apollo/client';
 import { ErrorResponse } from '@apollo/client/link/error';
 import fetchMock from 'fetch-mock';
 
-import { makePromise } from '../../test-utils/make-promise';
+import { makePromise } from '../../testing/make-promise';
 import { Identity } from '../identity';
 import { mockValidToken } from '../identity/tokenHandlers';
 
 import {
-  Config,
   createGraphqlClient,
   getDataIdFromObject,
   getParsedError,
+  GraphQLClientConfig,
   isServerParseError,
 } from './graphql-client';
 import { mocks, queries } from './mocks';
@@ -31,7 +31,7 @@ const URI = '/graphql-uri';
 
 const fetchResult: FetchResult = { data: { foo: 'bar' } };
 
-const createMockClient = (config?: Partial<Config>) =>
+const createMockClient = (config?: Partial<GraphQLClientConfig>) =>
   createGraphqlClient({
     onError: jest.fn(),
     uri: URI,

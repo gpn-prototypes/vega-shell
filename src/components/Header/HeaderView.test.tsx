@@ -1,5 +1,6 @@
 import React from 'react';
-import { fireEvent, render, RenderResult, screen } from '@testing-library/react';
+
+import { fireEvent, render, RenderResult, screen } from '../../testing';
 
 import { HeaderView, HeaderViewProps } from './HeaderView';
 
@@ -24,19 +25,6 @@ function findTabs(): HTMLElement | null {
 function findMenu(): HTMLElement | null {
   return screen.queryByRole('menubar');
 }
-
-jest.mock('../../app-context', () => {
-  return {
-    useAppContext: () => {
-      return {
-        notifications: {
-          add: () => {},
-          remove: () => {},
-        },
-      };
-    },
-  };
-});
 
 describe('HeaderView', () => {
   describe('Title', () => {

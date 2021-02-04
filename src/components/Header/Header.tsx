@@ -1,7 +1,7 @@
 import React from 'react';
 import { generatePath, useHistory, useLocation } from 'react-router-dom';
 
-import { useAppContext } from '../../app-context';
+import { useShell } from '../../app';
 
 import { useGetProjectName } from './__generated__/get-project-name';
 import { HeaderView } from './HeaderView';
@@ -10,7 +10,7 @@ import { NavLinkType } from './types';
 import './Header.css';
 
 export const Header: React.FC = () => {
-  const { serverError } = useAppContext();
+  const { serverError } = useShell();
   const history = useHistory();
   const location = useLocation();
 

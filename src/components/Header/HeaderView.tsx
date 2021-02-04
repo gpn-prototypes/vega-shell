@@ -3,7 +3,7 @@ import { Link, matchPath } from 'react-router-dom';
 import { Badge, Text, useMount } from '@gpn-prototypes/vega-ui';
 import cn from 'bem-cn';
 
-import { useAppContext } from '../../app-context';
+import { useShell } from '../../app';
 import { BaseHeader } from '../BaseHeader';
 
 import defaultAvatar from './default-avatar.svg';
@@ -36,7 +36,7 @@ const testId = {
 
 export const HeaderView = (props: HeaderViewProps): React.ReactElement => {
   const { isLoading, projectName, pathname, onChangeActive } = props;
-  const { identity } = useAppContext();
+  const { identity } = useShell();
 
   const [userName, setUserName] = useState<string | null>(null);
 

@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { mountRootParcel } from 'single-spa';
 import ParcelComponent from 'single-spa-react/lib/esm/parcel';
 
-import { useAppContext } from '../../app-context';
+import { useShell } from '../../app/shell-context';
 import { RootLoader } from '../Loader';
 
 type Props = {
@@ -12,7 +12,7 @@ type Props = {
 };
 
 export const Application: React.FC<Props> = ({ name, wrapClassName, wrapWith }) => {
-  const { serverError, ...context } = useAppContext();
+  const { serverError, ...shell } = useShell();
   const [isLoading, setIsLoading] = useState(true);
 
   const handleParcelMount = (): void => {
@@ -26,12 +26,12 @@ export const Application: React.FC<Props> = ({ name, wrapClassName, wrapWith }) 
   const handleServiceError = (): void => {
     System.delete(System.resolve(name));
     const key = `${name}-load-error`;
-    context.notifications.add({
+    shell.notifications.add({
       key,
       message: `Ошибка загрузки модуля «${name}»`,
       status: 'alert',
       onClose: () => {
-        context.notifications.remove(key);
+        shell.notifications.remove(key);
       },
     });
 
@@ -55,7 +55,7 @@ export const Application: React.FC<Props> = ({ name, wrapClassName, wrapWith }) 
         wrapClassName={wrapClassName}
         wrapWith={wrapWith}
         parcelDidMount={handleParcelMount}
-        {...context}
+        {...shell}
       />
     </>
   );
