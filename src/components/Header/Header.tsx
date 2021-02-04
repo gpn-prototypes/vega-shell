@@ -19,7 +19,7 @@ export const Header: React.FC = () => {
 
   const { data, loading } = useGetProjectName({
     skip: projectId === undefined,
-    variables: { vid: projectId },
+    variables: { vid: projectId as string },
   });
 
   const getProjectName = (): string | undefined | null => {
