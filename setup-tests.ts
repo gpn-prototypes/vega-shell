@@ -2,6 +2,10 @@ import fetch from 'cross-fetch';
 
 import '@testing-library/jest-dom';
 
+import { cleanup } from './src/testing/cleanup';
+
+afterEach(cleanup);
+
 jest.mock('single-spa-react/lib/esm/parcel', () => {
   // eslint-disable-next-line global-require, @typescript-eslint/no-var-requires
   const { useMount } = require('@gpn-prototypes/vega-ui');

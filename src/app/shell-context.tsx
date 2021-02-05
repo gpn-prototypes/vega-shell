@@ -51,7 +51,9 @@ export const ShellProvider: React.FC<ShellProps> = (props) => {
 
   return (
     <ShellContext.Provider value={value}>
-      <Router history={shell.history}>{children}</Router>
+      <Router history={shell.history}>
+        <ApolloProvider client={shell.graphQLClient}>{children}</ApolloProvider>
+      </Router>
     </ShellContext.Provider>
   );
 };

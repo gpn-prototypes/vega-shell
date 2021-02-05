@@ -86,12 +86,12 @@ export class Shell {
 
     const { data } = result;
 
-    if (data.project?.__typename === 'Error' && data.project.code === 'PROJECT_NOT_FOUND') {
-      return FindProjectResult.NOT_FOUND;
-    }
-
     if (data.project?.__typename === 'Project') {
       return FindProjectResult.SUCCESS;
+    }
+
+    if (data.project?.__typename === 'Error' && data.project.code === 'PROJECT_NOT_FOUND') {
+      return FindProjectResult.NOT_FOUND;
     }
 
     return FindProjectResult.ERROR;

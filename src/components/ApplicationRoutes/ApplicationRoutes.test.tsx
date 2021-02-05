@@ -1,149 +1,238 @@
 import React from 'react';
 import { act, screen, waitFor } from '@testing-library/react';
+import fetchMock from 'fetch-mock';
+import { v4 as uuid } from 'uuid';
 
-import { useShell } from '../../app';
-import { getSystemJSMock, Options as RenderOptions, render, RenderResult } from '../../testing';
-import { ErrorLabels } from '../Error';
+import { Options, render, RenderResult } from '../../testing';
 
 import { ApplicationRoutes, AUTH_ERROR_MESSAGE } from './ApplicationRoutes';
 
-type RenderParams = {
-  pathname: string;
-  beforeRender?: RenderOptions['beforeRender'];
-  isAuth?: boolean;
-};
+jest.mock('../Application', () => ({
+  Application: (props: { name: string }): React.ReactElement => {
+    return <span>{props.name}</span>;
+  },
+}));
 
 beforeEach(() => {
-  global.System = getSystemJSMock(() => <div>test</div>);
-});
-
-afterEach(() => {
+  fetchMock.reset();
   localStorage.clear();
-  delete global.System;
 });
 
-function renderComponent(params: RenderParams = { pathname: '/', isAuth: true }): RenderResult {
-  return render(<ApplicationRoutes />, {
-    beforeRender: ({ shell }) => {
-      shell.history.push(params.pathname);
-      if (params.beforeRender !== undefined) {
-        params.beforeRender({ shell });
-      }
-    },
-    isAuth: params.isAuth,
-  });
+function renderComponent(params?: Options): RenderResult {
+  return render(<ApplicationRoutes />, params);
 }
 
-const sendAuthError = (shell: RenderResult['shell']): void => {
-  act(() => {
-    shell.messageBus.send({
-      channel: 'error',
-      topic: 'server-error',
-      payload: { code: 401, message: 'server-error' },
-    });
-  });
-};
+function createProjectRoute(vid: string): string {
+  return `/projects/show/${vid}`;
+}
 
 describe('ApplicationRoutes', () => {
   test('рендерится без ошибок', () => {
     expect(renderComponent).not.toThrow();
   });
 
-  describe('Авторизация', () => {
-    test('при очистке токенов и попытке перейти на другую страницу происходит переход на страницу авторизации', () => {
-      const { shell } = renderComponent();
+  describe('авторизация', () => {
+    test('при очистке токенов и попытке перейти на другую страницу происходит переход на страницу авторизации', async () => {
+      const { shell } = renderComponent({ isAuth: true, route: '/projects' });
 
-      shell.identity.clear();
+      window.localStorage.clear();
 
-      shell.history.push('/project/projectId/show');
+      act(() => {
+        shell.history.push(createProjectRoute(uuid()));
+      });
 
-      expect(shell.history.location.pathname).toBe('/login');
+      expect(screen.getByLabelText('Авторизация')).toBeInTheDocument();
     });
 
     test('при разавторизации происходит переход на страницу авторизации', () => {
-      const { shell } = renderComponent();
+      const { shell } = renderComponent({ isAuth: true, route: '/projects' });
 
       act(() => {
         shell.identity.logout({ destroyTokens: false });
       });
 
-      expect(shell.history.location.pathname).toBe('/login');
+      expect(screen.getByLabelText('Авторизация')).toBeInTheDocument();
     });
 
     test('если пользователь авторизан, то происходит редирект на страницу проектов', () => {
-      const { shell } = renderComponent();
+      renderComponent({ isAuth: true, route: '/login' });
 
-      expect(shell.history.location.pathname).toBe('/projects');
+      expect(window.location.pathname).toBe('/projects');
+      expect(screen.getByText('@vega/sp')).toBeInTheDocument();
     });
   });
 
   describe('состояние ошибки', () => {
-    test.each([404, 500])('при ошибке от сервера с кодом %s рендерит экран ошибки', (code) => {
-      const { shell } = renderComponent();
+    test('при ошибке от сервера с кодом 500 рендерит экран ошибки', async () => {
+      fetchMock.mock('/graphql', { status: 500 });
 
-      act(() => {
-        shell.messageBus.send({
-          channel: 'error',
-          topic: 'server-error',
-          payload: { code, message: 'server-error' },
-        });
+      renderComponent({ route: createProjectRoute(uuid()), isAuth: true });
+
+      await act(async () => {
+        await fetchMock.flush();
       });
 
-      expect(screen.queryByLabelText(ErrorLabels.body)).toBeInTheDocument();
+      expect(fetchMock.done('/graphql')).toBe(true);
+
+      expect(await screen.findByText(/500/)).toBeInTheDocument();
     });
 
-    test('при ошибке с кодом 401 создается уведомление', () => {
-      const { shell } = renderComponent();
+    test('при ошибке с кодом 401 создается уведомление', async () => {
+      fetchMock.mock('/graphql', { status: 401 });
 
-      sendAuthError(shell);
+      const { shell } = renderComponent({ isAuth: true, route: createProjectRoute(uuid()) });
+
+      await act(async () => {
+        await fetchMock.flush();
+      });
 
       expect(shell.notifications.getAll()).toEqual(
         expect.arrayContaining([expect.objectContaining({ message: AUTH_ERROR_MESSAGE })]),
       );
     });
 
-    test('при ошибке с кодом 401 происходит разлогин пользователя', () => {
-      const { shell } = renderComponent();
+    test('при ошибке с кодом 401 происходит разлогин пользователя', async () => {
+      fetchMock.mock('/graphql', { status: 401 });
 
-      sendAuthError(shell);
+      renderComponent();
 
-      expect(shell.identity.isLoggedIn()).not.toBeTruthy();
+      await act(async () => {
+        await fetchMock.flush();
+      });
+
+      expect(window.location.pathname).toBe('/login');
+      expect(screen.getByLabelText('Авторизация')).toBeInTheDocument();
     });
 
     test('ошибка от сервера пропадает при смене роута', async () => {
-      // Сделал отдельную обертку, так как в useOnChange при пуше роутера код заходил раньше чем в обработку сообщение от messageBus
-      const Component = () => {
-        const componentShell = useShell();
+      fetchMock.mock('/graphql', { status: 500 });
 
-        React.useEffect(() => {
-          componentShell.setServerError({
-            code: 500,
-            message: 'error',
-          });
-          // eslint-disable-next-line react-hooks/exhaustive-deps
-        }, []);
-
-        return <ApplicationRoutes />;
-      };
+      const { shell } = renderComponent({ isAuth: true, route: createProjectRoute(uuid()) });
 
       await act(async () => {
-        render(<Component />, {
-          beforeRender: ({ shell: testingShell }) => {
-            testingShell.history.push('/projects');
-          },
+        await fetchMock.flush();
+      });
+
+      expect(fetchMock.done('/graphql')).toBe(true);
+
+      expect(document.body).toHaveTextContent(/500/);
+
+      shell.history.push('/projects');
+
+      await waitFor(() => expect(document.body).not.toHaveTextContent(/500/));
+    });
+  });
+
+  test('показыает 404 страницу, если url не совпадает ни с одним из роутов', async () => {
+    renderComponent({ isAuth: true, route: '/unknown-test-page' });
+    expect(screen.getByText(/404/)).toBeInTheDocument();
+  });
+
+  describe('страницы проекта', () => {
+    let vid: string;
+
+    beforeEach(() => {
+      vid = uuid();
+    });
+
+    const createSuccessMock = (id: string) => ({
+      data: {
+        project: {
+          __typename: 'Project',
+          vid: id,
+        },
+      },
+    });
+
+    const createNotFoundMock = () => ({
+      data: {
+        project: {
+          __typename: 'Error',
+          code: 'PROJECT_NOT_FOUND',
+        },
+      },
+    });
+
+    const createErrorMock = () => ({
+      data: {
+        project: {
+          __typename: 'Error',
+          code: 'TEST_ERROR_CODE',
+        },
+      },
+    });
+
+    test('показывает лоадер', async () => {
+      fetchMock.mock('/graphql', createSuccessMock(vid));
+
+      renderComponent({ isAuth: true, route: createProjectRoute(vid) });
+
+      expect(screen.getByLabelText('Загрузка приложения')).toBeVisible();
+
+      await act(async () => {
+        await fetchMock.flush();
+      });
+
+      expect(screen.queryByLabelText('Загрузка приложения')).not.toBeInTheDocument();
+    });
+
+    test('показыает 404 страницу, если проект не найден', async () => {
+      fetchMock.mock('/graphql', createNotFoundMock);
+
+      renderComponent({ isAuth: true, route: createProjectRoute(vid) });
+
+      await act(async () => {
+        await fetchMock.flush();
+      });
+
+      expect(fetchMock.done('/graphql')).toBe(true);
+      expect(screen.getByText(/404/)).toBeInTheDocument();
+    });
+
+    test('показыает 404 страницу, если url не совпадает ни с одним из приложений', async () => {
+      fetchMock.mock('/graphql', createSuccessMock(vid));
+
+      renderComponent({ isAuth: true, route: `${createProjectRoute(vid)}/unknown-test-page` });
+
+      await act(async () => {
+        await fetchMock.flush();
+      });
+
+      expect(screen.getByText(/404/)).toBeInTheDocument();
+    });
+
+    test('показыает 404 страницу при ошибке запроса проекта', async () => {
+      fetchMock.mock('/graphql', createErrorMock);
+
+      renderComponent({ isAuth: true, route: createProjectRoute(vid) });
+
+      await act(async () => {
+        await fetchMock.flush();
+      });
+
+      expect(screen.getByText(/404/)).toBeInTheDocument();
+    });
+
+    describe('роуты приложений', () => {
+      test.each([
+        ['@vega/sp', ''],
+        ['@vega/rb', 'rb'],
+        ['@vega/lc', 'lc'],
+        ['@vega/fem', 'fem'],
+      ])('отображается страница для модуля %p', async (name, path) => {
+        fetchMock.mock('/graphql', createSuccessMock);
+
+        renderComponent({
           isAuth: true,
+          route: `${createProjectRoute(vid)}/${path}`,
         });
+
+        await act(async () => {
+          await fetchMock.flush();
+        });
+
+        expect(screen.getByText(name)).toBeInTheDocument();
       });
-
-      expect(screen.queryByLabelText(ErrorLabels.body)).toBeInTheDocument();
-
-      await act(async () => {
-        window.history.pushState({}, 'Project show page', '/projects/show/projectId');
-      });
-
-      await waitFor(() =>
-        expect(screen.queryByLabelText(ErrorLabels.body)).not.toBeInTheDocument(),
-      );
     });
   });
 });

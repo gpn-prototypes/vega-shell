@@ -72,7 +72,7 @@ export const AuthPage: AuthPageType = () => {
   }
 
   return (
-    <div className={cnAuthPage()}>
+    <div className={cnAuthPage()} aria-label="Авторизация">
       <AuthForm onLogin={identity.auth} containerClassName={cnAuthPage('FormContainer')} />
       <div className={cnAuthPage('Teaser')}>
         <Carousel
