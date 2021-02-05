@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import {
   Button,
   Loader,
@@ -19,20 +19,28 @@ import { GazpromLogo } from './GazpromLogo';
 
 import './Error.css';
 
-type ErrorViewProps = ServerError;
+export type ErrorViewProps = ServerError;
+export const labels = {
+  errorText: 'Текст ошибки',
+  reloadButton: 'Попробовать снова',
+  projectButton: 'В список проектов',
+} as const;
 
-const TIME_TO_RELOAD_SEC = 60;
+export const TIME_TO_RELOAD_SEC = 60;
+
+export const internalServerErrorText = (timeLeft: number): string => `Ошибка 500. Сервер недоступен
+Повторное подключение через ${timeLeft} сек`;
 
 const cnErrorView = cn('ErrorView');
 
-type ErrorViewButtonProps = ErrorViewProps & {
+type ErrorViewButtonProps = Pick<ErrorViewProps, 'code'> & {
   reloadInterval: ReturnType<typeof useInterval>;
 };
 
 const ErrorViewButton = (props: ErrorViewButtonProps): React.ReactElement => {
   const { code, reloadInterval } = props;
   const history = useHistory();
-  const buttonText = code === 500 ? 'Попробовать снова' : 'В список проектов';
+  const buttonText = code === 500 ? labels.reloadButton : labels.projectButton;
 
   const handleClick = (): void => {
     if (code === 404) {
@@ -49,8 +57,11 @@ const ErrorViewButton = (props: ErrorViewButtonProps): React.ReactElement => {
     <Button
       onClick={handleClick}
       size="s"
+      role="button"
+      name={buttonText}
       view="ghost"
       label={buttonText}
+      aria-label={buttonText}
       className={cnErrorView('Button').toString()}
     />
   );
@@ -64,8 +75,7 @@ export const ErrorView: React.FC<ErrorViewProps> = (props) => {
 
   const getMessage = (): string => {
     if (IS_INTERNAL_SERVER_ERROR) {
-      return `Ошибка 500. Сервер недоступен
-        Повторное подключение через ${timeLeft} сек`;
+      return internalServerErrorText(timeLeft);
     }
 
     return userMessage ?? '';
@@ -74,6 +84,7 @@ export const ErrorView: React.FC<ErrorViewProps> = (props) => {
   const intervalAPI = useInterval(
     1000,
     () => {
+      // istanbul ignore else
       if (timeLeft > 1) {
         setTimeLeft((prevTime) => prevTime - 1);
       }
@@ -99,18 +110,20 @@ export const ErrorView: React.FC<ErrorViewProps> = (props) => {
   }, [intervalAPI, timeLeft]);
 
   return (
-    <Router>
-      <Theme className={cnErrorView()} preset={presetGpnDark}>
-        <div className={cnErrorView('Body')}>
-          <GazpromLogo />
-          <Logo className={cnErrorView('VegaLogo')} />
-          <Text size="xl" className={cnErrorView('UserMessage').toString()}>
-            {getMessage()}
-          </Text>
-          {IS_INTERNAL_SERVER_ERROR && <Loader className={cnErrorView('Loader').toString()} />}
-          <ErrorViewButton {...props} reloadInterval={intervalAPI} />
-        </div>
-      </Theme>
-    </Router>
+    <Theme className={cnErrorView()} preset={presetGpnDark}>
+      <div className={cnErrorView('Body')}>
+        <GazpromLogo />
+        <Logo className={cnErrorView('VegaLogo')} />
+        <Text
+          size="xl"
+          aria-label={labels.errorText}
+          className={cnErrorView('UserMessage').toString()}
+        >
+          {getMessage()}
+        </Text>
+        {IS_INTERNAL_SERVER_ERROR && <Loader className={cnErrorView('Loader').toString()} />}
+        <ErrorViewButton code={code} reloadInterval={intervalAPI} />
+      </div>
+    </Theme>
   );
 };
