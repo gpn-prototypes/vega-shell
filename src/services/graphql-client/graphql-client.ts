@@ -6,10 +6,10 @@ import {
   HttpOptions,
   InMemoryCache,
   NormalizedCacheObject,
+  Observable,
   ServerParseError,
   StoreObject,
 } from '@apollo/client';
-import { setContext } from '@apollo/client/link/context';
 import { ErrorResponse, onError } from '@apollo/client/link/error';
 
 import { Identity } from '../identity/identity';
@@ -105,17 +105,51 @@ export function normalizeUri(uri: string): string {
   return `/${path}`;
 }
 
-export const createAuthLink = (identity: Identity): ApolloLink => {
-  return setContext(async (_, { headers }) => {
-    const token = await identity.getToken();
-    return {
-      headers: {
-        ...headers,
-        Authorization: token ? `Bearer ${token}` : undefined,
-      },
-    };
+export const createAuthLink = (identity: Identity, config: ResponseLinkConfig): ApolloLink =>
+  new ApolloLink((operation, forward) => {
+    return new Observable((observer) => {
+      const subscriptions = new Set<ZenObservable.Subscription>();
+
+      const unsubscribe = () => {
+        subscriptions.forEach((sub) => {
+          sub.unsubscribe();
+        });
+      };
+
+      identity.getToken().then((token) => {
+        if (token === null) {
+          config.handleError({ code: 401, message: 'unauthorized' });
+
+          observer.complete();
+          return;
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        operation.setContext((context: Record<string, any>) => ({
+          ...context,
+          headers: {
+            ...context.headers,
+            Authorization: `Bearer ${token}`,
+          },
+        }));
+
+        const sub = forward(operation).subscribe({
+          next(value) {
+            observer.next(value);
+          },
+          error(errorValue) {
+            observer.error(errorValue);
+          },
+          complete() {
+            observer.complete();
+          },
+        });
+
+        subscriptions.add(sub);
+      });
+
+      return unsubscribe;
+    });
   });
-};
 
 export const isServerParseError = (
   error: Error | ServerError | ServerParseError | undefined,
@@ -222,7 +256,7 @@ export function createGraphqlClient(config: GraphQLClientConfig): GraphQLClient 
       createErrorLink({ handleError }),
       createSwitchUriLink(uri),
       createProjectDiffResolverLink(),
-      createAuthLink(identity),
+      createAuthLink(identity, { handleError }),
       createHttpLink({ fetch }),
     ]),
   });
