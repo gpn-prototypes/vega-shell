@@ -2,7 +2,7 @@
   "extends": "@gpn-prototypes/frontend-configs/tsconfig",
   "shouldExtractLiteralValuesFromEnum": true,
   "include": ["src/**/*"],
-  "files": ["./assets.d.ts", "./single-spa-react.d.ts"],
+  "files": ["./assets.d.ts", "./single-spa-react.d.ts", "./global.d.ts"],
   "exclude": ["node_modules", "**/dist/**/*"],
   "compilerOptions": {
     "moduleResolution": "node",

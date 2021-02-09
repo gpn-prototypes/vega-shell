@@ -1,4 +1,4 @@
-name: Обновлении vega-ui
+name: Обновление vega-ui
 on:
   workflow_dispatch:
 
