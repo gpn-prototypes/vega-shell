@@ -13,6 +13,7 @@ import * as jsonDiffPatch from 'jsondiffpatch';
 
 import { omitTypename } from '../utils';
 
+import { CombinedFetchResult } from './combined-fetch-result';
 import { ProjectDiffResolverError } from './error';
 
 export type Data = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -63,7 +64,7 @@ export class ProjectDiffResolvingOperation {
 
   private successMutationFieldNames: Set<string>;
 
-  private fetchResult: FetchResult;
+  private fetchResult: CombinedFetchResult;
 
   private resolver: jsonDiffPatch.DiffPatcher;
 
@@ -84,7 +85,7 @@ export class ProjectDiffResolvingOperation {
     this.attempt = 1;
     this.maxAttempts = options.maxAttempts ?? 5;
 
-    this.fetchResult = {};
+    this.fetchResult = new CombinedFetchResult();
 
     this.projectAccessor = options.projectAccessor;
     this.mergeStrategy = options.mergeStrategy;
@@ -163,30 +164,7 @@ export class ProjectDiffResolvingOperation {
   }
 
   private combineFetchResults(incoming: FetchResult): void {
-    const existing = this.fetchResult;
-
-    if (existing.data === undefined && incoming.data !== undefined) {
-      this.fetchResult.data = incoming.data;
-    } else if (existing.data !== undefined) {
-      this.fetchResult.data = { ...existing.data, ...(incoming.data ?? {}) };
-    }
-
-    if (existing.errors === undefined && incoming.errors !== undefined) {
-      existing.errors = incoming.errors;
-    } else if (existing.errors !== undefined) {
-      existing.errors = existing.errors.concat(incoming.errors ?? []);
-    }
-
-    if (existing.context === undefined && incoming.context !== undefined) {
-      existing.context = incoming.context;
-    } else if (existing.context !== undefined) {
-      existing.context = { ...existing.context, ...(incoming.context ?? {}) };
-    }
-    if (existing.extensions === undefined && incoming.extensions !== undefined) {
-      existing.extensions = incoming.extensions;
-    } else if (existing.extensions !== undefined) {
-      existing.extensions = { ...existing.extensions, ...(incoming.extensions ?? {}) };
-    }
+    this.fetchResult.combine(incoming);
   }
 
   public run(): Observable<FetchResult> {
@@ -254,7 +232,7 @@ export class ProjectDiffResolvingOperation {
       return;
     }
 
-    this.done(this.fetchResult);
+    this.done(this.fetchResult.get());
   }
 
   private onError(error: unknown): void {
