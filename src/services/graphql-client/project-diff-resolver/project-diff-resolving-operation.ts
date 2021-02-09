@@ -193,6 +193,7 @@ export class ProjectDiffResolvingOperation {
     const observable = new Observable<FetchResult>((observer) => {
       this.observer = observer;
       return () => {
+        // istanbul ignore else
         if (this.subscription !== null) {
           this.subscription.unsubscribe();
         }
@@ -220,10 +221,12 @@ export class ProjectDiffResolvingOperation {
   }
 
   private done(data: FetchResult): void {
+    // istanbul ignore if не должно происходить
     if (this.observer === null) {
       throw new ProjectDiffResolverError('Internal bug. Observer is null!');
     }
 
+    // istanbul ignore else
     if (typeof this.observer.next === 'function' && typeof this.observer.complete === 'function') {
       this.observer.next(data);
       this.observer.complete();
@@ -231,6 +234,7 @@ export class ProjectDiffResolvingOperation {
       return;
     }
 
+    // istanbul ignore next не должно происходить
     throw new ProjectDiffResolverError('Internal bug. Incompatible observer!');
   }
 
@@ -254,6 +258,7 @@ export class ProjectDiffResolvingOperation {
   }
 
   private onError(error: unknown): void {
+    // istanbul ignore else
     if (this.observer !== null && typeof this.observer.error === 'function') {
       this.observer.error(error);
     }
@@ -272,12 +277,13 @@ export class ProjectDiffResolvingOperation {
   }
 
   private resolveConflicts(mutations: MutationResult[]): void {
+    // istanbul ignore if не должно происходить
     if (mutations.length === 0) {
       throw new ProjectDiffResolverError('Internal bug. No mutations with error!');
     }
 
     const { variables } = this.operation;
-    const [versions] = mutations.map((m) => this.projectAccessor.fromDiffError(m));
+    const versions = this.projectAccessor.fromDiffError(mutations[0]);
 
     const { remote, local } = versions;
 
