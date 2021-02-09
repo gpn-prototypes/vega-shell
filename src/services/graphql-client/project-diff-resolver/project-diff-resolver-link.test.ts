@@ -130,6 +130,34 @@ describe('ProjectDiffResolverLink', () => {
     expect(result).toStrictEqual(response);
   });
 
+  test('обрабатывается обычная ошибка', async () => {
+    const query = gql`
+      mutation TestMutation($foo: String!, $version: Int!) {
+        testMutationOne(foo: $foo, version: $version) {
+          result {
+            ... on TestData {
+              foo
+            }
+            ... on ${errorTypename} {
+              message
+            }
+          }
+        }
+      }
+    `;
+
+    const stub = () => {
+      return new Observable<Response>((observer) => {
+        observer.error(new Error('test'));
+      });
+    };
+
+    const link = createLink(stub as MockedHttpLink<Response>);
+
+    const result = toPromise(execute(link, { query }));
+    await expect(result).rejects.toThrow('test');
+  });
+
   test('решает конфликт с одной мутацией', async () => {
     const vid = 'test-vid';
     const query = gql`
