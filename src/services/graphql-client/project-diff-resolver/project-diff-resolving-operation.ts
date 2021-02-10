@@ -8,13 +8,12 @@ import {
 } from '@apollo/client';
 import { createOperation } from '@apollo/client/link/utils';
 import { DocumentNode, visit } from 'graphql';
-import type { Config as DiffPatcherConfig } from 'jsondiffpatch';
-import * as jsonDiffPatch from 'jsondiffpatch';
 
 import { omitTypename } from '../utils';
 
 import { CombinedFetchResult } from './combined-fetch-result';
 import { ProjectDiffResolverError } from './error';
+import { ProjectDiffResolver } from './project-diff-resolver';
 
 export type Data = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 interface MutationResult {
@@ -69,11 +68,9 @@ export class ProjectDiffResolvingOperation {
 
   private fetchResult: CombinedFetchResult;
 
-  private resolver: jsonDiffPatch.DiffPatcher;
+  private resolver: ProjectDiffResolver;
 
   private projectAccessor: ProjectAccessor;
-
-  private mergeStrategy: MergeStrategy;
 
   constructor(options: Options) {
     this.operation = options.operation;
@@ -91,19 +88,10 @@ export class ProjectDiffResolvingOperation {
     this.fetchResult = new CombinedFetchResult();
 
     this.projectAccessor = options.projectAccessor;
-    this.mergeStrategy = options.mergeStrategy;
 
-    this.resolver = jsonDiffPatch.create({
-      objectHash(item, index) {
-        return item?.vid || `$$index:${index}`;
-      },
-      textDiff: {
-        minLength: Infinity,
-      },
-      propertyFilter(name) {
-        return !['__typename', 'version', 'vid'].includes(name);
-      },
-    } as DiffPatcherConfig);
+    this.resolver = new ProjectDiffResolver({
+      mergeStrategy: options.mergeStrategy,
+    });
   }
 
   private snapshotMutationNames(node: DocumentNode): void {
@@ -267,24 +255,12 @@ export class ProjectDiffResolvingOperation {
     const localChanges = this.projectAccessor.fromVariables(variables);
     const versions = this.projectAccessor.fromDiffError(mutations[0], localChanges);
 
-    const { remote, local } = versions;
+    const patched = this.resolver.merge({
+      ...versions,
+      localChanges,
+    });
 
-    if (this.mergeStrategy.default === 'smart') {
-      const diff = this.resolver.diff(local, localChanges);
-
-      if (diff !== undefined) {
-        const patched = this.resolver.patch(remote, diff);
-
-        const updatedVars = this.projectAccessor.toVariables(variables, omitTypename(patched));
-
-        this.updateOperation(updatedVars);
-        return;
-      }
-    }
-
-    this.updateOperation(
-      this.projectAccessor.toVariables(variables, { ...localChanges, version: remote.version }),
-    );
+    this.updateOperation(this.projectAccessor.toVariables(variables, omitTypename(patched)));
   }
 
   private updateOperation(variables: OperationVariables): void {
