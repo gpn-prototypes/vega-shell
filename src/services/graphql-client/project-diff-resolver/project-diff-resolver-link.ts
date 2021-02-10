@@ -85,9 +85,12 @@ export class ProjectDiffResolverLink extends ApolloLink {
       defaultOptions.projectAccessor,
     );
 
-    this.mergeStrategy = {
-      default: 'replace',
-    };
+    this.mergeStrategy = ProjectDiffResolverLink.makeMergeStrategy(
+      defaultOptions.mergeStrategy ?? {},
+      {
+        default: 'replace',
+      },
+    );
   }
 
   request(operation: Operation, nextLink: NextLink): Observable<FetchResult> {

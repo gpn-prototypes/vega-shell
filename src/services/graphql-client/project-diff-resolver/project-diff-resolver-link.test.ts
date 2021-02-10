@@ -40,7 +40,12 @@ describe('ProjectDiffResolverLink', () => {
   function createResolverLink(defaults?: Partial<Options>) {
     return new ProjectDiffResolverLink({
       errorTypename,
-      projectAccessor: { fromDiffError: (data) => ({ remote: data.result.remote, local: {} }) },
+      projectAccessor: {
+        fromDiffError: (data, local) => ({
+          remote: data.result.remote,
+          local: { ...local, ...data.result.remote },
+        }),
+      },
       ...defaults,
     });
   }
@@ -217,6 +222,99 @@ describe('ProjectDiffResolverLink', () => {
                 version: 2,
                 __typename: 'Test',
               },
+              __typename: errorTypename,
+            },
+          },
+        };
+      }
+
+      if (attempt === 2) {
+        data = {
+          testMutationOne: {
+            result: {
+              vid,
+              bar: 'bar_1',
+              ...patchedVars,
+              version: 3,
+              __typename: 'Test',
+            },
+          },
+        };
+      }
+
+      return { data };
+    });
+
+    const link = createLink(stub);
+
+    const variables = {
+      vid,
+      foo: 'foo_2',
+      version: 1,
+    };
+
+    const result = await toPromise(execute(link, { query, variables }));
+
+    expect(patchedVars).toStrictEqual({
+      ...variables,
+      version: 2,
+    });
+
+    expect(result).toStrictEqual(expectedResponse);
+  });
+
+  test('автоматический режим решения конфликтов', async () => {
+    const vid = 'test-vid';
+    const query = gql`
+      fragment testData on TestData {
+        vid
+        version
+        foo
+        bar
+      }
+
+      mutation TestMutation($foo: String!, $version: Int!) {
+        testMutationOne(foo: $foo, version: $version) {
+          result {
+            ... on TestData {
+              ...testData
+            }
+            ... on ${errorTypename} {
+              remote {
+                ...testData
+              }
+            }
+          }
+        }
+      }
+    `;
+
+    const expectedResponse: Response = {
+      data: {
+        testMutationOne: {
+          result: {
+            vid,
+            foo: 'foo_2',
+            bar: 'bar_1',
+            version: 3,
+            __typename: 'Test',
+          },
+        },
+      },
+    };
+
+    let patchedVars = {};
+
+    const stub = createHttpLink((operation) => {
+      const { attempt } = operation.getContext();
+      patchedVars = operation.variables;
+
+      let data: Response['data'] = {};
+
+      if (attempt === 1) {
+        data = {
+          testMutationOne: {
+            result: {
               remote: {
                 vid,
                 foo: 'foo_1',
@@ -247,7 +345,11 @@ describe('ProjectDiffResolverLink', () => {
       return { data };
     });
 
-    const link = createLink(stub);
+    const link = createLink(stub, {
+      mergeStrategy: {
+        default: 'smart',
+      },
+    });
 
     const variables = {
       vid,
@@ -317,7 +419,7 @@ describe('ProjectDiffResolverLink', () => {
             result: {
               remote: {
                 vid,
-                foo: 'foo',
+                foo: 'foo_1',
                 version: 2,
                 __typename: 'Test',
               },
@@ -343,7 +445,11 @@ describe('ProjectDiffResolverLink', () => {
       return { data };
     });
 
-    const link = createLink(stub);
+    const link = createLink(stub, {
+      mergeStrategy: {
+        default: 'smart',
+      },
+    });
 
     const variables = {
       vid,

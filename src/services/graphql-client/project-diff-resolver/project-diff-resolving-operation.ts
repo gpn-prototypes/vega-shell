@@ -28,7 +28,10 @@ export interface ProjectAccessor<
   Variables extends OperationVariables = OperationVariables,
   ProjectData extends Data = Data
 > {
-  fromDiffError(mutationResult: MutationResult): { local: ProjectData; remote: ProjectData };
+  fromDiffError(
+    mutationResult: MutationResult,
+    local: ProjectData,
+  ): { local: ProjectData; remote: ProjectData };
   fromVariables(variables: Variables): ProjectData;
   toVariables(variables: Variables, data: ProjectData): Variables;
 }
@@ -261,11 +264,10 @@ export class ProjectDiffResolvingOperation {
     }
 
     const { variables } = this.operation;
-    const versions = this.projectAccessor.fromDiffError(mutations[0]);
+    const localChanges = this.projectAccessor.fromVariables(variables);
+    const versions = this.projectAccessor.fromDiffError(mutations[0], localChanges);
 
     const { remote, local } = versions;
-
-    const localChanges = this.projectAccessor.fromVariables(variables);
 
     if (this.mergeStrategy.default === 'smart') {
       const diff = this.resolver.diff(local, localChanges);
