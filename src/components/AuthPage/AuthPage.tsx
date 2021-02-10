@@ -30,6 +30,8 @@ type AuthPageType = React.FC & {
   testId: typeof testId;
 };
 
+export const AUTH_ERROR_NOTIFICATION_KEY = 'sso-error-alert';
+
 export const AuthPage: AuthPageType = () => {
   const { identity, notifications } = useShell();
 
@@ -41,15 +43,14 @@ export const AuthPage: AuthPageType = () => {
 
     if (useUnstableAuthSSO === 'true') {
       identity?.authSSO().catch(() => {
-        const key = 'sso-error-alert';
         const message = 'При входе возникла ошибка, войдите с помощью учетной записи';
 
         notifications.add({
-          key,
+          key: AUTH_ERROR_NOTIFICATION_KEY,
           message,
           status: 'alert',
           onClose: () => {
-            notifications.remove(key);
+            notifications.remove(AUTH_ERROR_NOTIFICATION_KEY);
           },
         });
 
