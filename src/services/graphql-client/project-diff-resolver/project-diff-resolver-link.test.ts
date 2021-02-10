@@ -210,11 +210,11 @@ describe('ProjectDiffResolverLink', () => {
         data = {
           testMutationOne: {
             result: {
-              local: {
+              remote: {
                 vid,
-                foo: 'foo',
-                bar: 'bar',
-                version: 1,
+                foo: 'foo_1',
+                bar: 'bar_1',
+                version: 2,
                 __typename: 'Test',
               },
               remote: {
@@ -315,12 +315,6 @@ describe('ProjectDiffResolverLink', () => {
         data = {
           testMutationOne: {
             result: {
-              local: {
-                vid,
-                foo: 'foo',
-                version: 1,
-                __typename: 'Test',
-              },
               remote: {
                 vid,
                 foo: 'foo',
