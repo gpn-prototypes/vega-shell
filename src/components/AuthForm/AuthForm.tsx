@@ -61,10 +61,15 @@ export const AuthForm: AuthFormComponent = (props) => {
   const [isFetching, setIsFetching] = useState(false);
 
   const handleAuthSubmit = (values: State): void => {
+    // TODO: Тесты https://jira.csssr.io/browse/VEGA-867
     setIsFetching(true);
+    const key = `auth-error-alert`;
+
+    if (notifications.find(key) !== undefined) {
+      notifications.remove(key);
+    }
 
     onLogin(values).catch((error: LoginError) => {
-      const key = `${error.code}-alert`;
       const message = error.code === 'AUTH_ERROR' ? authErrorMessage : error.message;
 
       if (error) {
