@@ -478,7 +478,7 @@ export type JtiBlackListEntry = {
   exp?: Maybe<Scalars['Int']>;
 };
 
-export type ProjectOrError = Project | Error;
+export type ProjectOrError = Project | Error | ValidationError;
 
 export type Project = {
   __typename?: 'Project';
@@ -487,7 +487,6 @@ export type Project = {
   filesTotal?: Maybe<Scalars['Int']>;
   files?: Maybe<Array<Maybe<Attachment>>>;
   attendees?: Maybe<Array<Maybe<Attendee>>>;
-  yearEnd?: Maybe<Scalars['Int']>;
   domainSchema?: Maybe<DomainSchema>;
   versions: Array<Maybe<Scalars['Int']>>;
   myRoles?: Maybe<Array<Maybe<ProjectRole>>>;
@@ -511,6 +510,7 @@ export type Project = {
   status?: Maybe<ProjectStatusEnum>;
   resourceId?: Maybe<Scalars['String']>;
   yearStart?: Maybe<Scalars['Int']>;
+  yearEnd?: Maybe<Scalars['Int']>;
   version?: Maybe<Scalars['Int']>;
 };
 
@@ -604,17 +604,7 @@ export enum ErrorCodesEnum {
   ProjectVersionDiffError = 'PROJECT_VERSION_DIFF_ERROR',
   /** Проект с таким именем уже существует */
   ProjectNameAlreadyExists = 'PROJECT_NAME_ALREADY_EXISTS',
-  /** Пустое имя проекта */
-  EmptyProjectName = 'EMPTY_PROJECT_NAME',
-  /** Имя проекта превышает лимит в 256 символов */
-  TooLongProjectName = 'TOO_LONG_PROJECT_NAME',
-  /** Имя проекта должно содержать минимум 2 символа */
-  TooShortProjectName = 'TOO_SHORT_PROJECT_NAME',
-  /** Год начала планирования не может быть меньше текущего календарного года */
-  YearStartError = 'YEAR_START_ERROR',
-  /** Отрицательное число лет планирования недопустимо */
-  YearsCountError = 'YEARS_COUNT_ERROR',
-  /** Пользователь не обладает провами для совершения операции */
+  /** Пользователь не обладает правами для совершения операции */
   NoRights = 'NO_RIGHTS',
   /** Объект не найден */
   ObjectNotFound = 'OBJECT_NOT_FOUND',
@@ -624,8 +614,6 @@ export enum ErrorCodesEnum {
   NoAttendeeToRemove = 'NO_ATTENDEE_TO_REMOVE',
   /** Некорректный формат UUID */
   IncorrectUuid = 'INCORRECT_UUID',
-  /** Статус проекта нельзя очистить */
-  ProjectStatusCannotBeNull = 'PROJECT_STATUS_CANNOT_BE_NULL',
   /** Участник проекта не найден */
   ProjectAttendeeNotFound = 'PROJECT_ATTENDEE_NOT_FOUND',
   /** Участник проекта уже обладет данной ролью */
@@ -638,12 +626,63 @@ export enum ErrorCodesEnum {
   ProjectManagerNotFound = 'PROJECT_MANAGER_NOT_FOUND',
   /** Проект нельзя возвращать в статус заготовки. */
   CannotBringBlankBack = 'CANNOT_BRING_BLANK_BACK',
-  /** Отсутствует год начала планирования проекта */
-  ProjectYearstartCannotBeNull = 'PROJECT_YEARSTART_CANNOT_BE_NULL',
   /** Неверный номер страницы */
-  InvalidPageNumber = 'INVALID_PAGE_NUMBER'
+  InvalidPageNumber = 'INVALID_PAGE_NUMBER',
+  /** Ошибка валидации */
+  Validation = 'VALIDATION'
 }
 
+
+export type ValidationError = ErrorInterface & {
+  __typename?: 'ValidationError';
+  /** Код ошибки, соответствующий человекочитаемому сообщению об ошибке */
+  code: ErrorCodesEnum;
+  /** Сообщение об ошибке. Отображается в случае отсутствия соответствующего коду человекочитаемого сообщения на клиенте */
+  message: Scalars['String'];
+  details?: Maybe<Scalars['String']>;
+  payload?: Maybe<Scalars['DictType']>;
+  /** Массив ошибок валидации для отправленных полей мутации */
+  items?: Maybe<Array<Maybe<ValidationErrorItemType>>>;
+};
+
+export type ValidationErrorItemType = {
+  __typename?: 'ValidationErrorItemType';
+  path?: Maybe<Array<Maybe<Scalars['String']>>>;
+  /** Код ошибки, соответствующий человекочитаемому сообщению об ошибке */
+  code: ValidationErrorCode;
+  /** Сообщение об ошибке валидации. Отображается в случае отсутствия соответствующего коду человекочитаемого сообщения на клиенте */
+  message: Scalars['String'];
+};
+
+/** Validation error codes list. */
+export enum ValidationErrorCode {
+  /** NUMBER_TOO_LARGE */
+  NumberTooLarge = 'NUMBER_TOO_LARGE',
+  /** NUMBER_TOO_LOW */
+  NumberTooLow = 'NUMBER_TOO_LOW',
+  /** NUMBER_IS_NEGATIVE */
+  NumberIsNegative = 'NUMBER_IS_NEGATIVE',
+  /** STRING_TOO_LONG */
+  StringTooLong = 'STRING_TOO_LONG',
+  /** STRING_TOO_SHORT */
+  StringTooShort = 'STRING_TOO_SHORT',
+  /** STRING_DOES_NOT_MATCH_PATTERN */
+  StringDoesNotMatchPattern = 'STRING_DOES_NOT_MATCH_PATTERN',
+  /** ARRAY_IS_EMPTY */
+  ArrayIsEmpty = 'ARRAY_IS_EMPTY',
+  /** ARRAY_TOO_SHORT */
+  ArrayTooShort = 'ARRAY_TOO_SHORT',
+  /** ARRAY_TOO_LONG */
+  ArrayTooLong = 'ARRAY_TOO_LONG',
+  /** OBJECT_KEY_NOT_FOUND */
+  ObjectKeyNotFound = 'OBJECT_KEY_NOT_FOUND',
+  /** VALUE_IS_EMPTY */
+  ValueIsEmpty = 'VALUE_IS_EMPTY',
+  /** VALUE_HAS_WRONG_TYPE */
+  ValueHasWrongType = 'VALUE_HAS_WRONG_TYPE',
+  /** NOT_UNIQUE */
+  NotUnique = 'NOT_UNIQUE'
+}
 
 export type ProjectListOrError = ProjectList | Error;
 
@@ -1580,8 +1619,8 @@ export type CreateProject = {
 
 export type ProjectInputType = {
   name?: Maybe<Scalars['String']>;
+  region?: Maybe<Scalars['UUID']>;
   type?: Maybe<ProjectTypeEnum>;
-  region?: Maybe<Scalars['ID']>;
   coordinateSystem?: Maybe<Scalars['String']>;
   coordinates?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
@@ -1607,7 +1646,7 @@ export type UpdateProject = {
   result?: Maybe<ProjectDiffOrError>;
 };
 
-export type ProjectDiffOrError = Project | UpdateProjectDiff | Error;
+export type ProjectDiffOrError = Project | UpdateProjectDiff | Error | ValidationError;
 
 /** Contains remote and local versions of  project if versions are not equal. */
 export type UpdateProjectDiff = {

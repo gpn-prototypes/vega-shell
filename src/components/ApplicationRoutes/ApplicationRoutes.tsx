@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Redirect, Route, Switch, useLocation, useRouteMatch } from 'react-router-dom';
+import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/client';
 import { useMount, useOnChange, usePreviousRef } from '@gpn-prototypes/vega-ui';
 
 import { useShell } from '../../app';
 import { ServerError } from '../../services/graphql-client';
 import { Application } from '../Application';
-import { AUTH_ERROR_NOTIFICATION_KEY, AuthPage } from '../AuthPage';
+import { AuthPage } from '../AuthPage';
 import { ErrorView } from '../Error';
 import { Header } from '../Header';
 
@@ -28,8 +28,6 @@ export const ApplicationRoutes = (): React.ReactElement => {
   const { bus, identity, notifications, graphqlClient } = shell;
 
   const location = useLocation();
-
-  const projectPageMatch = useRouteMatch('/projects/show/:projectId');
 
   const [isLoggedIn, setIsLoggedIn] = useState(identity.isLoggedIn());
 
@@ -76,24 +74,6 @@ export const ApplicationRoutes = (): React.ReactElement => {
     if (previousPathname !== null && previousPathname !== location.pathname) {
       if (serverError !== null) {
         setServerError(null);
-      }
-
-      // Покрытие тестами добавлю в VEGA-862
-      if (previousPathname !== '/projects/create' && projectPageMatch === null) {
-        const allSuccessNotifications = notifications
-          .getAll()
-          .filter(({ status }) => status === 'success');
-        allSuccessNotifications.forEach(({ key }) => {
-          notifications.remove(key);
-        });
-      }
-
-      if (previousPathname === AUTH_PATH) {
-        const authErrorNotification = notifications.find(AUTH_ERROR_NOTIFICATION_KEY);
-
-        if (authErrorNotification !== undefined) {
-          notifications.remove(authErrorNotification.key);
-        }
       }
     }
     if (identity.isLoggedIn() !== isLoggedIn) {

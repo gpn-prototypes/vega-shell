@@ -42,6 +42,10 @@ export const AuthPage: AuthPageType = () => {
     const useUnstableAuthSSO = localStorage.getItem('useUnstableAuthSSO');
 
     if (useUnstableAuthSSO === 'true') {
+      if (notifications.find(AUTH_ERROR_NOTIFICATION_KEY) !== undefined) {
+        notifications.remove(AUTH_ERROR_NOTIFICATION_KEY);
+      }
+
       identity?.authSSO().catch(() => {
         const message = 'При входе возникла ошибка, войдите с помощью учетной записи';
 
