@@ -5,6 +5,11 @@ schema:
         Authorization: Bearer ${AUTH_TOKEN}
 documents: 'src/**/*.graphql'
 generates:
+  schema.graphql:
+    plugins:
+      - schema-ast
+    config:
+      includeDirectives: true
   src/__generated__/types.ts:
     plugins:
       - typescript

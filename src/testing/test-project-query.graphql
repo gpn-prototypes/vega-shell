@@ -1,0 +1,15 @@
+query ProjectsList {
+  projectList {
+    ... on ProjectList {
+      projectList {
+        vid
+        name
+      }
+    }
+    ... on Error {
+      code
+      message
+      details
+    }
+  }
+}

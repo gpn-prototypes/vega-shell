@@ -1,3 +1,4 @@
+import { ApolloLink } from '@apollo/client';
 import type { History } from 'history';
 import { createBrowserHistory } from 'history';
 
@@ -17,6 +18,7 @@ import {
 interface Config {
   baseApiUrl: string;
   fetch?: GraphQLClientConfig['fetch'];
+  link?: ApolloLink;
 }
 
 export class Shell {
@@ -51,6 +53,7 @@ export class Shell {
       uri: `${config.baseApiUrl}/graphql`,
       fetch: config.fetch,
       identity: this.identity,
+      link: config.link,
       onError: (error: ServerError) => {
         this.handleGraphQLClientError(error);
       },
