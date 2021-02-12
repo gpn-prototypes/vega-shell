@@ -53,6 +53,8 @@ type AuthFormComponent = React.FC<AuthFormProps> & {
 const authErrorMessage =
   'Неверный e-mail или пароль. Проверьте введенные данные и повторите попытку.';
 
+export const AUTH_ERROR_KEY = 'auth-error';
+
 export const AuthForm: AuthFormComponent = (props) => {
   const { onLogin, containerClassName } = props;
 
@@ -67,6 +69,10 @@ export const AuthForm: AuthFormComponent = (props) => {
 
     if (notifications.find(key) !== undefined) {
       notifications.remove(key);
+    }
+
+    if (notifications.find(AUTH_ERROR_KEY) !== undefined) {
+      notifications.remove(AUTH_ERROR_KEY);
     }
 
     onLogin(values).catch((error: LoginError) => {
