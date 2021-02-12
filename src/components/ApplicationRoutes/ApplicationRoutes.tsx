@@ -25,7 +25,9 @@ const NotFoundView = () => (
 export const ApplicationRoutes = (): React.ReactElement => {
   const shell = useShell();
   const { serverError, setServerError } = shell;
-  const { bus, identity, notifications, graphqlClient } = shell;
+  const { bus, identity, notificationCenter, graphqlClient } = shell;
+
+  const authNotifications = notificationCenter.createNamespace('auth');
 
   const location = useLocation();
 
@@ -48,14 +50,10 @@ export const ApplicationRoutes = (): React.ReactElement => {
 
         if (payload.code === 401) {
           identity.logout({ destroyTokens: false });
-          notifications.add({
-            key: `auth-error`,
-            status: 'alert',
-            message:
+          authNotifications.add({
+            view: 'alert',
+            body:
               'Что-то пошло не так. Для повторного входа в\u00A0систему введите свои e-mail и\u00A0пароль',
-            onClose(item) {
-              notifications.remove(item.key);
-            },
           });
         }
       },

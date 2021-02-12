@@ -92,6 +92,7 @@ export const Snackbar = (): React.ReactElement => {
             autoClose: item.autoClose,
             actions,
             onClose: () => {
+              shell.notificationCenter.remove(item.id);
               shell.notificationCenter.dispatchAction<string>(
                 {
                   namespace: item.namespace,

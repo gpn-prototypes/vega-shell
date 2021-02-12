@@ -15,7 +15,7 @@ export type GetProjectName = (
   ) | (
     { __typename: 'Error' }
     & Pick<Types.Error, 'code' | 'message' | 'details' | 'payload'>
-  )> }
+  ) | { __typename: 'ValidationError' }> }
 );
 
 

@@ -56,7 +56,9 @@ const authErrorMessage =
 export const AuthForm: AuthFormComponent = (props) => {
   const { onLogin, containerClassName } = props;
 
-  const { notifications } = useShell();
+  const { notificationCenter } = useShell();
+
+  const authNotifications = notificationCenter.createNamespace('auth');
 
   const [isFetching, setIsFetching] = useState(false);
 
@@ -64,17 +66,12 @@ export const AuthForm: AuthFormComponent = (props) => {
     setIsFetching(true);
 
     onLogin(values).catch((error: LoginError) => {
-      const key = `${error.code}-alert`;
       const message = error.code === 'AUTH_ERROR' ? authErrorMessage : error.message;
 
       if (error) {
-        notifications.add({
-          key,
-          message,
-          status: 'alert',
-          onClose: () => {
-            notifications.remove(key);
-          },
+        authNotifications.add({
+          body: message,
+          view: 'alert',
         });
       }
 

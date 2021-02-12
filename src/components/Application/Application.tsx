@@ -21,11 +21,13 @@ export const Application: React.FC<Props> = ({ name, wrapClassName, wrapWith }) 
     }
   };
 
+  const systemNotifications = shell.notificationCenter.createNamespace('system');
+
   const config = useMemo(() => System.import(name), [name]);
 
   const handleServiceError = (): void => {
     System.delete(System.resolve(name));
-    shell.notificationCenter.add({
+    systemNotifications.add({
       body: `Ошибка загрузки модуля «${name}»`,
       view: 'alert',
     });
