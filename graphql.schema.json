@@ -3393,6 +3393,11 @@
             "kind": "OBJECT",
             "name": "Error",
             "ofType": null
+          },
+          {
+            "kind": "OBJECT",
+            "name": "ValidationError",
+            "ofType": null
           }
         ]
       },
@@ -3490,18 +3495,6 @@
                 "name": "Attendee",
                 "ofType": null
               }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "yearEnd",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -3788,6 +3781,18 @@
           },
           {
             "name": "yearStart",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "yearEnd",
             "description": null,
             "args": [],
             "type": {
@@ -4243,6 +4248,11 @@
           },
           {
             "kind": "OBJECT",
+            "name": "ValidationError",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
             "name": "DuplicateRoleError",
             "ofType": null
           }
@@ -4299,38 +4309,8 @@
             "deprecationReason": null
           },
           {
-            "name": "EMPTY_PROJECT_NAME",
-            "description": "Пустое имя проекта",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "TOO_LONG_PROJECT_NAME",
-            "description": "Имя проекта превышает лимит в 256 символов",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "TOO_SHORT_PROJECT_NAME",
-            "description": "Имя проекта должно содержать минимум 2 символа",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "YEAR_START_ERROR",
-            "description": "Год начала планирования не может быть меньше текущего календарного года",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "YEARS_COUNT_ERROR",
-            "description": "Отрицательное число лет планирования недопустимо",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "NO_RIGHTS",
-            "description": "Пользователь не обладает провами для совершения операции",
+            "description": "Пользователь не обладает правами для совершения операции",
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -4355,12 +4335,6 @@
           {
             "name": "INCORRECT_UUID",
             "description": "Некорректный формат UUID",
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "PROJECT_STATUS_CANNOT_BE_NULL",
-            "description": "Статус проекта нельзя очистить",
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -4401,14 +4375,14 @@
             "deprecationReason": null
           },
           {
-            "name": "PROJECT_YEARSTART_CANNOT_BE_NULL",
-            "description": "Отсутствует год начала планирования проекта",
+            "name": "INVALID_PAGE_NUMBER",
+            "description": "Неверный номер страницы",
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "INVALID_PAGE_NUMBER",
-            "description": "Неверный номер страницы",
+            "name": "VALIDATION",
+            "description": "Ошибка валидации",
             "isDeprecated": false,
             "deprecationReason": null
           }
@@ -4423,6 +4397,243 @@
         "inputFields": null,
         "interfaces": null,
         "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "ValidationError",
+        "description": null,
+        "fields": [
+          {
+            "name": "code",
+            "description": "Код ошибки, соответствующий человекочитаемому сообщению об ошибке",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "ErrorCodesEnum",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "message",
+            "description": "Сообщение об ошибке. Отображается в случае отсутствия соответствующего коду человекочитаемого сообщения на клиенте",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "details",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "payload",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "DictType",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "items",
+            "description": "Массив ошибок валидации для отправленных полей мутации",
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "ValidationErrorItemType",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [
+          {
+            "kind": "INTERFACE",
+            "name": "ErrorInterface",
+            "ofType": null
+          }
+        ],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "ValidationErrorItemType",
+        "description": null,
+        "fields": [
+          {
+            "name": "path",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "code",
+            "description": "Код ошибки, соответствующий человекочитаемому сообщению об ошибке",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "ValidationErrorCode",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "message",
+            "description": "Сообщение об ошибке валидации. Отображается в случае отсутствия соответствующего коду человекочитаемого сообщения на клиенте",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "ENUM",
+        "name": "ValidationErrorCode",
+        "description": "Validation error codes list.",
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": [
+          {
+            "name": "NUMBER_TOO_LARGE",
+            "description": "NUMBER_TOO_LARGE",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "NUMBER_TOO_LOW",
+            "description": "NUMBER_TOO_LOW",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "NUMBER_IS_NEGATIVE",
+            "description": "NUMBER_IS_NEGATIVE",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "STRING_TOO_LONG",
+            "description": "STRING_TOO_LONG",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "STRING_TOO_SHORT",
+            "description": "STRING_TOO_SHORT",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "STRING_DOES_NOT_MATCH_PATTERN",
+            "description": "STRING_DOES_NOT_MATCH_PATTERN",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "ARRAY_IS_EMPTY",
+            "description": "ARRAY_IS_EMPTY",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "ARRAY_TOO_SHORT",
+            "description": "ARRAY_TOO_SHORT",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "ARRAY_TOO_LONG",
+            "description": "ARRAY_TOO_LONG",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "OBJECT_KEY_NOT_FOUND",
+            "description": "OBJECT_KEY_NOT_FOUND",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "VALUE_IS_EMPTY",
+            "description": "VALUE_IS_EMPTY",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "VALUE_HAS_WRONG_TYPE",
+            "description": "VALUE_HAS_WRONG_TYPE",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "NOT_UNIQUE",
+            "description": "NOT_UNIQUE",
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
         "possibleTypes": null
       },
       {
@@ -9643,21 +9854,21 @@
             "defaultValue": null
           },
           {
-            "name": "type",
+            "name": "region",
             "description": null,
             "type": {
-              "kind": "ENUM",
-              "name": "ProjectTypeEnum",
+              "kind": "SCALAR",
+              "name": "UUID",
               "ofType": null
             },
             "defaultValue": null
           },
           {
-            "name": "region",
+            "name": "type",
             "description": null,
             "type": {
-              "kind": "SCALAR",
-              "name": "ID",
+              "kind": "ENUM",
+              "name": "ProjectTypeEnum",
               "ofType": null
             },
             "defaultValue": null
@@ -9839,6 +10050,11 @@
           {
             "kind": "OBJECT",
             "name": "Error",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
+            "name": "ValidationError",
             "ofType": null
           }
         ]

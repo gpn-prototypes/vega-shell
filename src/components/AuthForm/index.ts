@@ -1,1 +1,1 @@
-export { AuthForm } from './AuthForm';
+export { AuthForm, AUTH_ERROR_KEY } from './AuthForm';

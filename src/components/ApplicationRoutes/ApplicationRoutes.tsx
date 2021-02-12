@@ -6,6 +6,7 @@ import { useMount, useOnChange, usePreviousRef } from '@gpn-prototypes/vega-ui';
 import { useShell } from '../../app';
 import { ServerError } from '../../services/graphql-client';
 import { Application } from '../Application';
+import { AUTH_ERROR_KEY } from '../AuthForm';
 import { AuthPage } from '../AuthPage';
 import { ErrorView } from '../Error';
 import { Header } from '../Header';
@@ -49,7 +50,7 @@ export const ApplicationRoutes = (): React.ReactElement => {
         if (payload.code === 401) {
           identity.logout({ destroyTokens: false });
           notifications.add({
-            key: `auth-error`,
+            key: AUTH_ERROR_KEY,
             status: 'alert',
             message:
               'Что-то пошло не так. Для повторного входа в\u00A0систему введите свои e-mail и\u00A0пароль',
@@ -69,6 +70,7 @@ export const ApplicationRoutes = (): React.ReactElement => {
 
   const previousPathname = usePreviousRef(location.pathname).current;
 
+  // Оставил в обвязке, так как она управляет роутингом и нотификациями и тестами будет проще покрывать
   useOnChange(location.pathname, () => {
     if (previousPathname !== null && previousPathname !== location.pathname) {
       if (serverError !== null) {
