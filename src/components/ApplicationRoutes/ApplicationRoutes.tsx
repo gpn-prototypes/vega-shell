@@ -26,6 +26,28 @@ const NotFoundView = () => (
 export const AUTH_ERROR_MESSAGE =
   'Что-то пошло не так. Для повторного входа в\u00A0систему введите свои e-mail и\u00A0пароль';
 
+const LogoutView = (props: { redirectPathname: string | null }): React.ReactElement | null => {
+  const { identity } = useShell();
+
+  const { redirectPathname } = props;
+
+  useMount(() => {
+    if (identity.isLoggedIn()) {
+      identity.logout();
+    }
+  });
+
+  const getQuery = (): string => {
+    if (redirectPathname === '/logout' || redirectPathname === null) {
+      return '';
+    }
+
+    return `redirectTo=${encodeURIComponent(redirectPathname)}`;
+  };
+
+  return <Redirect to={`/login?${getQuery()}`} />;
+};
+
 export const ApplicationRoutes = (): React.ReactElement => {
   const shell = useShell();
   const { serverError, setServerError } = shell;
@@ -70,7 +92,6 @@ export const ApplicationRoutes = (): React.ReactElement => {
 
   const previousPathname = usePreviousRef(location.pathname).current;
 
-  // Оставил в обвязке, так как она управляет роутингом и нотификациями и тестами будет проще покрывать
   useOnChange(location.pathname, () => {
     if (previousPathname !== null && previousPathname !== location.pathname) {
       // istanbul ignore else
@@ -84,10 +105,6 @@ export const ApplicationRoutes = (): React.ReactElement => {
     }
   });
 
-  const getLoginPath = (): string => {
-    return `${AUTH_PATH}?redirectTo=${encodeURIComponent(location.pathname)}`;
-  };
-
   const getLoginRedirectPath = (): string => {
     const query = new URLSearchParams(location.search);
     return query.get('redirectTo') ?? '/projects';
@@ -96,12 +113,17 @@ export const ApplicationRoutes = (): React.ReactElement => {
   return (
     <>
       {serverError && <ErrorView {...serverError} />}
-      {!isLoggedIn && location.pathname !== AUTH_PATH && <Redirect to={getLoginPath()} />}
+      {!isLoggedIn && location.pathname !== AUTH_PATH && (
+        <LogoutView redirectPathname={previousPathname} />
+      )}
       <Switch>
         {isLoggedIn && <Redirect from="/" to="/projects" exact />}
         <Route exact path={AUTH_PATH}>
           {isLoggedIn && <Redirect to={getLoginRedirectPath()} />}
           <AuthPage />
+        </Route>
+        <Route exact path="/logout">
+          <LogoutView redirectPathname={previousPathname} />
         </Route>
         <Route path="/projects">
           <ApolloProvider client={graphqlClient}>
