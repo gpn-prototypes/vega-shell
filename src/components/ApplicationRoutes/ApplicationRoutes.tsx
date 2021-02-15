@@ -23,6 +23,9 @@ const NotFoundView = () => (
   </Route>
 );
 
+export const AUTH_ERROR_MESSAGE =
+  'Что-то пошло не так. Для повторного входа в\u00A0систему введите свои e-mail и\u00A0пароль';
+
 export const ApplicationRoutes = (): React.ReactElement => {
   const shell = useShell();
   const { serverError, setServerError } = shell;
@@ -47,16 +50,13 @@ export const ApplicationRoutes = (): React.ReactElement => {
           setServerError(payload);
         }
 
+        // istanbul ignore else
         if (payload.code === 401) {
           identity.logout({ destroyTokens: false });
           notifications.add({
             key: AUTH_ERROR_KEY,
             status: 'alert',
-            message:
-              'Что-то пошло не так. Для повторного входа в\u00A0систему введите свои e-mail и\u00A0пароль',
-            onClose(item) {
-              notifications.remove(item.key);
-            },
+            message: AUTH_ERROR_MESSAGE,
           });
         }
       },
@@ -73,10 +73,12 @@ export const ApplicationRoutes = (): React.ReactElement => {
   // Оставил в обвязке, так как она управляет роутингом и нотификациями и тестами будет проще покрывать
   useOnChange(location.pathname, () => {
     if (previousPathname !== null && previousPathname !== location.pathname) {
+      // istanbul ignore else
       if (serverError !== null) {
         setServerError(null);
       }
     }
+    // istanbul ignore else
     if (identity.isLoggedIn() !== isLoggedIn) {
       setIsLoggedIn(identity.isLoggedIn());
     }

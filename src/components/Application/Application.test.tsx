@@ -1,5 +1,4 @@
 import React from 'react';
-import { useMount } from '@gpn-prototypes/vega-ui';
 import { act, RenderResult, screen } from '@testing-library/react';
 
 import { useShell } from '../../app';
@@ -37,6 +36,7 @@ describe('Application', () => {
   });
 
   test('рендерит компонент', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const spy = jest.spyOn(global.System!, 'import');
 
     await act(async () => {
@@ -59,16 +59,17 @@ describe('Application', () => {
     expect(screen.queryByLabelText(SHELL_LOADER_LABEL)).not.toBeInTheDocument();
   });
 
-  test('если serverError не равно null, то компонент не рендерится', async () => {
+  test('если присутствует ошибка от сервера, то компонент не рендерится', async () => {
     const Component = () => {
       const shell = useShell();
 
-      useMount(() => {
+      React.useEffect(() => {
         shell.setServerError({
           code: 404,
           message: 'not-found',
         });
-      });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, []);
 
       return <Application name={APP_NAME} />;
     };

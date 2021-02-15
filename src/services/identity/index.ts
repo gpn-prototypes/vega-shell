@@ -1,1 +1,1 @@
-export { Identity } from './identity';
+export { Identity, LS_KEYS } from './identity';

@@ -20,10 +20,12 @@ import { GazpromLogo } from './GazpromLogo';
 import './Error.css';
 
 export type ErrorViewProps = ServerError;
+
 export const labels = {
   errorText: 'Текст ошибки',
   reloadButton: 'Попробовать снова',
   projectButton: 'В список проектов',
+  body: 'Ошибка от сервера',
 } as const;
 
 export const TIME_TO_RELOAD_SEC = 60;
@@ -111,7 +113,7 @@ export const ErrorView: React.FC<ErrorViewProps> = (props) => {
 
   return (
     <Theme className={cnErrorView()} preset={presetGpnDark}>
-      <div className={cnErrorView('Body')}>
+      <div aria-label={labels.body} className={cnErrorView('Body')}>
         <GazpromLogo />
         <Logo className={cnErrorView('VegaLogo')} />
         <Text
