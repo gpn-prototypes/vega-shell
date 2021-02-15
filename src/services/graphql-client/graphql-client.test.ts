@@ -24,7 +24,6 @@ afterEach(() => {
   fetchMock.restore();
 });
 
-const errorTypename = 'TestError';
 const PROJECT_VID = 'projectVid';
 
 const URI = '/graphql-uri';
@@ -135,39 +134,33 @@ describe('createGraphqlClient', () => {
     expect(response).toMatchObject({ data: mocks.projectResponse });
   });
 
-  test('решает конфликты при редактировании проекта', async () => {
-    let attempt = 1;
-    let data = {};
+  describe('конкурентный доступ', () => {
+    const errorTypename = 'TestError';
 
-    const expectedResponse = {
-      data: {
-        testMutationOne: {
-          result: {
-            vid: PROJECT_VID,
+    test('решает конфликты', async () => {
+      let attempt = 1;
+      let data = {};
+      const vid = 'test-vid';
+
+      const expectedResponse = {
+        data: {
+          testMutationOne: {
+            vid,
             foo: 'foo_2',
             bar: 'bar_1',
             version: 3,
             __typename: 'Test',
           },
         },
-      },
-    };
+      };
 
-    fetchMock.post(URI, () => {
-      if (attempt === 1) {
-        attempt += 1;
-        data = {
-          testMutationOne: {
-            result: {
-              local: {
-                vid: PROJECT_VID,
-                foo: 'foo',
-                bar: 'bar',
-                version: 1,
-                __typename: 'Test',
-              },
+      fetchMock.post(URI, () => {
+        if (attempt === 1) {
+          attempt += 1;
+          data = {
+            testMutationOne: {
               remote: {
-                vid: PROJECT_VID,
+                vid,
                 foo: 'foo_1',
                 bar: 'bar_1',
                 version: 2,
@@ -175,27 +168,25 @@ describe('createGraphqlClient', () => {
               },
               __typename: errorTypename,
             },
-          },
-        };
-      }
+          };
+        }
 
-      if (attempt === 2) {
-        data = { ...expectedResponse.data };
-      }
+        if (attempt === 2) {
+          data = { ...expectedResponse.data };
+        }
 
-      return { data };
-    });
+        return { data };
+      });
 
-    const mutation = gql`
-      fragment testData on TestData {
-        vid
-        version
-        foo
-        bar
-      }
-      mutation TestMutation($foo: String!, $version: Int!) {
-        testMutationOne(foo: $foo, version: $version) {
-          result {
+      const mutation = gql`
+        fragment testData on TestData {
+          vid
+          version
+          foo
+          bar
+        }
+        mutation TestMutation($foo: String!, $version: Int!) {
+          testMutationOne(foo: $foo, version: $version) {
             ... on TestData {
               ...testData
             }
@@ -206,20 +197,126 @@ describe('createGraphqlClient', () => {
             }
           }
         }
-      }
-    `;
+      `;
 
-    const client = createMockClient();
+      const client = createMockClient();
 
-    const variables = {
-      vid: PROJECT_VID,
-      foo: 'foo_2',
-      version: 1,
-    };
+      const variables = {
+        vid,
+        foo: 'foo_2',
+        version: 1,
+      };
 
-    const result = await client.mutate({ mutation, variables });
+      const result = await client.mutate({
+        mutation,
+        variables,
+        context: {
+          projectDiffResolving: {
+            errorTypename,
+            projectAccessor: {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              fromDiffError(mutationResult: any) {
+                return {
+                  remote: mutationResult.data,
+                  local: {
+                    vid,
+                    foo: 'foo',
+                    bar: 'bar',
+                    version: 1,
+                  },
+                };
+              },
+            },
+          },
+        },
+      });
 
-    expect(result).toEqual(expectedResponse);
+      expect(result).toEqual(expectedResponse);
+    });
+
+    test('выбрасывает иключение, если не передан projectAccessor.fromDiffError', async () => {
+      let attempt = 1;
+      let data = {};
+      const vid = 'test-vid';
+
+      const expectedResponse = {
+        data: {
+          testMutationOne: {
+            vid,
+            foo: 'foo_2',
+            bar: 'bar_1',
+            version: 3,
+            __typename: 'Test',
+          },
+        },
+      };
+
+      fetchMock.post(URI, () => {
+        if (attempt === 1) {
+          attempt += 1;
+          data = {
+            testMutationOne: {
+              remote: {
+                vid,
+                foo: 'foo_1',
+                bar: 'bar_1',
+                version: 2,
+                __typename: 'Test',
+              },
+              __typename: errorTypename,
+            },
+          };
+        }
+
+        if (attempt === 2) {
+          data = { ...expectedResponse.data };
+        }
+
+        return { data };
+      });
+
+      const mutation = gql`
+        fragment testData on TestData {
+          vid
+          version
+          foo
+          bar
+        }
+
+        mutation TestMutation($foo: String!, $version: Int!) {
+          testMutationOne(foo: $foo, version: $version) {
+            ... on TestData {
+              ...testData
+            }
+            ... on ${errorTypename} {
+              remote {
+                ...testData
+              }
+            }
+          }
+        }
+      `;
+
+      const client = createMockClient();
+
+      const variables = {
+        vid,
+        foo: 'foo_2',
+        version: 1,
+      };
+
+      const result = client.mutate({
+        mutation,
+        variables,
+        context: {
+          projectDiffResolving: {
+            errorTypename,
+          },
+        },
+      });
+
+      await expect(result).rejects.toThrow();
+    });
   });
 
   test('корректно парсит ошибку', async () => {

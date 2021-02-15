@@ -41,9 +41,9 @@ describe('ProjectDiffResolverLink', () => {
     return new ProjectDiffResolverLink({
       errorTypename,
       projectAccessor: {
-        fromDiffError: (data, local) => ({
+        fromDiffError: (data) => ({
           remote: data.result.remote,
-          local: { ...local, ...data.result.remote },
+          local: {},
         }),
       },
       ...defaults,
@@ -294,8 +294,7 @@ describe('ProjectDiffResolverLink', () => {
         testMutationOne: {
           result: {
             vid,
-            foo: 'foo_2',
-            bar: 'bar_1',
+            data: [{ a: 2 }, { b: 2 }],
             version: 3,
             __typename: 'Test',
           },
@@ -317,8 +316,7 @@ describe('ProjectDiffResolverLink', () => {
             result: {
               remote: {
                 vid,
-                foo: 'foo_1',
-                bar: 'bar_1',
+                data: [{ a: 2 }, { b: 1 }],
                 version: 2,
                 __typename: 'Test',
               },
@@ -333,7 +331,6 @@ describe('ProjectDiffResolverLink', () => {
           testMutationOne: {
             result: {
               vid,
-              bar: 'bar_1',
               ...patchedVars,
               version: 3,
               __typename: 'Test',
@@ -349,18 +346,31 @@ describe('ProjectDiffResolverLink', () => {
       mergeStrategy: {
         default: 'smart',
       },
+      projectAccessor: {
+        fromDiffError(data) {
+          return {
+            remote: data.result.remote,
+            local: {
+              vid,
+              data: [{ a: 1 }, { b: 1 }],
+              version: 1,
+            },
+          };
+        },
+      },
     });
 
     const variables = {
       vid,
-      foo: 'foo_2',
+      data: [{ a: 1 }, { b: 2 }],
       version: 1,
     };
 
     const result = await toPromise(execute(link, { query, variables }));
 
     expect(patchedVars).toStrictEqual({
-      ...variables,
+      vid,
+      data: [{ a: 2 }, { b: 2 }],
       version: 2,
     });
 
@@ -448,6 +458,18 @@ describe('ProjectDiffResolverLink', () => {
     const link = createLink(stub, {
       mergeStrategy: {
         default: 'smart',
+      },
+      projectAccessor: {
+        fromDiffError(data) {
+          return {
+            remote: data.result.remote,
+            local: {
+              vid,
+              foo: 'foo_1',
+              version: 1,
+            },
+          };
+        },
       },
     });
 

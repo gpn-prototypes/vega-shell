@@ -21,6 +21,8 @@ interface MutationResult {
   result: Data & {
     __typename: string;
   };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
 }
 
 export interface ProjectAccessor<
@@ -40,7 +42,7 @@ export interface MergeStrategy {
 }
 
 interface Options<V = OperationVariables, D = Data> {
-  maxAttempts?: number;
+  maxAttempts: number;
   errorTypename: string;
   operation: Operation;
   nextLink: NextLink;
@@ -83,7 +85,7 @@ export class ProjectDiffResolvingOperation {
     this.subscription = null;
 
     this.attempt = 1;
-    this.maxAttempts = options.maxAttempts ?? 5;
+    this.maxAttempts = options.maxAttempts;
 
     this.fetchResult = new CombinedFetchResult();
 
