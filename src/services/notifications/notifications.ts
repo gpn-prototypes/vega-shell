@@ -45,7 +45,11 @@ export class Notifications {
   }
 
   public add(item: Item): void {
-    this.items = [...this.items, item];
+    const newItem = {
+      onClose: () => this.remove(item.key),
+      ...item,
+    };
+    this.items = [...this.items, newItem];
 
     this.publish('change', { items: this.items });
   }

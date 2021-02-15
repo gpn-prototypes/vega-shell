@@ -43,7 +43,7 @@ describe('Notifications', () => {
 
     finded = notifications.find('test-2');
 
-    expect(finded).toEqual(items[1]);
+    expect(finded).toMatchObject(items[1]);
 
     finded = notifications.find('never');
 

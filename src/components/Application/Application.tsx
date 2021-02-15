@@ -5,23 +5,32 @@ import ParcelComponent from 'single-spa-react/lib/esm/parcel';
 import { useShell } from '../../app/shell-context';
 import { RootLoader } from '../Loader';
 
-type Props = {
+export type ApplicationProps = {
   name: string;
   wrapWith?: string;
   wrapClassName?: string;
+  onUnmount?: (name: string) => void;
 };
 
-export const Application: React.FC<Props> = ({ name, wrapClassName, wrapWith }) => {
+export const Application: React.FC<ApplicationProps> = ({
+  name,
+  wrapClassName,
+  wrapWith,
+  ...rest
+}) => {
   const { serverError, ...shell } = useShell();
   const [isLoading, setIsLoading] = useState(true);
 
   const handleParcelMount = (): void => {
+    // istanbul ignore else
     if (isLoading) {
       setIsLoading(false);
     }
   };
 
-  const config = useMemo(() => System.import(name), [name]);
+  const config = useMemo(() => {
+    return System.import(name);
+  }, [name]);
 
   const handleServiceError = (): void => {
     System.delete(System.resolve(name));
@@ -30,16 +39,15 @@ export const Application: React.FC<Props> = ({ name, wrapClassName, wrapWith }) 
       key,
       message: `Ошибка загрузки модуля «${name}»`,
       status: 'alert',
-      onClose: () => {
-        shell.notifications.remove(key);
-      },
     });
 
+    // istanbul ignore else
     if (isLoading) {
       setIsLoading(false);
     }
   };
 
+  // istanbul ignore else
   if (serverError !== null) {
     return null;
   }
@@ -56,6 +64,7 @@ export const Application: React.FC<Props> = ({ name, wrapClassName, wrapWith }) 
         wrapWith={wrapWith}
         parcelDidMount={handleParcelMount}
         {...shell}
+        {...rest}
       />
     </>
   );
