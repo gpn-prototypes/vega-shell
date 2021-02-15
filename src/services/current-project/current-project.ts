@@ -1,24 +1,28 @@
 enum Code {
-  IDLE = 'IDLE',
-  NOT_FOUND = 'NOT_FOUND',
-  CHECKOUT = 'CHECKOUT',
-  CHECKED = 'CHECKED',
-  ERROR = 'ERROR',
+  Idle = 'IDLE',
+  NotFound = 'NOT_FOUND',
+  InProgress = 'IN_PROGRESS',
+  Done = 'DONE',
+  Error = 'ERROR',
 }
 
 type ProjectVID = string;
 
+interface Project {
+  vid: ProjectVID;
+}
+
 type CheckoutStatus =
-  | { code: Code.IDLE }
-  | { code: Code.CHECKOUT; vid: ProjectVID }
-  | { code: Code.CHECKED; vid: ProjectVID }
-  | { code: Code.NOT_FOUND; vid: ProjectVID }
-  | { code: Code.ERROR; vid: ProjectVID };
+  | { code: Code.Idle }
+  | { code: Code.Done; project: Project }
+  | { code: Code.InProgress; vid: ProjectVID }
+  | { code: Code.NotFound; vid: ProjectVID }
+  | { code: Code.Error; vid: ProjectVID };
 
 export enum FindProjectResult {
-  SUCCESS,
-  NOT_FOUND,
-  ERROR,
+  Success = 'SUCCESS',
+  NotFound = 'NOT_FOUND',
+  Error = 'ERROR',
 }
 interface FindProject {
   (vid: ProjectVID): Promise<FindProjectResult>;
@@ -38,57 +42,63 @@ export class CurrentProject {
     this.codes = Code;
     this.findProject = params.findProject;
     this.checkoutStatus = {
-      code: Code.IDLE,
+      code: Code.Idle,
     };
   }
 
   private toIdle(): void {
     this.checkoutStatus = {
-      code: Code.IDLE,
+      code: Code.Idle,
     };
   }
 
-  private toCheckout(vid: ProjectVID): void {
+  private toInProgress(vid: ProjectVID): void {
     this.checkoutStatus = {
-      code: Code.CHECKOUT,
+      code: Code.InProgress,
       vid,
     };
   }
 
-  private toChecked(vid: ProjectVID): void {
+  private toDone(vid: ProjectVID): void {
     this.checkoutStatus = {
-      code: Code.CHECKED,
-      vid,
+      code: Code.Done,
+      project: {
+        vid,
+      },
     };
   }
 
   private toError(vid: ProjectVID): void {
     this.checkoutStatus = {
-      code: Code.ERROR,
+      code: Code.Error,
       vid,
     };
   }
 
   private toNotFound(vid: ProjectVID): void {
     this.checkoutStatus = {
-      code: Code.NOT_FOUND,
+      code: Code.NotFound,
       vid,
     };
   }
 
   public async checkout(vid: ProjectVID): Promise<CheckoutStatus> {
-    this.toCheckout(vid);
+    this.toInProgress(vid);
 
     try {
       const result = await this.findProject(vid);
 
-      if (result === FindProjectResult.NOT_FOUND) {
+      if (result === FindProjectResult.NotFound) {
         this.toNotFound(vid);
-      } else if (result === FindProjectResult.ERROR) {
-        this.toError(vid);
-      } else if (result === FindProjectResult.SUCCESS) {
-        this.toChecked(vid);
+        return this.status();
       }
+
+      if (result === FindProjectResult.Success) {
+        this.toDone(vid);
+        return this.status();
+      }
+
+      this.toError(vid);
     } catch (err) {
       this.toError(vid);
     }
@@ -102,5 +112,13 @@ export class CurrentProject {
 
   public status(): CheckoutStatus {
     return this.checkoutStatus;
+  }
+
+  public get(): Project | null {
+    if (this.checkoutStatus.code === Code.Done) {
+      return this.checkoutStatus.project;
+    }
+
+    return null;
   }
 }

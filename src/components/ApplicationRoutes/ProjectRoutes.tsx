@@ -33,11 +33,11 @@ export function ProjectRoutes(props: Props): React.ReactElement {
     };
   }, [currentProject, vid]);
 
-  if (status.code === codes.NOT_FOUND || status.code === codes.ERROR) {
+  if (status.code === codes.NotFound || status.code === codes.Error) {
     return <NotFoundView />;
   }
 
-  if (status.code !== codes.CHECKED) {
+  if (status.code !== codes.Done) {
     return <RootLoader />;
   }
 

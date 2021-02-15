@@ -19,23 +19,23 @@ describe('CurrentProject', () => {
   test('проект переключается', async () => {
     const vid = uuid();
 
-    findProject.mockResolvedValueOnce(FindProjectResult.SUCCESS);
+    findProject.mockResolvedValueOnce(FindProjectResult.Success);
     const checkout = project.checkout(vid);
 
-    expect(project.status()).toStrictEqual({ code: project.codes.CHECKOUT, vid });
+    expect(project.status()).toStrictEqual({ code: project.codes.InProgress, vid });
 
     await checkout;
 
-    expect(project.status()).toStrictEqual({ code: project.codes.CHECKED, vid });
+    expect(project.status()).toStrictEqual({ code: project.codes.Done, project: { vid } });
   });
 
   test('проект не найден', async () => {
     const vid = uuid();
 
-    findProject.mockResolvedValueOnce(FindProjectResult.NOT_FOUND);
+    findProject.mockResolvedValueOnce(FindProjectResult.NotFound);
     await project.checkout(vid);
 
-    expect(project.status()).toStrictEqual({ code: project.codes.NOT_FOUND, vid });
+    expect(project.status()).toStrictEqual({ code: project.codes.NotFound, vid });
   });
 
   test('ошибка при запросе проекта', async () => {
@@ -44,29 +44,40 @@ describe('CurrentProject', () => {
     findProject.mockRejectedValueOnce(new Error('test'));
     await project.checkout(vid);
 
-    expect(project.status()).toStrictEqual({ code: project.codes.ERROR, vid });
+    expect(project.status()).toStrictEqual({ code: project.codes.Error, vid });
   });
 
   test('ошибка в ответе', async () => {
     const vid = uuid();
 
-    findProject.mockResolvedValueOnce(FindProjectResult.ERROR);
+    findProject.mockResolvedValueOnce(FindProjectResult.Error);
     await project.checkout(vid);
 
-    expect(project.status()).toStrictEqual({ code: project.codes.ERROR, vid });
+    expect(project.status()).toStrictEqual({ code: project.codes.Error, vid });
   });
 
   test('сброс активного проекта', async () => {
     const vid = uuid();
 
-    findProject.mockResolvedValueOnce(vid);
+    findProject.mockResolvedValueOnce(FindProjectResult.Success);
     await project.checkout(vid);
     project.release();
 
-    expect(project.status()).toStrictEqual({ code: project.codes.IDLE });
+    expect(project.status()).toStrictEqual({ code: project.codes.Idle });
   });
 
   test('если проект не задан, то возвращается статус по умолчанию', () => {
-    expect(project.status()).toMatchObject({ code: project.codes.IDLE });
+    expect(project.status()).toMatchObject({ code: project.codes.Idle });
+  });
+
+  test('возвращает данные выбранного проекта', async () => {
+    const vid = uuid();
+    findProject.mockResolvedValueOnce(FindProjectResult.Success);
+
+    expect(project.get()).toBe(null);
+
+    await project.checkout(vid);
+
+    expect(project.get()).toStrictEqual({ vid });
   });
 });

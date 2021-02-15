@@ -87,14 +87,14 @@ export class Shell {
     const { data } = result;
 
     if (data.project?.__typename === 'Project') {
-      return FindProjectResult.SUCCESS;
+      return FindProjectResult.Success;
     }
 
     if (data.project?.__typename === 'Error' && data.project.code === 'PROJECT_NOT_FOUND') {
-      return FindProjectResult.NOT_FOUND;
+      return FindProjectResult.NotFound;
     }
 
-    return FindProjectResult.ERROR;
+    return FindProjectResult.Error;
   }
 
   dispose(): void {
