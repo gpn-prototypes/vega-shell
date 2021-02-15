@@ -8,6 +8,7 @@ import {
 } from '@apollo/client';
 import { BREAK, DocumentNode, visit } from 'graphql';
 
+import { ProjectDiffResolverError } from './error';
 import type { Data, MergeStrategy, ProjectAccessor } from './project-diff-resolving-operation';
 import { ProjectDiffResolvingOperation } from './project-diff-resolving-operation';
 
@@ -29,7 +30,7 @@ export class ProjectDiffResolverLink extends ApolloLink {
 
   private readonly maxAttempts: number;
 
-  private readonly projectAccessor: ProjectAccessor;
+  private readonly projectAccessor: Partial<ProjectAccessor> | undefined;
 
   private readonly mergeStrategy: MergeStrategy;
 
@@ -60,15 +61,15 @@ export class ProjectDiffResolverLink extends ApolloLink {
     };
   }
 
-  private static makeProjectAccessor(accessor?: Partial<ProjectAccessor>): ProjectAccessor {
+  private static makeProjectAccessor(accessor: Partial<ProjectAccessor>): ProjectAccessor {
     const identity = <T>(value: T): T => value;
     const merge = (a: Data, b: Data): Data => ({ ...a, ...b });
 
-    const {
-      fromDiffError = () => ({ remote: {}, local: {} }),
-      fromVariables = identity,
-      toVariables = merge,
-    } = accessor ?? {};
+    const { fromDiffError, fromVariables = identity, toVariables = merge } = accessor;
+
+    if (typeof fromDiffError !== 'function') {
+      throw new ProjectDiffResolverError('projectAccessor.fromDiffError is required');
+    }
 
     return {
       fromDiffError,
@@ -81,9 +82,7 @@ export class ProjectDiffResolverLink extends ApolloLink {
     super();
     this.errorTypename = defaultOptions.errorTypename;
     this.maxAttempts = defaultOptions.maxAttempts ?? 5;
-    this.projectAccessor = ProjectDiffResolverLink.makeProjectAccessor(
-      defaultOptions.projectAccessor,
-    );
+    this.projectAccessor = defaultOptions.projectAccessor;
 
     this.mergeStrategy = ProjectDiffResolverLink.makeMergeStrategy(
       defaultOptions.mergeStrategy ?? {},
