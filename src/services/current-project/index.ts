@@ -1,1 +1,2 @@
-export { CurrentProject, FindProjectResult } from './current-project';
+export { CurrentProject, FindProjectResultCode } from './current-project';
+export type { FindProjectResult } from './current-project';

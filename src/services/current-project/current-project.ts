@@ -10,6 +10,7 @@ type ProjectVID = string;
 
 interface Project {
   vid: ProjectVID;
+  version: number;
 }
 
 type CheckoutStatus =
@@ -19,11 +20,17 @@ type CheckoutStatus =
   | { code: Code.NotFound; vid: ProjectVID }
   | { code: Code.Error; vid: ProjectVID };
 
-export enum FindProjectResult {
+export enum FindProjectResultCode {
   Success = 'SUCCESS',
   NotFound = 'NOT_FOUND',
   Error = 'ERROR',
 }
+
+export type FindProjectResult =
+  | { code: FindProjectResultCode.Success; project: Project }
+  | { code: FindProjectResultCode.NotFound }
+  | { code: FindProjectResultCode.Error };
+
 interface FindProject {
   (vid: ProjectVID): Promise<FindProjectResult>;
 }
@@ -59,12 +66,10 @@ export class CurrentProject {
     };
   }
 
-  private toDone(vid: ProjectVID): void {
+  private toDone(project: Project): void {
     this.checkoutStatus = {
       code: Code.Done,
-      project: {
-        vid,
-      },
+      project,
     };
   }
 
@@ -88,13 +93,13 @@ export class CurrentProject {
     try {
       const result = await this.findProject(vid);
 
-      if (result === FindProjectResult.NotFound) {
+      if (result.code === FindProjectResultCode.NotFound) {
         this.toNotFound(vid);
         return this.status();
       }
 
-      if (result === FindProjectResult.Success) {
-        this.toDone(vid);
+      if (result.code === FindProjectResultCode.Success) {
+        this.toDone(result.project);
         return this.status();
       }
 

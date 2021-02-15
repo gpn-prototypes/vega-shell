@@ -2,7 +2,11 @@ import { ApolloLink } from '@apollo/client';
 import type { History } from 'history';
 import { createBrowserHistory } from 'history';
 
-import { CurrentProject, FindProjectResult } from '../services/current-project';
+import {
+  CurrentProject,
+  FindProjectResult,
+  FindProjectResultCode,
+} from '../services/current-project';
 import type { GraphQLClient, GraphQLClientConfig } from '../services/graphql-client';
 import { createGraphqlClient, ServerError } from '../services/graphql-client';
 import { Identity } from '../services/identity';
@@ -90,14 +94,19 @@ export class Shell {
     const { data } = result;
 
     if (data.project?.__typename === 'Project') {
-      return FindProjectResult.Success;
+      const project = {
+        vid: data.project.vid as string,
+        version: data.project.version as number,
+      };
+
+      return { code: FindProjectResultCode.Success, project };
     }
 
     if (data.project?.__typename === 'Error' && data.project.code === 'PROJECT_NOT_FOUND') {
-      return FindProjectResult.NotFound;
+      return { code: FindProjectResultCode.NotFound };
     }
 
-    return FindProjectResult.Error;
+    return { code: FindProjectResultCode.Error };
   }
 
   dispose(): void {
