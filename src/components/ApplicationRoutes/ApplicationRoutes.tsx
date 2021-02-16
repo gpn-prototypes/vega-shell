@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
+import { Redirect, Route, Switch, useHistory, useLocation } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/client';
-import { useMount, useOnChange, usePreviousRef } from '@gpn-prototypes/vega-ui';
+import { Loader, useMount, useOnChange, usePreviousRef } from '@gpn-prototypes/vega-ui';
 
 import { useShell } from '../../app';
 import { ServerError } from '../../services/graphql-client';
@@ -26,10 +26,8 @@ const NotFoundView = () => (
 export const AUTH_ERROR_MESSAGE =
   'Что-то пошло не так. Для повторного входа в\u00A0систему введите свои e-mail и\u00A0пароль';
 
-const LogoutView = (props: { redirectPathname: string | null }): React.ReactElement | null => {
+const LogoutView = (): React.ReactElement | null => {
   const { identity } = useShell();
-
-  const { redirectPathname } = props;
 
   useMount(() => {
     if (identity.isLoggedIn()) {
@@ -37,15 +35,7 @@ const LogoutView = (props: { redirectPathname: string | null }): React.ReactElem
     }
   });
 
-  const getQuery = (): string => {
-    if (redirectPathname === '/logout' || redirectPathname === null) {
-      return '';
-    }
-
-    return `redirectTo=${encodeURIComponent(redirectPathname)}`;
-  };
-
-  return <Redirect to={`/login?${getQuery()}`} />;
+  return <Loader />;
 };
 
 export const ApplicationRoutes = (): React.ReactElement => {
@@ -55,12 +45,15 @@ export const ApplicationRoutes = (): React.ReactElement => {
 
   const location = useLocation();
 
-  const [isLoggedIn, setIsLoggedIn] = useState(identity.isLoggedIn());
+  const [_, setIsLoggedIn] = useState(identity.isLoggedIn());
+
+  const isLoggedIn = identity.isLoggedIn();
 
   useMount(() => {
     const authUnsub = bus.subscribe<{ loggedIn: boolean }>(
       { channel: 'auth', topic: 'login' },
       ({ payload: { loggedIn } }) => {
+        console.log('here 2')
         setIsLoggedIn(loggedIn);
       },
     );
@@ -99,10 +92,6 @@ export const ApplicationRoutes = (): React.ReactElement => {
         setServerError(null);
       }
     }
-    // istanbul ignore else
-    if (identity.isLoggedIn() !== isLoggedIn) {
-      setIsLoggedIn(identity.isLoggedIn());
-    }
   });
 
   const getLoginRedirectPath = (): string => {
@@ -110,12 +99,25 @@ export const ApplicationRoutes = (): React.ReactElement => {
     return query.get('redirectTo') ?? '/projects';
   };
 
+  console.log(_, isLoggedIn)
+
+  const getLoginPath = (): string => {
+    const basePath = AUTH_PATH;
+    if (previousPathname === '/logout' || previousPathname === null) {
+      return basePath;
+    }
+    return `${basePath}?redirectTo=${encodeURIComponent(previousPathname)}`;
+  };
+
+  console.log('render', isLoggedIn);
+
+  const redirectToAuth =
+    (!isLoggedIn && location.pathname !== AUTH_PATH) || location.pathname === '/logout';
+
   return (
     <>
       {serverError && <ErrorView {...serverError} />}
-      {!isLoggedIn && location.pathname !== AUTH_PATH && (
-        <LogoutView redirectPathname={previousPathname} />
-      )}
+      {redirectToAuth && <Redirect to={getLoginPath()} />}
       <Switch>
         {isLoggedIn && <Redirect from="/" to="/projects" exact />}
         <Route exact path={AUTH_PATH}>
@@ -123,7 +125,7 @@ export const ApplicationRoutes = (): React.ReactElement => {
           <AuthPage />
         </Route>
         <Route exact path="/logout">
-          <LogoutView redirectPathname={previousPathname} />
+          <LogoutView />
         </Route>
         <Route path="/projects">
           <ApolloProvider client={graphqlClient}>
