@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Redirect, Route, Switch, useHistory, useLocation } from 'react-router-dom';
+import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/client';
 import { Loader, useMount, useOnChange, usePreviousRef } from '@gpn-prototypes/vega-ui';
 
@@ -53,7 +53,6 @@ export const ApplicationRoutes = (): React.ReactElement => {
     const authUnsub = bus.subscribe<{ loggedIn: boolean }>(
       { channel: 'auth', topic: 'login' },
       ({ payload: { loggedIn } }) => {
-        console.log('here 2')
         setIsLoggedIn(loggedIn);
       },
     );
@@ -99,65 +98,67 @@ export const ApplicationRoutes = (): React.ReactElement => {
     return query.get('redirectTo') ?? '/projects';
   };
 
-  console.log(_, isLoggedIn)
-
   const getLoginPath = (): string => {
     const basePath = AUTH_PATH;
-    if (previousPathname === '/logout' || previousPathname === null) {
+    if (
+      previousPathname === AUTH_PATH ||
+      previousPathname === '/logout' ||
+      previousPathname === null
+    ) {
       return basePath;
     }
+
     return `${basePath}?redirectTo=${encodeURIComponent(previousPathname)}`;
   };
 
-  console.log('render', isLoggedIn);
+  if (!isLoggedIn && location.pathname !== AUTH_PATH) {
+    return <Redirect to={getLoginPath()} />;
+  }
 
-  const redirectToAuth =
-    (!isLoggedIn && location.pathname !== AUTH_PATH) || location.pathname === '/logout';
+  if (serverError !== null) {
+    return <ErrorView {...serverError} />;
+  }
 
   return (
-    <>
-      {serverError && <ErrorView {...serverError} />}
-      {redirectToAuth && <Redirect to={getLoginPath()} />}
-      <Switch>
-        {isLoggedIn && <Redirect from="/" to="/projects" exact />}
-        <Route exact path={AUTH_PATH}>
-          {isLoggedIn && <Redirect to={getLoginRedirectPath()} />}
-          <AuthPage />
-        </Route>
-        <Route exact path="/logout">
-          <LogoutView />
-        </Route>
-        <Route path="/projects">
-          <ApolloProvider client={graphqlClient}>
-            <Header />
-          </ApolloProvider>
-          <main className="main">
-            <Switch>
-              <Route exact path={['/projects/show/:projectId/rb']}>
-                <Application name="@vega/rb" />
-              </Route>
-              <Route exact path={['/projects/show/:projectId/lc']}>
-                <Application name="@vega/lc" />
-              </Route>
-              <Route
-                exact
-                path={[
-                  '/projects/show/:projectId/fem',
-                  '/projects/show/:projectId/fem/OPEX',
-                  '/projects/show/:projectId/fem/CAPEX',
-                ]}
-              >
-                <Application name="@vega/fem" />
-              </Route>
-              <Route exact path={['/projects', '/projects/create', '/projects/show/:projectId']}>
-                <Application name="@vega/sp" />
-              </Route>
-              <NotFoundView />
-            </Switch>
-          </main>
-        </Route>
-        <NotFoundView />
-      </Switch>
-    </>
+    <Switch>
+      {isLoggedIn && <Redirect exact from="/" to="/projects" />}
+      <Route path={AUTH_PATH}>
+        {isLoggedIn && <Redirect to={getLoginRedirectPath()} />}
+        <AuthPage />
+      </Route>
+      <Route path="/logout">
+        <LogoutView />
+      </Route>
+      <Route path="/projects">
+        <ApolloProvider client={graphqlClient}>
+          <Header />
+        </ApolloProvider>
+        <main className="main">
+          <Switch>
+            <Route exact path={['/projects/show/:projectId/rb']}>
+              <Application name="@vega/rb" />
+            </Route>
+            <Route exact path={['/projects/show/:projectId/lc']}>
+              <Application name="@vega/lc" />
+            </Route>
+            <Route
+              exact
+              path={[
+                '/projects/show/:projectId/fem',
+                '/projects/show/:projectId/fem/OPEX',
+                '/projects/show/:projectId/fem/CAPEX',
+              ]}
+            >
+              <Application name="@vega/fem" />
+            </Route>
+            <Route exact path={['/projects', '/projects/create', '/projects/show/:projectId']}>
+              <Application name="@vega/sp" />
+            </Route>
+            <NotFoundView />
+          </Switch>
+        </main>
+      </Route>
+      <NotFoundView />
+    </Switch>
   );
 };
