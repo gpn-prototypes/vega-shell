@@ -524,7 +524,13 @@ export type Attendee = {
   __typename?: 'Attendee';
   user?: Maybe<User>;
   roles?: Maybe<Array<Maybe<ProjectRole>>>;
+  status?: Maybe<AttendeeStatus>;
 };
+
+export enum AttendeeStatus {
+  Active = 'ACTIVE',
+  Inactive = 'INACTIVE'
+}
 
 export enum AttendeeOrderBy {
   FirstName = 'FIRST_NAME',
