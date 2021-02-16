@@ -1,8 +1,13 @@
 #!/bin/bash
 
-if [ -z "$NPM_URI" ] || [ -z "$NPM_AUTH_TOKEN" ]
+if [ -z "$NPM_URI" ]
 then
-  echo "Required variables (NPM_URI or NPM_AUTH_TOKEN) not found. Abort."
+  NPM_URI="npm.pkg.github.com"
+fi
+
+if [ -z "$NPM_AUTH_TOKEN" ]
+then
+  echo "NPM_AUTH_TOKEN is required to continue. Abort."
   exit 1;
 fi
 

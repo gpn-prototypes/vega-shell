@@ -1,6 +1,9 @@
 #!/bin/bash
 
-VERSION="${BUILD_VERSION:=1}"
+if [ -z "$FE_BUILDER_VERSION" ]
+then
+  FE_BUILDER_VERSION="1"
+fi
 
 IS_IMAGE_EXIST=$(docker image ls | grep -w "vega/frontend-builder")
 
@@ -9,7 +12,7 @@ then
   echo "Docker image already exist. Skip build command."
 else
   echo "Docker image do not exist. Run build command."
-  docker build -t vega/frontend-builder:$VERSION ./ci
+  docker build -t vega/frontend-builder:$FE_BUILDER_VERSION ./ci
 fi
 
 docker run \
