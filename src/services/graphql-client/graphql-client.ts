@@ -212,7 +212,6 @@ export const createResponseLink = (config: ResponseLinkConfig): ApolloLink =>
           });
         }
       }
-
       return response;
     });
   });
