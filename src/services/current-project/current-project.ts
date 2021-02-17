@@ -39,7 +39,7 @@ interface Params {
 }
 
 export class CurrentProject {
-  private checkoutStatus: CheckoutStatus;
+  private checkoutStatus: Readonly<CheckoutStatus>;
 
   private findProject: FindProject;
 
@@ -48,43 +48,33 @@ export class CurrentProject {
   constructor(params: Params) {
     this.codes = Code;
     this.findProject = params.findProject;
-    this.checkoutStatus = {
+    this.checkoutStatus = Object.freeze({
       code: Code.Idle,
-    };
+    });
+  }
+
+  private setStatus(status: CheckoutStatus) {
+    this.checkoutStatus = Object.freeze({ ...status });
   }
 
   private toIdle(): void {
-    this.checkoutStatus = {
-      code: Code.Idle,
-    };
+    this.setStatus({ code: Code.Idle });
   }
 
   private toInProgress(vid: ProjectVID): void {
-    this.checkoutStatus = {
-      code: Code.InProgress,
-      vid,
-    };
+    this.setStatus({ code: Code.InProgress, vid });
   }
 
   private toDone(project: Project): void {
-    this.checkoutStatus = {
-      code: Code.Done,
-      project,
-    };
+    this.setStatus({ code: Code.Done, project });
   }
 
   private toError(vid: ProjectVID): void {
-    this.checkoutStatus = {
-      code: Code.Error,
-      vid,
-    };
+    this.setStatus({ code: Code.Error, vid });
   }
 
   private toNotFound(vid: ProjectVID): void {
-    this.checkoutStatus = {
-      code: Code.NotFound,
-      vid,
-    };
+    this.setStatus({ code: Code.NotFound, vid });
   }
 
   public async checkout(vid: ProjectVID): Promise<CheckoutStatus> {

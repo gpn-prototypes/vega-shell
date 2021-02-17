@@ -95,4 +95,47 @@ describe('CurrentProject', () => {
 
     expect(project.get()).toStrictEqual({ vid, version: 1 });
   });
+
+  test('статус нельзя изменить', async () => {
+    const vid = uuid();
+
+    function assertStatusMutationFails() {
+      const status = project.status();
+      expect(() => {
+        // @ts-expect-error: специальная попытка мутировать невалидным статусом
+        // eslint-disable-next-line no-param-reassign
+        status.code = '';
+      }).toThrow();
+    }
+
+    assertStatusMutationFails();
+
+    findProject.mockResolvedValueOnce({
+      code: FindProjectResultCode.Success,
+      project: { vid, version: 1 },
+    });
+
+    const checkout = project.checkout(vid);
+
+    assertStatusMutationFails();
+
+    await checkout;
+
+    assertStatusMutationFails();
+
+    findProject.mockResolvedValueOnce({ code: FindProjectResultCode.NotFound });
+    await project.checkout(vid);
+
+    assertStatusMutationFails();
+
+    findProject.mockResolvedValueOnce({ code: FindProjectResultCode.Error });
+    await project.checkout(vid);
+
+    assertStatusMutationFails();
+
+    findProject.mockRejectedValueOnce({ code: FindProjectResultCode.Error });
+    await project.checkout(vid);
+
+    assertStatusMutationFails();
+  });
 });
