@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useReducer, useRef, useState } from 'react';
 import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/client';
 import { Loader, useMount, useOnChange, usePreviousRef } from '@gpn-prototypes/vega-ui';
@@ -27,8 +27,8 @@ export const AUTH_ERROR_MESSAGE =
   'Что-то пошло не так. Для повторного входа в\u00A0систему введите свои e-mail и\u00A0пароль';
 
 const useForceUpdate = () => {
-  const [, set] = useState(true);
-  return useCallback(() => set((s) => !s), [set]);
+  const [, forceUpdate] = useReducer((s) => s + 1, 0);
+  return forceUpdate;
 };
 
 const LogoutView = (): React.ReactElement | null => {
@@ -56,6 +56,8 @@ export const ApplicationRoutes = (): React.ReactElement => {
 
   const isLoggedIn = identity.isLoggedIn();
 
+  const lastAuthMessage = useRef(bus.peek({ channel: 'auth', topic: 'login' }));
+
   useMount(() => {
     const authUnsub = bus.subscribe<{ loggedIn: boolean }>(
       { channel: 'auth', topic: 'login' },
@@ -64,9 +66,9 @@ export const ApplicationRoutes = (): React.ReactElement => {
       },
     );
 
-    const lastAuthMessage = bus.peek({ channel: 'auth', topic: 'login' });
+    const lastAuthMessageInMount = bus.peek({ channel: 'auth', topic: 'login' });
 
-    if (lastAuthMessage !== undefined) {
+    if (lastAuthMessage.current !== lastAuthMessageInMount) {
       forceUpdate();
     }
 
@@ -136,6 +138,10 @@ export const ApplicationRoutes = (): React.ReactElement => {
     return <ErrorView {...serverError} />;
   }
 
+  if (previousPathname !== '/logout' && !previousPathname?.includes('/login')) {
+    lastAuthorizedRoute.current = previousPathname;
+  }
+
   return (
     <Switch>
       {isLoggedIn && <Redirect exact from="/" to="/projects" />}
@@ -143,13 +149,9 @@ export const ApplicationRoutes = (): React.ReactElement => {
         {isLoggedIn && <Redirect to={getLoginRedirectPath()} />}
         <AuthPage />
       </Route>
-      <Route
-        path="/logout"
-        render={() => {
-          lastAuthorizedRoute.current = previousPathname;
-          return <LogoutView />;
-        }}
-      />
+      <Route path="/logout">
+        <LogoutView />;
+      </Route>
       <Route path="/projects">
         <ApolloProvider client={graphqlClient}>
           <Header />

@@ -49,7 +49,6 @@ export class Shell {
   }
 
   private handleLoggedInChange(data: { isLoggedIn: boolean }): void {
-    console.log('here');
     this.messageBus.send({
       channel: 'auth',
       topic: 'login',
