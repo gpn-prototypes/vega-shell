@@ -50,6 +50,7 @@ export class Shell {
       },
       onLogout: () => {
         this.handleLoggedInChange({ isLoggedIn: false });
+        this.graphQLClient.clearStore();
       },
     });
 
@@ -112,5 +113,8 @@ export class Shell {
   dispose(): void {
     this.messageBus.dispose();
     this.identity.clear();
+    this.currentProject.release();
+    this.graphQLClient.clearStore();
+    this.graphQLClient.stop();
   }
 }
