@@ -3,7 +3,6 @@ import { Link, matchPath } from 'react-router-dom';
 import { Badge, Text, useMount } from '@gpn-prototypes/vega-ui';
 import cn from 'bem-cn';
 
-import { useShell } from '../../app';
 import { BaseHeader } from '../BaseHeader';
 
 import defaultAvatar from './default-avatar.svg';
@@ -36,7 +35,6 @@ const testId = {
 
 export const HeaderView = (props: HeaderViewProps): React.ReactElement => {
   const { isLoading, projectName, pathname, onChangeActive } = props;
-  const { identity } = useShell();
 
   const [userName, setUserName] = useState<string | null>(null);
 
@@ -176,20 +174,18 @@ export const HeaderView = (props: HeaderViewProps): React.ReactElement => {
       <BaseHeader.Menu.Delimiter />
       <BaseHeader.Menu.Item>
         {(menuItemProps): React.ReactNode => (
-          <a
+          <Link
             onClick={(e) => {
-              e.preventDefault();
               if (menuItemProps.closeMenu) {
-                identity.logout();
                 menuItemProps.closeMenu(e);
               }
             }}
             className={menuItemProps.className}
-            href="/login"
+            to="/logout"
             data-testid={testId.logout}
           >
             <Text size="s">Выйти</Text>
-          </a>
+          </Link>
         )}
       </BaseHeader.Menu.Item>
     </BaseHeader.Menu>
