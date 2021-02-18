@@ -38,7 +38,7 @@ const renderComponent = (
 const getMenuList = (): HTMLElement => screen.getByRole('menu');
 
 function openDropdown(menu: RenderResult): void {
-  const menuTrigger = menu.queryByTestId(BaseHeaderMenu.testId.trigger);
+  const menuTrigger = menu.getByLabelText('Меню');
 
   act(() => {
     if (menuTrigger !== null) {

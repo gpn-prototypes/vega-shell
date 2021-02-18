@@ -20,13 +20,10 @@ export const BaseHeaderMenuItem: React.FC<BaseHeaderMenuItemProps> = (props) => 
 
   const { closeMenu } = useBaseHeaderMenuContext();
 
-  const content =
-    typeof children === 'function'
-      ? children({
-          closeMenu,
-          className: cnBaseHeader('MenuLink').toString(),
-        })
-      : children;
+  const content = children({
+    closeMenu,
+    className: cnBaseHeader('MenuLink').toString(),
+  });
 
   return (
     <li

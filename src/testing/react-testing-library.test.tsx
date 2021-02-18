@@ -1,10 +1,11 @@
 import React from 'react';
-import { act, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { MockList } from 'apollo-server';
 import faker from 'faker';
 
 import { useProjectsList } from './__generated__/test-project-query';
 import { render } from './react-testing-library';
+import { waitRequests } from './wait-requests';
 
 const resolver = {
   Project: () => {
@@ -35,15 +36,6 @@ const errorResolver = {
     };
   },
 };
-
-// https://trojanowski.dev/apollo-hooks-testing-without-act-warnings/
-async function waitRequests(ms = 0) {
-  await act(() => {
-    return new Promise((resolve) => {
-      setTimeout(resolve, ms);
-    });
-  });
-}
 
 const Component = () => {
   const { data: projectListData } = useProjectsList();
