@@ -83,10 +83,27 @@ describe('ProjectDiffResolverLink', () => {
       }
     `;
 
-    const mutation = gql`
-      query TestQuery {
-        test
+    let handledQueriesCount = 0;
+
+    const stub = createHttpLink((operation) => {
+      const context = operation.getContext();
+
+      if (context.attempt !== undefined) {
+        handledQueriesCount += 1;
       }
+
+      return {};
+    });
+
+    const link = createLink(stub);
+
+    await toPromise(execute(link, { query }));
+
+    expect(handledQueriesCount).toBe(0);
+  });
+
+  test('не обрабатывает мутацию, если в контексте не переданы настройки по решению конфликта', async () => {
+    const mutation = gql`
       mutation TestMutation {
         updateTest
       }
@@ -106,33 +123,9 @@ describe('ProjectDiffResolverLink', () => {
 
     const link = createLink(stub);
 
-    await toPromise(execute(link, { query }));
     await toPromise(execute(link, { query: mutation }));
 
-    expect(handledQueriesCount).toBe(1);
-  });
-
-  test('выполняется запрос', async () => {
-    const query = gql`
-      query TestQuery {
-        test
-      }
-    `;
-
-    const response: Response = {
-      data: {
-        test: 'test',
-      },
-    };
-
-    const stub = createHttpLink(() => response);
-
-    const link = createLink(stub);
-
-    const result = await toPromise(execute(link, { query }));
-
-    expect(stub).toBeCalledTimes(1);
-    expect(result).toStrictEqual(response);
+    expect(handledQueriesCount).toBe(0);
   });
 
   test('обрабатывается обычная ошибка', async () => {
@@ -140,12 +133,8 @@ describe('ProjectDiffResolverLink', () => {
       mutation TestMutation($foo: String!, $version: Int!) {
         testMutationOne(foo: $foo, version: $version) {
           result {
-            ... on TestData {
-              foo
-            }
-            ... on ${errorTypename} {
-              message
-            }
+            ... on TestData { foo }
+            ... on ${errorTypename} { message }
           }
         }
       }
@@ -159,7 +148,16 @@ describe('ProjectDiffResolverLink', () => {
 
     const link = createLink(stub as MockedHttpLink<Response>);
 
-    const result = toPromise(execute(link, { query }));
+    const result = toPromise(
+      execute(link, {
+        query,
+        context: {
+          projectDiffResolving: {
+            fromDiffError: () => ({ remote: {}, local: {} }),
+          },
+        },
+      }),
+    );
     await expect(result).rejects.toThrow('test');
   });
 
@@ -173,16 +171,14 @@ describe('ProjectDiffResolverLink', () => {
         bar
       }
 
+      query TestQuery { data }
+
       mutation TestMutation($foo: String!, $version: Int!) {
         testMutationOne(foo: $foo, version: $version) {
           result {
-            ... on TestData {
-              ...testData
-            }
+            ... on TestData { ...testData }
             ... on ${errorTypename} {
-              remote {
-                ...testData
-              }
+              remote { ...testData }
             }
           }
         }
@@ -253,7 +249,21 @@ describe('ProjectDiffResolverLink', () => {
       version: 1,
     };
 
-    const result = await toPromise(execute(link, { query, variables }));
+    const result = await toPromise(
+      execute(link, {
+        query,
+        variables,
+        context: {
+          projectDiffResolving: {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            fromDiffError: (data: any) => ({
+              remote: data.result.remote,
+              local: { vid, foo: 'foo' },
+            }),
+          },
+        },
+      }),
+    );
 
     expect(patchedVars).toStrictEqual({
       ...variables,
@@ -263,26 +273,77 @@ describe('ProjectDiffResolverLink', () => {
     expect(result).toStrictEqual(expectedResponse);
   });
 
+  test('корректно обрабатывает пустой ответ при успешной мутации', async () => {
+    const vid = 'test-vid';
+    const local = {
+      vid,
+      a: 1,
+      version: 1,
+    };
+
+    const query = gql`
+      fragment testData on TestData { vid data version }
+      mutation TestMutation($foo: String!, $version: Int!) {
+        testMutationOne(foo: $foo, version: $version) {
+          result {
+            ... on TestData { ...testData }
+            ... on ${errorTypename} {
+              remote { ...testData }
+            }
+          }
+        }
+      }
+    `;
+
+    const stub = createHttpLink(() => {
+      return {};
+    });
+
+    const link = createLink(stub);
+
+    const variables = {
+      vid,
+      data: [{ a: 1 }, { b: 2 }],
+      version: 1,
+    };
+
+    const result = await toPromise(
+      execute(link, {
+        query,
+        variables,
+        context: {
+          projectDiffResolving: {
+            projectAccessor: {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              fromDiffError(data: any) {
+                return {
+                  remote: data.result.remote,
+                  local,
+                };
+              },
+            },
+          },
+        },
+      }),
+    );
+
+    expect(result).toStrictEqual({});
+  });
+
   test('автоматический режим решения конфликтов', async () => {
     const vid = 'test-vid';
     const query = gql`
       fragment testData on TestData {
         vid
-        version
-        foo
-        bar
+        data
       }
 
       mutation TestMutation($foo: String!, $version: Int!) {
         testMutationOne(foo: $foo, version: $version) {
           result {
-            ... on TestData {
-              ...testData
-            }
+            ... on TestData { ...testData }
             ... on ${errorTypename} {
-              remote {
-                ...testData
-              }
+              remote { ...testData }
             }
           }
         }
@@ -342,23 +403,7 @@ describe('ProjectDiffResolverLink', () => {
       return { data };
     });
 
-    const link = createLink(stub, {
-      mergeStrategy: {
-        default: 'smart',
-      },
-      projectAccessor: {
-        fromDiffError(data) {
-          return {
-            remote: data.result.remote,
-            local: {
-              vid,
-              data: [{ a: 1 }, { b: 1 }],
-              version: 1,
-            },
-          };
-        },
-      },
-    });
+    const link = createLink(stub);
 
     const variables = {
       vid,
@@ -366,7 +411,32 @@ describe('ProjectDiffResolverLink', () => {
       version: 1,
     };
 
-    const result = await toPromise(execute(link, { query, variables }));
+    const result = await toPromise(
+      execute(link, {
+        query,
+        variables,
+        context: {
+          projectDiffResolving: {
+            mergeStrategy: {
+              default: 'smart',
+            },
+            projectAccessor: {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              fromDiffError(data: any) {
+                return {
+                  remote: data.result.remote,
+                  local: {
+                    vid,
+                    data: [{ a: 1 }, { b: 1 }],
+                    version: 1,
+                  },
+                };
+              },
+            },
+          },
+        },
+      }),
+    );
 
     expect(patchedVars).toStrictEqual({
       vid,
@@ -389,13 +459,9 @@ describe('ProjectDiffResolverLink', () => {
       mutation TestMutation($foo: String!, $version: Int!) {
         testMutationOne(foo: $foo, version: $version) {
           result {
-            ... on TestData {
-              ...testData
-            }
+            ... on TestData { ...testData }
             ... on ${errorTypename} {
-              remote {
-                ...testData
-              }
+              remote { ...testData }
             }
           }
         }
@@ -455,23 +521,7 @@ describe('ProjectDiffResolverLink', () => {
       return { data };
     });
 
-    const link = createLink(stub, {
-      mergeStrategy: {
-        default: 'smart',
-      },
-      projectAccessor: {
-        fromDiffError(data) {
-          return {
-            remote: data.result.remote,
-            local: {
-              vid,
-              foo: 'foo_1',
-              version: 1,
-            },
-          };
-        },
-      },
-    });
+    const link = createLink(stub);
 
     const variables = {
       vid,
@@ -479,7 +529,32 @@ describe('ProjectDiffResolverLink', () => {
       version: 1,
     };
 
-    const result = await toPromise(execute(link, { query, variables }));
+    const result = await toPromise(
+      execute(link, {
+        query,
+        variables,
+        context: {
+          projectDiffResolving: {
+            mergeStrategy: {
+              default: 'smart',
+            },
+            projectAccessor: {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              fromDiffError(data: any) {
+                return {
+                  remote: data.result.remote,
+                  local: {
+                    vid,
+                    foo: 'foo_1',
+                    version: 1,
+                  },
+                };
+              },
+            },
+          },
+        },
+      }),
+    );
 
     expect(patchedVars).toStrictEqual({
       ...variables,
@@ -501,32 +576,21 @@ describe('ProjectDiffResolverLink', () => {
 
       fragment diffErrorData on ${errorTypename} {
         message
-        remote {
-          ...testData
-        }
+        remote { ...testData }
       }
 
       mutation TestMutation($foo: String!, $bar: String!, $version: Int!) {
         testMutationOne(foo: $foo, version: $version) {
           result {
-            ... on TestData {
-              ...testData
-            }
-
-            ... on ${errorTypename} {
-              ...diffErrorData
-            }
+            ... on TestData { ...testData }
+            ... on ${errorTypename} { ...diffErrorData }
           }
         }
 
         testMutationTwo(bar: $bar, version: $version) {
           result {
-            ... on TestData {
-              ...testData
-            }
-            ... on ${errorTypename} {
-              ...diffErrorData
-            }
+            ... on TestData { ...testData }
+            ... on ${errorTypename} { ...diffErrorData }
           }
         }
       }
@@ -646,6 +710,24 @@ describe('ProjectDiffResolverLink', () => {
     const result = await toPromise(
       execute(link, {
         query,
+        context: {
+          projectDiffResolving: {
+            projectAccessor: {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              fromDiffError(data: any) {
+                return {
+                  remote: data.result.remote,
+                  local: {
+                    vid,
+                    foo: 'foo',
+                    bar: 'bar',
+                    version: 1,
+                  },
+                };
+              },
+            },
+          },
+        },
         variables: {
           version: 1,
           foo: 'foo_1',
@@ -756,6 +838,12 @@ describe('ProjectDiffResolverLink', () => {
     const result = await toPromise(
       execute(link, {
         query,
+        context: {
+          projectDiffResolving: {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            fromDiffError: (data: any) => ({ local: {}, remote: data.result.remote }),
+          },
+        },
         variables: {
           version: 1,
           foo: 'bar',

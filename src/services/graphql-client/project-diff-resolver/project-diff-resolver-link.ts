@@ -97,12 +97,18 @@ export class ProjectDiffResolverLink extends ApolloLink {
       return nextLink(operation);
     }
 
+    const { projectDiffResolving } = operation.getContext();
+
+    if (projectDiffResolving === undefined) {
+      return nextLink(operation);
+    }
+
     const {
       maxAttempts = this.maxAttempts,
       errorTypename = this.errorTypename,
       projectAccessor = {},
       mergeStrategy = {},
-    } = operation.getContext().projectDiffResolving ?? {};
+    } = projectDiffResolving;
 
     const resolving = new ProjectDiffResolvingOperation({
       maxAttempts,
