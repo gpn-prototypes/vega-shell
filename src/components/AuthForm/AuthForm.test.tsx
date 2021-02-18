@@ -1,46 +1,22 @@
 import React from 'react';
+import userEvent from '@testing-library/user-event';
 
-import { fireEvent, render, RenderResult, screen } from '../../testing';
+import {
+  BeforeRenderFn,
+  findLoginInput,
+  findPasswordInput,
+  findSubmitButton,
+  incorrectLogin,
+  login,
+  render,
+  RenderResult,
+  waitFor,
+} from '../../testing';
 
-import { AuthForm, AuthFormProps } from './AuthForm';
+import { AUTH_ERROR_KEY, authErrorMessage, AuthForm, AuthFormProps } from './AuthForm';
 
-function renderComponent(props: AuthFormProps): RenderResult {
-  return render(<AuthForm {...props} />);
-}
-
-function findLoginInput(): HTMLElement {
-  return screen.getByTestId(AuthForm.testId.loginInput);
-}
-
-function findPasswordInput(): HTMLElement {
-  return screen.getByTestId(AuthForm.testId.passwordInput);
-}
-
-function findSubmitButton(): HTMLElement {
-  return screen.getByTestId(AuthForm.testId.submit);
-}
-
-function getInputs(): ChildNode[] {
-  const loginContainer = findLoginInput();
-  const passwordContainer = findPasswordInput();
-
-  const { firstChild: loginInput } = loginContainer;
-  const { firstChild: passwordInput } = passwordContainer;
-
-  if (loginInput && passwordInput) {
-    return [loginInput, passwordInput];
-  }
-
-  return [];
-}
-
-function submitIncorrectData(): void {
-  const [loginInput, passwordInput] = getInputs();
-
-  fireEvent.change(loginInput, { target: { value: 'test..gpn.ru' } });
-  fireEvent.change(passwordInput, { target: { value: '12345678[]' } });
-
-  fireEvent.click(findSubmitButton());
+function renderComponent(props: AuthFormProps, beforeRender?: BeforeRenderFn): RenderResult {
+  return render(<AuthForm {...props} />, { beforeRender });
 }
 
 const onLogin = jest.fn(() => Promise.resolve(''));
@@ -57,12 +33,7 @@ describe('AuthForm', () => {
   test('если ввести корректные данные и засабмитить форму, то вызовется onLogin', () => {
     renderComponent({ onLogin });
 
-    const [loginInput, passwordInput] = getInputs();
-
-    fireEvent.change(loginInput, { target: { value: 'test@gpn.ru' } });
-    fireEvent.change(passwordInput, { target: { value: '12345678' } });
-
-    fireEvent.click(findSubmitButton());
+    login();
 
     expect(onLogin).toBeCalledTimes(1);
   });
@@ -70,7 +41,7 @@ describe('AuthForm', () => {
   test('если ввести некорректные данные и засабмитить форму, то onLogin не вызовется', () => {
     renderComponent({ onLogin });
 
-    submitIncorrectData();
+    incorrectLogin();
 
     expect(onLogin).toBeCalledTimes(0);
   });
@@ -78,32 +49,74 @@ describe('AuthForm', () => {
   test('если ввести некорректные данные и засабмитить форму, то сработает ошибка валидации', () => {
     renderComponent({ onLogin });
 
-    submitIncorrectData();
+    incorrectLogin();
 
-    expect(findLoginInput().classList.contains('TextField_state_alert')).toBe(true);
+    // Особенности верстки Consta
+    expect(findLoginInput().parentElement).toHaveClass('TextField_state_alert');
   });
 
   test('если не ввести данные и засабмитить форму, то сработает ошибка валидации', () => {
     renderComponent({ onLogin });
 
-    fireEvent.click(findSubmitButton());
+    userEvent.click(findSubmitButton());
 
-    expect(findLoginInput().classList.contains('TextField_state_alert')).toBe(true);
-    expect(findPasswordInput().classList.contains('TextField_state_alert')).toBe(true);
+    expect(findLoginInput().parentElement).toHaveClass('TextField_state_alert');
+    expect(findPasswordInput().parentElement).toHaveClass('TextField_state_alert');
   });
 
   test('если засабмитить форму, то в кнопке рендерится лоадер', () => {
     renderComponent({ onLogin });
 
-    const [loginInput, passwordInput] = getInputs();
-
-    fireEvent.change(loginInput, { target: { value: 'test@gpn.ru' } });
-    fireEvent.change(passwordInput, { target: { value: '12345678' } });
-
-    fireEvent.click(findSubmitButton());
+    login();
 
     const submitButton = findSubmitButton();
 
-    expect(submitButton.classList.contains('Button_loading')).toBe(true);
+    expect(submitButton).toHaveClass('Button_loading');
+  });
+
+  test('обрабатывает ошибку авторизации', async () => {
+    const onLoginError = jest.fn().mockRejectedValueOnce({ code: 'AUTH_ERROR' });
+
+    const { shell } = renderComponent({ onLogin: onLoginError });
+
+    login();
+
+    await waitFor(() => {
+      expect(shell.notifications.getAll()).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ key: 'auth-error-alert', message: authErrorMessage }),
+        ]),
+      );
+    });
+  });
+
+  test('если код ошибки не AUTH_ERROR, то в нотификации отобразится сообщение с сервера', async () => {
+    const message = 'Ошибка валидации';
+    const onLoginError = jest.fn().mockRejectedValueOnce({ code: 'VALIDATION_ERROR', message });
+
+    const { shell } = renderComponent({ onLogin: onLoginError });
+
+    login();
+
+    await waitFor(() => {
+      expect(shell.notifications.getAll()).toEqual(
+        expect.arrayContaining([expect.objectContaining({ key: 'auth-error-alert', message })]),
+      );
+    });
+  });
+
+  test('удаляет нотификации перед запросом', async () => {
+    const result = renderComponent({ onLogin }, ({ shell }) => {
+      shell.notifications.add({ key: AUTH_ERROR_KEY, status: 'alert' });
+      shell.notifications.add({ key: 'auth-error-alert', status: 'alert' });
+
+      expect(shell.notifications.getAll()).toHaveLength(2);
+    });
+
+    login();
+
+    await waitFor(() => {
+      expect(result.shell.notifications.getAll()).toHaveLength(0);
+    });
   });
 });

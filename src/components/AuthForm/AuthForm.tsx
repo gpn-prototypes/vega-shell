@@ -50,7 +50,7 @@ type AuthFormComponent = React.FC<AuthFormProps> & {
   testId: typeof testId;
 };
 
-const authErrorMessage =
+export const authErrorMessage =
   'Неверный e-mail или пароль. Проверьте введенные данные и повторите попытку.';
 
 export const AUTH_ERROR_KEY = 'auth-error';
@@ -63,7 +63,6 @@ export const AuthForm: AuthFormComponent = (props) => {
   const [isFetching, setIsFetching] = useState(false);
 
   const handleAuthSubmit = (values: State): void => {
-    // TODO: Тесты https://jira.csssr.io/browse/VEGA-867
     setIsFetching(true);
     const key = `auth-error-alert`;
 
@@ -83,9 +82,6 @@ export const AuthForm: AuthFormComponent = (props) => {
           key,
           message,
           status: 'alert',
-          onClose: () => {
-            notifications.remove(key);
-          },
         });
       }
 
@@ -139,6 +135,7 @@ export const AuthForm: AuthFormComponent = (props) => {
                   id="password"
                   type="password"
                   name="password"
+                  aria-label="Введите пароль"
                   size="l"
                   width="full"
                   maxLength={200}

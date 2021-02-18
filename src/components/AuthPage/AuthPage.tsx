@@ -24,13 +24,15 @@ const slides: SlideType[] = [
 
 const testId = {
   carousel: 'AuthPage:Carousel',
+  loader: 'AuthPage:Loader',
+  root: 'AuthPage:Root',
 };
 
 type AuthPageType = React.FC & {
   testId: typeof testId;
 };
 
-export const AUTH_ERROR_NOTIFICATION_KEY = 'sso-error-alert';
+export const AUTH_SSO_ERROR_NOTIFICATION_KEY = 'sso-error-alert';
 
 export const AuthPage: AuthPageType = () => {
   const { identity, notifications } = useShell();
@@ -42,20 +44,17 @@ export const AuthPage: AuthPageType = () => {
     const useUnstableAuthSSO = localStorage.getItem('useUnstableAuthSSO');
 
     if (useUnstableAuthSSO === 'true') {
-      if (notifications.find(AUTH_ERROR_NOTIFICATION_KEY) !== undefined) {
-        notifications.remove(AUTH_ERROR_NOTIFICATION_KEY);
+      if (notifications.find(AUTH_SSO_ERROR_NOTIFICATION_KEY) !== undefined) {
+        notifications.remove(AUTH_SSO_ERROR_NOTIFICATION_KEY);
       }
 
       identity?.authSSO().catch(() => {
         const message = 'При входе возникла ошибка, войдите с помощью учетной записи';
 
         notifications.add({
-          key: AUTH_ERROR_NOTIFICATION_KEY,
+          key: AUTH_SSO_ERROR_NOTIFICATION_KEY,
           message,
           status: 'alert',
-          onClose: () => {
-            notifications.remove(AUTH_ERROR_NOTIFICATION_KEY);
-          },
         });
 
         setIsLoading(false);
@@ -68,7 +67,7 @@ export const AuthPage: AuthPageType = () => {
   }, []);
 
   if (isLoading) {
-    return <Loader />;
+    return <Loader aria-label="Загрузка при авторизации" data-testid={testId.loader} />;
   }
 
   return (
