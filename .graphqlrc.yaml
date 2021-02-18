@@ -1,0 +1,3 @@
+schema: "graphql.schema.json"
+include: "src/**/*.{graphql,ts,tsx}"
+exclude: "**/*.test.{ts,tsx}"
