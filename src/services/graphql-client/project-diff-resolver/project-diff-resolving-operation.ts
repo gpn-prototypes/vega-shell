@@ -8,10 +8,12 @@ import {
 } from '@apollo/client';
 import { createOperation } from '@apollo/client/link/utils';
 import { DocumentNode, visit } from 'graphql';
-import type { Config as DiffPatcherConfig } from 'jsondiffpatch';
-import * as jsonDiffPatch from 'jsondiffpatch';
 
+import { omitTypename } from '../utils';
+
+import { CombinedFetchResult } from './combined-fetch-result';
 import { ProjectDiffResolverError } from './error';
+import { ProjectDiffResolver } from './project-diff-resolver';
 
 export type Data = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 interface MutationResult {
@@ -19,13 +21,18 @@ interface MutationResult {
   result: Data & {
     __typename: string;
   };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
 }
 
 export interface ProjectAccessor<
   Variables extends OperationVariables = OperationVariables,
   ProjectData extends Data = Data
 > {
-  fromDiffError(mutationResult: MutationResult): { local: ProjectData; remote: ProjectData };
+  fromDiffError(
+    mutationResult: MutationResult,
+    local: ProjectData,
+  ): { local: ProjectData; remote: ProjectData };
   fromVariables(variables: Variables): ProjectData;
   toVariables(variables: Variables, data: ProjectData): Variables;
 }
@@ -35,14 +42,13 @@ export interface MergeStrategy {
 }
 
 interface Options<V = OperationVariables, D = Data> {
-  maxAttempts?: number;
+  maxAttempts: number;
   errorTypename: string;
   operation: Operation;
   nextLink: NextLink;
   projectAccessor: ProjectAccessor<V, D>;
   mergeStrategy: MergeStrategy;
 }
-
 export class ProjectDiffResolvingOperation {
   readonly errorTypename: string;
 
@@ -62,13 +68,11 @@ export class ProjectDiffResolvingOperation {
 
   private successMutationFieldNames: Set<string>;
 
-  private fetchResult: FetchResult;
+  private fetchResult: CombinedFetchResult;
 
-  private resolver: jsonDiffPatch.DiffPatcher;
+  private resolver: ProjectDiffResolver;
 
   private projectAccessor: ProjectAccessor;
-
-  private mergeStrategy: MergeStrategy;
 
   constructor(options: Options) {
     this.operation = options.operation;
@@ -81,21 +85,15 @@ export class ProjectDiffResolvingOperation {
     this.subscription = null;
 
     this.attempt = 1;
-    this.maxAttempts = options.maxAttempts ?? 5;
+    this.maxAttempts = options.maxAttempts;
 
-    this.fetchResult = {};
+    this.fetchResult = new CombinedFetchResult();
 
     this.projectAccessor = options.projectAccessor;
-    this.mergeStrategy = options.mergeStrategy;
 
-    this.resolver = jsonDiffPatch.create({
-      textDiff: {
-        minLength: Infinity,
-      },
-      propertyFilter(name) {
-        return !['__typename', 'version', 'vid'].includes(name);
-      },
-    } as DiffPatcherConfig);
+    this.resolver = new ProjectDiffResolver({
+      mergeStrategy: options.mergeStrategy,
+    });
   }
 
   private snapshotMutationNames(node: DocumentNode): void {
@@ -132,7 +130,7 @@ export class ProjectDiffResolvingOperation {
 
     this.getMutationNames()
       .map((name) => [data[name], name])
-      .filter(([value]) => value !== undefined && value?.result?.__typename !== this.errorTypename)
+      .filter(([value]) => value !== undefined && !this.hasDiffError(value))
       .forEach(([, name]) => {
         this.successMutationFieldNames.add(name);
       });
@@ -140,6 +138,10 @@ export class ProjectDiffResolvingOperation {
 
   private getMutationNames(): string[] {
     return Array.from(this.mutationFieldNames);
+  }
+
+  private hasDiffError(data: Data): boolean {
+    return this.errorTypename === (data.result ?? data)?.__typename;
   }
 
   private getMutationsWithDiffErrors(fetchResult: FetchResult): MutationResult[] {
@@ -151,40 +153,18 @@ export class ProjectDiffResolvingOperation {
 
     return this.getMutationNames()
       .map((name) => data[name])
-      .filter((value) => value !== undefined && value?.result?.__typename === this.errorTypename);
+      .filter((value) => value !== undefined && this.hasDiffError(value));
   }
 
   private combineFetchResults(incoming: FetchResult): void {
-    const existing = this.fetchResult;
-
-    if (existing.data === undefined && incoming.data !== undefined) {
-      this.fetchResult.data = incoming.data;
-    } else if (existing.data !== undefined) {
-      this.fetchResult.data = { ...existing.data, ...(incoming.data ?? {}) };
-    }
-
-    if (existing.errors === undefined && incoming.errors !== undefined) {
-      existing.errors = incoming.errors;
-    } else if (existing.errors !== undefined) {
-      existing.errors = existing.errors.concat(incoming.errors ?? []);
-    }
-
-    if (existing.context === undefined && incoming.context !== undefined) {
-      existing.context = incoming.context;
-    } else if (existing.context !== undefined) {
-      existing.context = { ...existing.context, ...(incoming.context ?? {}) };
-    }
-    if (existing.extensions === undefined && incoming.extensions !== undefined) {
-      existing.extensions = incoming.extensions;
-    } else if (existing.extensions !== undefined) {
-      existing.extensions = { ...existing.extensions, ...(incoming.extensions ?? {}) };
-    }
+    this.fetchResult.combine(incoming);
   }
 
   public run(): Observable<FetchResult> {
     const observable = new Observable<FetchResult>((observer) => {
       this.observer = observer;
       return () => {
+        // istanbul ignore else
         if (this.subscription !== null) {
           this.subscription.unsubscribe();
         }
@@ -212,10 +192,12 @@ export class ProjectDiffResolvingOperation {
   }
 
   private done(data: FetchResult): void {
+    // istanbul ignore if не должно происходить
     if (this.observer === null) {
       throw new ProjectDiffResolverError('Internal bug. Observer is null!');
     }
 
+    // istanbul ignore else
     if (typeof this.observer.next === 'function' && typeof this.observer.complete === 'function') {
       this.observer.next(data);
       this.observer.complete();
@@ -223,6 +205,7 @@ export class ProjectDiffResolvingOperation {
       return;
     }
 
+    // istanbul ignore next не должно происходить
     throw new ProjectDiffResolverError('Internal bug. Incompatible observer!');
   }
 
@@ -242,10 +225,11 @@ export class ProjectDiffResolvingOperation {
       return;
     }
 
-    this.done(this.fetchResult);
+    this.done(this.fetchResult.get());
   }
 
   private onError(error: unknown): void {
+    // istanbul ignore else
     if (this.observer !== null && typeof this.observer.error === 'function') {
       this.observer.error(error);
     }
@@ -264,43 +248,21 @@ export class ProjectDiffResolvingOperation {
   }
 
   private resolveConflicts(mutations: MutationResult[]): void {
+    // istanbul ignore if не должно происходить
     if (mutations.length === 0) {
       throw new ProjectDiffResolverError('Internal bug. No mutations with error!');
     }
 
     const { variables } = this.operation;
-    const [versions] = mutations.map((m) => this.projectAccessor.fromDiffError(m));
-
-    const { remote, local } = versions;
-
     const localChanges = this.projectAccessor.fromVariables(variables);
+    const versions = this.projectAccessor.fromDiffError(mutations[0], localChanges);
 
-    const affectedRemote: Data = {
-      version: remote.version,
-    };
-
-    Object.keys(localChanges).forEach((key) => {
-      if (remote[key] !== undefined) {
-        affectedRemote[key] = remote[key];
-      }
+    const patched = this.resolver.merge({
+      ...versions,
+      localChanges,
     });
 
-    if (this.mergeStrategy.default === 'smart') {
-      const diff = this.resolver.diff(local, localChanges);
-
-      if (diff !== undefined) {
-        const patch = this.resolver.patch({ ...affectedRemote }, diff);
-
-        const updatedVars = this.projectAccessor.toVariables(variables, patch);
-
-        this.updateOperation(updatedVars);
-        return;
-      }
-    }
-
-    this.updateOperation(
-      this.projectAccessor.toVariables(variables, { ...localChanges, version: remote.version }),
-    );
+    this.updateOperation(this.projectAccessor.toVariables(variables, omitTypename(patched)));
   }
 
   private updateOperation(variables: OperationVariables): void {
