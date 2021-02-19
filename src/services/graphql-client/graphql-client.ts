@@ -31,6 +31,7 @@ export type GraphQLClientConfig = {
   uri: string;
   identity: Identity;
   fetch?: HttpOptions['fetch'];
+  link?: ApolloLink;
   onError: ErrorHandler;
 };
 
@@ -120,11 +121,10 @@ export const createAuthLink = (identity: Identity, config: ResponseLinkConfig): 
           observer.complete();
           return;
         }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        operation.setContext((context: Record<string, any>) => ({
+        operation.setContext((context: Record<string, unknown>) => ({
           ...context,
           headers: {
-            ...context.headers,
+            ...(context.headers as Record<string, string>),
             Authorization: `Bearer ${token}`,
           },
         }));
@@ -227,7 +227,7 @@ export function createGraphqlClient(config: GraphQLClientConfig): GraphQLClient 
       createSwitchUriLink(uri),
       createProjectDiffResolverLink(),
       createAuthLink(identity, { handleError }),
-      createHttpLink({ fetch }),
+      config.link ?? createHttpLink({ fetch }),
     ]),
   });
 }

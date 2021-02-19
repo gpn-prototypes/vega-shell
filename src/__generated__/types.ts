@@ -188,6 +188,8 @@ export type QueryProjectListArgs = {
   includeBlank?: Maybe<Scalars['Boolean']>;
   pageNumber?: Maybe<Scalars['Int']>;
   pageSize?: Maybe<Scalars['Int']>;
+  orderBy?: Maybe<ProjectOrderByEnum>;
+  sortBy?: Maybe<SortType>;
 };
 
 export type ProjectLibrary = {
@@ -366,6 +368,7 @@ export type User = {
   favoriteProjects?: Maybe<Array<Maybe<Scalars['ID']>>>;
   organizationUnits?: Maybe<Array<Maybe<OrganizationUnit>>>;
   groups?: Maybe<Array<Maybe<UserGroup>>>;
+  customSettings?: Maybe<UserCustomSettings>;
 };
 
 export type OrganizationUnit = {
@@ -401,6 +404,35 @@ export type UserGroup = {
   name?: Maybe<Scalars['String']>;
   project?: Maybe<Scalars['ID']>;
 };
+
+export type UserCustomSettings = {
+  __typename?: 'UserCustomSettings';
+  projectList?: Maybe<ProjectListSortingSetting>;
+};
+
+export type ProjectListSortingSetting = {
+  __typename?: 'ProjectListSortingSetting';
+  orderBy?: Maybe<ProjectOrderByEnum>;
+  sortBy?: Maybe<SortTypeEnum>;
+};
+
+/** An enumeration. */
+export enum ProjectOrderByEnum {
+  IsFavorite = 'IS_FAVORITE',
+  Name = 'NAME',
+  Description = 'DESCRIPTION',
+  Region = 'REGION',
+  CreatedBy = 'CREATED_BY',
+  CreatedAt = 'CREATED_AT',
+  EditedBy = 'EDITED_BY',
+  EditedAt = 'EDITED_AT'
+}
+
+/** An enumeration. */
+export enum SortTypeEnum {
+  Asc = 'ASC',
+  Desc = 'DESC'
+}
 
 export type ProjectRole = {
   __typename?: 'ProjectRole';
@@ -1000,6 +1032,7 @@ export type MutationUpdateDomainTemplateCategoriesArgs = {
 export type MutationCreateUserArgs = {
   adId?: Maybe<Scalars['String']>;
   code?: Maybe<Scalars['String']>;
+  customSettings?: Maybe<UserCustomSettingsInputType>;
   favoriteProjects?: Maybe<Array<Maybe<Scalars['ID']>>>;
   firstName?: Maybe<Scalars['String']>;
   groups?: Maybe<Array<Maybe<Scalars['UUID']>>>;
@@ -1020,6 +1053,7 @@ export type MutationDeleteUserArgs = {
 export type MutationUpdateUserArgs = {
   adId?: Maybe<Scalars['String']>;
   code?: Maybe<Scalars['String']>;
+  customSettings?: Maybe<UserCustomSettingsInputType>;
   favoriteProjects?: Maybe<Array<Maybe<Scalars['ID']>>>;
   firstName?: Maybe<Scalars['String']>;
   groups?: Maybe<Array<Maybe<Scalars['UUID']>>>;
@@ -1315,7 +1349,7 @@ export type DeleteProjectLibraryCategories = {
 
 export type UpdateProjectLibraryCategories = {
   __typename?: 'UpdateProjectLibraryCategories';
-  result?: Maybe<ProjectLibrary>;
+  result?: Maybe<ProjectLibraryCategory>;
 };
 
 export type CreateComponent = {
@@ -1345,7 +1379,7 @@ export type DeleteComponentCategories = {
 
 export type UpdateComponentCategories = {
   __typename?: 'UpdateComponentCategories';
-  result?: Maybe<Component>;
+  result?: Maybe<ComponentLibraryCategory>;
 };
 
 export type CreateAssembly = {
@@ -1375,7 +1409,7 @@ export type DeleteAssemblyCategories = {
 
 export type UpdateAssemblyCategories = {
   __typename?: 'UpdateAssemblyCategories';
-  result?: Maybe<Assembly>;
+  result?: Maybe<AssemblyLibraryCategory>;
 };
 
 export type CreateActivity = {
@@ -1405,7 +1439,7 @@ export type DeleteActivityCategories = {
 
 export type UpdateActivityCategories = {
   __typename?: 'UpdateActivityCategories';
-  result?: Maybe<Activity>;
+  result?: Maybe<ActivityLibraryCategory>;
 };
 
 export type CreateDomainTemplate = {
@@ -1450,12 +1484,21 @@ export type DeleteDomainTemplateCategories = {
 
 export type UpdateDomainTemplateCategories = {
   __typename?: 'UpdateDomainTemplateCategories';
-  result?: Maybe<DomainTemplate>;
+  result?: Maybe<DomainTemplateLibraryCategory>;
 };
 
 export type CreateUser = {
   __typename?: 'CreateUser';
   result?: Maybe<User>;
+};
+
+export type UserCustomSettingsInputType = {
+  projectList?: Maybe<ProjectListSortingSettingInputType>;
+};
+
+export type ProjectListSortingSettingInputType = {
+  orderBy?: Maybe<ProjectOrderByEnum>;
+  sortBy?: Maybe<SortTypeEnum>;
 };
 
 export type DeleteUser = {
@@ -1626,8 +1669,8 @@ export type CreateProject = {
 export type ProjectInputType = {
   name?: Maybe<Scalars['String']>;
   region?: Maybe<Scalars['UUID']>;
-  type?: Maybe<ProjectTypeEnum>;
   coordinateSystem?: Maybe<Scalars['String']>;
+  type?: Maybe<ProjectTypeEnum>;
   coordinates?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
   resourceId?: Maybe<Scalars['String']>;
@@ -1715,6 +1758,7 @@ export type AttendeeTypeOrError = Attendee | UpdateProjectDiff | Error;
 export const namedOperations = {
   Query: {
     FindProject: 'FindProject',
-    GetProjectName: 'GetProjectName'
+    GetProjectName: 'GetProjectName',
+    ProjectsList: 'ProjectsList'
   }
 }
