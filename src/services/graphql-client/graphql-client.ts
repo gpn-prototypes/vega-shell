@@ -14,6 +14,7 @@ import { Identity } from '../identity/identity';
 
 import { createCache } from './cache';
 import { ProjectDiffResolverLink } from './project-diff-resolver';
+import { normalizeUri } from './utils';
 
 export type GraphQLClient = ApolloClient<NormalizedCacheObject>;
 export type ServerError = {
@@ -37,25 +38,6 @@ export type GraphQLClientConfig = {
 type ResponseLinkConfig = {
   handleError: ErrorHandler;
 };
-
-export function normalizeUri(uri: string): string {
-  const trimSlashRegxp = /^\/|\/$/g;
-  const trimmed = uri.replace(trimSlashRegxp, '').trim();
-  let protocol = '';
-  let path = trimmed;
-
-  if (trimmed.startsWith('http')) {
-    [protocol, path] = trimmed.split('://');
-  }
-
-  path = path.replace(/\/{2,}/g, '/').replace(trimSlashRegxp, '');
-
-  if (protocol !== '') {
-    return `${protocol}://${path}`;
-  }
-
-  return `/${path}`;
-}
 
 export const createAuthLink = (identity: Identity, config: ResponseLinkConfig): ApolloLink =>
   new ApolloLink((operation, forward) => {
