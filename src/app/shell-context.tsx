@@ -1,7 +1,9 @@
 import React, { createContext, useContext } from 'react';
 import { Router } from 'react-router-dom';
+import { ApolloProvider } from '@apollo/client';
 import type { History } from 'history';
 
+import type { CurrentProject } from '../services/current-project';
 import type { GraphQLClient, ServerError } from '../services/graphql-client';
 import type { Identity } from '../services/identity';
 import type { MessageBus } from '../services/message-bus';
@@ -21,6 +23,7 @@ interface ShellAPI {
   graphqlClient: GraphQLClient;
   bus: MessageBus;
   notifications: Notifications;
+  currentProject: CurrentProject;
   serverError: ServerError | null;
   setServerError: (serverError: ServerError | null) => void;
 }
@@ -39,6 +42,7 @@ export const ShellProvider: React.FC<ShellProps> = (props) => {
       notifications: shell.notifications,
       bus: shell.messageBus,
       graphqlClient: shell.graphQLClient,
+      currentProject: shell.currentProject,
       serverError,
       setServerError,
     }),
@@ -47,7 +51,9 @@ export const ShellProvider: React.FC<ShellProps> = (props) => {
 
   return (
     <ShellContext.Provider value={value}>
-      <Router history={shell.history}>{children}</Router>
+      <Router history={shell.history}>
+        <ApolloProvider client={shell.graphQLClient}>{children}</ApolloProvider>
+      </Router>
     </ShellContext.Provider>
   );
 };

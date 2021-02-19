@@ -19,7 +19,7 @@ export type Scalars = {
    * Leverages the internal Python implmeentation of UUID (uuid.UUID) to provide native UUID objects
    * in fields, resolvers and input.
    */
-  UUID: any;
+  UUID: string;
   DictType: any;
 };
 
@@ -1714,6 +1714,7 @@ export type AttendeeTypeOrError = Attendee | UpdateProjectDiff | Error;
 
 export const namedOperations = {
   Query: {
+    FindProject: 'FindProject',
     GetProjectName: 'GetProjectName'
   }
 }

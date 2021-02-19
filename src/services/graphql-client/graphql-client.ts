@@ -25,9 +25,6 @@ export type ServerError = {
 
 export type GraphQLClientError = Error | ServerError | ServerParseError | undefined;
 
-export const notFoundErrorUserMessage = `Ошибка 404. Страница не найдена.
-  Обратитесь в службу технической поддержки`;
-
 export type ErrorHandler = (error: ServerError) => void;
 
 export type GraphQLClientConfig = {
@@ -186,34 +183,9 @@ export const createErrorLink = (config: ResponseLinkConfig): ApolloLink =>
       if (error.networkError.statusCode === 401) {
         config.handleError({ code: 401, message: 'unauthorized' });
       }
-
-      if (error.networkError.statusCode === 404) {
-        config.handleError({
-          code: 404,
-          message: 'not-found',
-          userMessage: notFoundErrorUserMessage,
-        });
-      }
     }
+
     return error.forward(error.operation);
-  });
-
-export const createResponseLink = (config: ResponseLinkConfig): ApolloLink =>
-  new ApolloLink((operation, forward) => {
-    return forward(operation).map((response) => {
-      if (response.data && response.data.project) {
-        const { code, __typename: typename } = response.data.project;
-
-        if (typename === 'Error' && code === 'PROJECT_NOT_FOUND') {
-          config.handleError({
-            code: 404,
-            message: 'not-found',
-            userMessage: notFoundErrorUserMessage,
-          });
-        }
-      }
-      return response;
-    });
   });
 
 export const createHttpLink = (options?: HttpOptions): ApolloLink => {
@@ -251,7 +223,6 @@ export function createGraphqlClient(config: GraphQLClientConfig): GraphQLClient 
       },
     }),
     link: from([
-      createResponseLink({ handleError }),
       createErrorLink({ handleError }),
       createSwitchUriLink(uri),
       createProjectDiffResolverLink(),

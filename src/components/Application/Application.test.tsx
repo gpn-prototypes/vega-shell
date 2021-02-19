@@ -5,19 +5,26 @@ import { useShell } from '../../app';
 import { getSystemJSMock, render } from '../../testing';
 import { SHELL_LOADER_LABEL } from '../Loader';
 
-import { Application, ApplicationProps } from './Application';
+import { Application, ApplicationProps, lazyComponentsCache } from './Application';
 
 jest.unmock('single-spa-react/lib/esm/parcel');
-const APP_NAME = 'app-name';
 
-const TEST_COMPONENT_LABEL = 'test-component';
+const APP_NAME_1 = 'app-name-1';
+const APP_NAME_2 = 'app-name-2';
+
+const TEST_COMPONENT_LABEL_1 = 'test-component-1';
+const TEST_COMPONENT_LABEL_2 = 'test-component-2';
 
 const TestComponent = () => {
-  return <div aria-label={TEST_COMPONENT_LABEL} />;
+  return <div aria-label={TEST_COMPONENT_LABEL_1} />;
 };
 
 beforeEach(() => {
-  global.System = getSystemJSMock(TestComponent);
+  lazyComponentsCache.clear();
+  global.System = getSystemJSMock({
+    [APP_NAME_1]: TestComponent,
+    [APP_NAME_2]: () => <div aria-label={TEST_COMPONENT_LABEL_2} />,
+  });
 });
 
 afterEach(() => {
@@ -25,7 +32,8 @@ afterEach(() => {
 });
 
 export function renderComponent(props: Partial<ApplicationProps> = {}): RenderResult {
-  return render(<Application name={APP_NAME} {...props} />);
+  const { name = APP_NAME_1 } = props;
+  return render(<Application {...props} name={name} />);
 }
 
 describe('Application', () => {
@@ -43,11 +51,11 @@ describe('Application', () => {
       renderComponent();
     });
 
-    const component = screen.queryByLabelText(TEST_COMPONENT_LABEL);
+    const component = screen.queryByLabelText(TEST_COMPONENT_LABEL_1);
 
     expect(component).toBeInTheDocument();
 
-    expect(spy).toBeCalledWith(APP_NAME);
+    expect(spy).toBeCalledWith(APP_NAME_1);
   });
 
   test('отображается лоадер', async () => {
@@ -71,13 +79,48 @@ describe('Application', () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
       }, []);
 
-      return <Application name={APP_NAME} />;
+      return <Application name={APP_NAME_1} />;
     };
 
     await act(async () => {
       render(<Component />);
     });
 
-    expect(screen.queryByLabelText(TEST_COMPONENT_LABEL)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(TEST_COMPONENT_LABEL_1)).not.toBeInTheDocument();
+  });
+
+  describe('type="react"', () => {
+    test('рендерит компонент', async () => {
+      renderComponent({ type: 'react' });
+      expect(await screen.findByLabelText(TEST_COMPONENT_LABEL_1)).toBeInTheDocument();
+    });
+
+    test('отображается лоадер', async () => {
+      const { rerender } = renderComponent({ type: 'react' });
+
+      expect(screen.queryByLabelText(SHELL_LOADER_LABEL)).toBeVisible();
+      expect(await screen.findByLabelText(TEST_COMPONENT_LABEL_1)).toBeInTheDocument();
+      expect(screen.queryByLabelText(SHELL_LOADER_LABEL)).not.toBeInTheDocument();
+
+      rerender(<Application type="react" name={APP_NAME_1} />);
+
+      expect(screen.queryByLabelText(SHELL_LOADER_LABEL)).not.toBeInTheDocument();
+      expect(screen.queryByLabelText(TEST_COMPONENT_LABEL_1)).toBeInTheDocument();
+    });
+
+    test('смена приложения', async () => {
+      const { rerender } = renderComponent({ type: 'react', name: APP_NAME_1 });
+
+      expect(screen.queryByLabelText(SHELL_LOADER_LABEL)).toBeVisible();
+      expect(await screen.findByLabelText(TEST_COMPONENT_LABEL_1)).toBeInTheDocument();
+      expect(screen.queryByLabelText(SHELL_LOADER_LABEL)).not.toBeInTheDocument();
+
+      rerender(<Application type="react" name={APP_NAME_2} />);
+
+      expect(screen.queryByLabelText(TEST_COMPONENT_LABEL_1)).not.toBeInTheDocument();
+      expect(screen.queryByLabelText(SHELL_LOADER_LABEL)).toBeVisible();
+      expect(screen.queryByLabelText(TEST_COMPONENT_LABEL_2)).not.toBeInTheDocument();
+      expect(await screen.findByLabelText(TEST_COMPONENT_LABEL_2)).toBeInTheDocument();
+    });
   });
 });

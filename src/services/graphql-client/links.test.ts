@@ -1,11 +1,4 @@
-import {
-  ApolloLink,
-  execute,
-  FetchResult,
-  Observable,
-  throwServerError,
-  toPromise,
-} from '@apollo/client';
+import { ApolloLink, execute, FetchResult, throwServerError, toPromise } from '@apollo/client';
 import fetchMock from 'fetch-mock';
 
 import { makePromise } from '../../testing/make-promise';
@@ -16,13 +9,11 @@ import {
   createAuthLink,
   createErrorLink,
   createHttpLink,
-  createResponseLink,
   createSwitchUriLink,
   ErrorHandler,
   normalizeUri,
-  notFoundErrorUserMessage,
 } from './graphql-client';
-import { mocks, queries } from './mocks';
+import { queries } from './mocks';
 
 const validToken = mockValidToken();
 
@@ -71,48 +62,6 @@ describe('normalizeUri', () => {
   });
 });
 
-describe('responseLink', () => {
-  test('обрабатывает 404 ошибку', async () => {
-    const handleError = jest.fn();
-
-    const responseLink = createResponseLink({ handleError });
-
-    const stub = jest.fn(() => Observable.of(mocks.projectNotFoundError)) as never;
-
-    const link = ApolloLink.from([responseLink, stub]);
-
-    await toPromise(
-      execute(link, {
-        query: queries.GET_PROJECT,
-      }),
-    );
-
-    expect(handleError).toBeCalledWith({
-      code: 404,
-      message: 'not-found',
-      userMessage: notFoundErrorUserMessage,
-    });
-  });
-
-  test('возвращает response', async () => {
-    const handleError = jest.fn();
-
-    const responseLink = createResponseLink({ handleError });
-
-    const stub = jest.fn(() => Observable.of(mocks.projectResponse)) as never;
-
-    const link = ApolloLink.from([responseLink, stub]);
-
-    const result = await toPromise(
-      execute(link, {
-        query: queries.GET_PROJECT,
-      }),
-    );
-
-    expect(result).toEqual(mocks.projectResponse);
-  });
-});
-
 describe('errorLink', () => {
   test('обрабатывает 500 ошибку', async () => {
     const { link, handler: handleError } = makeErrorLink({
@@ -132,24 +81,6 @@ describe('errorLink', () => {
       code: 500,
       message: 'internal-server-error',
     });
-  });
-
-  test('обрабатывает 404 ошибку', async () => {
-    const { link, handler: handleError } = makeErrorLink({ status: 404, message: 'Not found' });
-
-    try {
-      await toPromise(
-        execute(link, {
-          query: queries.GET_PROJECT,
-        }),
-      );
-    } catch {
-      expect(handleError).toBeCalledWith({
-        code: 404,
-        message: 'not-found',
-        userMessage: notFoundErrorUserMessage,
-      });
-    }
   });
 
   test('обрабатывает 401 ошибку', async () => {

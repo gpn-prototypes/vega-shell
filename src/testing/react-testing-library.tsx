@@ -1,34 +1,42 @@
 import React from 'react';
-import { useUnmount } from '@gpn-prototypes/vega-ui';
 import {
   render as defaultRender,
   RenderOptions,
   RenderResult as RTLRenderResult,
 } from '@testing-library/react';
-import fetch from 'cross-fetch';
 
 import { Shell, ShellProvider } from '../app';
 import { LS_KEYS } from '../services/identity';
 import { mockValidToken } from '../services/identity/tokenHandlers';
 
+import { addCleanupTask } from './cleanup';
+
 export * from '@testing-library/react';
 
+interface RenderContext {
+  shell: Shell;
+}
+
+interface ShellOptions {
+  baseApiUrl?: string;
+}
+
 export interface Options extends RenderOptions {
-  shell?: {
-    baseApiUrl?: string;
-  };
+  route?: string;
   isAuth?: boolean;
-  beforeRender?: (context: { shell: Shell }) => void;
+  shell?: ShellOptions;
+  beforeRender?: (context: RenderContext) => void;
 }
 
 export type RenderResult = RTLRenderResult & { shell: Shell };
 
 export const render = (ui: React.ReactElement, options: Options = {}): RenderResult => {
-  const { shell: shellOptions, beforeRender, isAuth = false, ...rtlOptions } = options;
+  const { shell: shellOptions, beforeRender, isAuth = false, route = '/', ...rtlOptions } = options;
+
+  window.history.pushState({}, 'Test page', route);
 
   const shell = new Shell({
-    baseApiUrl: shellOptions?.baseApiUrl ?? 'https://api.test.url',
-    fetch,
+    baseApiUrl: shellOptions?.baseApiUrl ?? '',
   });
 
   if (beforeRender !== undefined) {
@@ -38,13 +46,18 @@ export const render = (ui: React.ReactElement, options: Options = {}): RenderRes
   if (isAuth) {
     localStorage.setItem(LS_KEYS.LS_ACCESS_TOKEN_KEY, mockValidToken());
     localStorage.setItem(LS_KEYS.LS_REFRESH_TOKEN_KEY, mockValidToken());
+
+    addCleanupTask(() => {
+      localStorage.removeItem(LS_KEYS.LS_ACCESS_TOKEN_KEY);
+      localStorage.removeItem(LS_KEYS.LS_REFRESH_TOKEN_KEY);
+    });
   }
 
-  const TestProviders: React.FC = ({ children }) => {
-    useUnmount(() => {
-      shell.dispose();
-    });
+  addCleanupTask(() => {
+    shell.dispose();
+  });
 
+  const TestProviders: React.FC = ({ children }) => {
     return <ShellProvider shell={shell}>{children}</ShellProvider>;
   };
 

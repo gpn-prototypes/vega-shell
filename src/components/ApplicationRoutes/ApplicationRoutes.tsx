@@ -1,6 +1,5 @@
 import React, { useReducer, useRef } from 'react';
 import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
-import { ApolloProvider } from '@apollo/client';
 import { Loader, useMount, useOnChange, usePreviousRef } from '@gpn-prototypes/vega-ui';
 
 import { useShell } from '../../app';
@@ -11,17 +10,10 @@ import { AuthPage } from '../AuthPage';
 import { ErrorView } from '../Error';
 import { Header } from '../Header';
 
-const AUTH_PATH = '/login';
+import { NotFoundView } from './NotFoundView';
+import { ProjectRoutes } from './ProjectRoutes';
 
-const NotFoundView = () => (
-  <Route>
-    <ErrorView
-      code={404}
-      message="page-not-found"
-      userMessage="Ошибка 404. Страница не найдена. Обратитесь в службу технической поддержки"
-    />
-  </Route>
-);
+const AUTH_PATH = '/login';
 
 export const AUTH_ERROR_MESSAGE =
   'Что-то пошло не так. Для повторного входа в\u00A0систему введите свои e-mail и\u00A0пароль';
@@ -46,7 +38,7 @@ const LogoutView = (): React.ReactElement | null => {
 export const ApplicationRoutes = (): React.ReactElement => {
   const shell = useShell();
   const { serverError, setServerError } = shell;
-  const { bus, identity, notifications, graphqlClient } = shell;
+  const { bus, identity, notifications } = shell;
 
   const lastAuthorizedRoute = useRef<string | null>(null);
 
@@ -75,7 +67,7 @@ export const ApplicationRoutes = (): React.ReactElement => {
     const errorUnsub = bus.subscribe<ServerError>(
       { channel: 'error', topic: 'server-error' },
       ({ payload }) => {
-        if ([404, 500].includes(payload.code)) {
+        if ([500].includes(payload.code)) {
           setServerError(payload);
         }
 
@@ -144,38 +136,29 @@ export const ApplicationRoutes = (): React.ReactElement => {
 
   return (
     <Switch>
-      {isLoggedIn && <Redirect exact from="/" to="/projects" />}
-      <Route path={AUTH_PATH}>
+      {isLoggedIn && <Redirect from="/" to="/projects" exact />}
+      <Route exact path={AUTH_PATH}>
         {isLoggedIn && <Redirect to={getLoginRedirectPath()} />}
         <AuthPage />
       </Route>
       <Route path="/logout">
-        <LogoutView />;
+        <LogoutView />
       </Route>
       <Route path="/projects">
-        <ApolloProvider client={graphqlClient}>
-          <Header />
-        </ApolloProvider>
+        <Header />
         <main className="main">
           <Switch>
-            <Route exact path={['/projects/show/:projectId/rb']}>
-              <Application name="@vega/rb" />
-            </Route>
-            <Route exact path={['/projects/show/:projectId/lc']}>
-              <Application name="@vega/lc" />
-            </Route>
             <Route
-              exact
-              path={[
-                '/projects/show/:projectId/fem',
-                '/projects/show/:projectId/fem/OPEX',
-                '/projects/show/:projectId/fem/CAPEX',
-              ]}
-            >
-              <Application name="@vega/fem" />
-            </Route>
-            <Route exact path={['/projects', '/projects/create', '/projects/show/:projectId']}>
-              <Application name="@vega/sp" />
+              path="/projects/show/:projectId"
+              render={({ match }) => {
+                const { params } = match;
+                const vid = params.projectId as string;
+
+                return <ProjectRoutes vid={vid} base={match.path} />;
+              }}
+            />
+            <Route exact path={['/projects', '/projects/create']}>
+              <Application type="react" name="@vega/sp" />
             </Route>
             <NotFoundView />
           </Switch>

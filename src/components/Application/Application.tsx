@@ -7,19 +7,34 @@ import { RootLoader } from '../Loader';
 
 export type ApplicationProps = {
   name: string;
+  type?: 'single-spa' | 'react';
   wrapWith?: string;
   wrapClassName?: string;
   onUnmount?: (name: string) => void;
 };
 
+export const lazyComponentsCache = new Map<string, ReturnType<typeof React.lazy>>();
+
+const toLazyComponent = (name: string) => {
+  let component = lazyComponentsCache.get(name);
+
+  if (component === undefined) {
+    component = React.lazy(() => System.import(name));
+    lazyComponentsCache.set(name, component);
+  }
+
+  return component;
+};
+
 export const Application: React.FC<ApplicationProps> = ({
   name,
+  type = 'single-spa',
   wrapClassName,
   wrapWith,
   ...rest
 }) => {
   const { serverError, ...shell } = useShell();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(type !== 'react');
 
   const handleParcelMount = (): void => {
     // istanbul ignore else
@@ -50,6 +65,15 @@ export const Application: React.FC<ApplicationProps> = ({
   // istanbul ignore else
   if (serverError !== null) {
     return null;
+  }
+
+  if (type === 'react') {
+    const Component = toLazyComponent(name);
+    return (
+      <React.Suspense fallback={<RootLoader />}>
+        <Component {...rest} {...shell} />
+      </React.Suspense>
+    );
   }
 
   return (

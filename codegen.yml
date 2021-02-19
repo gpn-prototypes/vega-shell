@@ -9,6 +9,9 @@ generates:
     plugins:
       - typescript
       - named-operations-object
+    config:
+      scalars:
+        UUID: string
   ./graphql.schema.json:
     plugins:
       - 'introspection'
