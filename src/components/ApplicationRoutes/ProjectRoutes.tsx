@@ -19,16 +19,16 @@ export function ProjectRoutes(props: Props): React.ReactElement {
   const [status, setStatus] = useState(() => currentProject.status());
 
   useEffect(() => {
-    let mounted = true;
+    let canUpdateState = true;
 
     currentProject.checkout(vid).then((checkoutStatus) => {
-      if (mounted) {
+      if (canUpdateState) {
         setStatus(checkoutStatus);
       }
     });
 
     return () => {
-      mounted = false;
+      canUpdateState = false;
       currentProject.release();
     };
   }, [currentProject, vid]);
@@ -53,7 +53,7 @@ export function ProjectRoutes(props: Props): React.ReactElement {
         <Application name="@vega/fem" />
       </Route>
       <Route exact path={base}>
-        <Application name="@vega/sp" />
+        <Application type="react" name="@vega/sp" />
       </Route>
       <NotFoundView />
     </Switch>

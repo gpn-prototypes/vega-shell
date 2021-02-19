@@ -158,7 +158,7 @@ export const ApplicationRoutes = (): React.ReactElement => {
               }}
             />
             <Route exact path={['/projects', '/projects/create']}>
-              <Application name="@vega/sp" />
+              <Application type="react" name="@vega/sp" />
             </Route>
             <NotFoundView />
           </Switch>

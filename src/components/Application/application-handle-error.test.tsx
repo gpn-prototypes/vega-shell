@@ -9,7 +9,9 @@ import { Application } from './Application';
 const COMPONENT_ERROR_NAME = 'component-error';
 
 beforeEach(() => {
-  global.System = getSystemJSMock(() => <div>test</div>);
+  global.System = getSystemJSMock({
+    [COMPONENT_ERROR_NAME]: () => <div>test</div>,
+  });
 });
 
 afterEach(() => {

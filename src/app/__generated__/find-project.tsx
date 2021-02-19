@@ -15,6 +15,9 @@ export type FindProject = (
   ) | (
     { __typename: 'Error' }
     & Pick<Types.Error, 'code'>
+  ) | (
+    { __typename: 'ValidationError' }
+    & Pick<Types.ValidationError, 'code'>
   )> }
 );
 
