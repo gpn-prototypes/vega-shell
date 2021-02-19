@@ -41,9 +41,8 @@ type RenderOptions = {
 function renderComponent(options: RenderOptions = {}): RenderResult {
   return render(<Header />, {
     shell: { customResolvers: resolver },
-    beforeRender: ({ shell }) => {
-      shell.history.push(options.initialRoute ?? `/projects/show/${vid}`);
-    },
+    isAuth: true,
+    route: options.initialRoute ?? `/projects/show/${vid}`,
   });
 }
 
@@ -132,7 +131,7 @@ describe('Header', () => {
 
       userEvent.click(menuButton);
 
-      const logoutButton = await screen.getByLabelText('Выйти');
+      const logoutButton = await screen.findByLabelText('Выйти');
 
       userEvent.click(logoutButton);
 
