@@ -34,8 +34,14 @@ export type FindProjectResult =
 interface FindProject {
   (vid: ProjectVID): Promise<FindProjectResult>;
 }
+
+interface OnStatusChange {
+  (status: Readonly<CheckoutStatus>): void;
+}
+
 interface Params {
   findProject: FindProject;
+  onStatusChange: OnStatusChange;
 }
 
 export class CurrentProject {
@@ -43,11 +49,14 @@ export class CurrentProject {
 
   private findProject: FindProject;
 
+  private onStatusChange: OnStatusChange;
+
   readonly codes: typeof Code;
 
   constructor(params: Params) {
     this.codes = Code;
     this.findProject = params.findProject;
+    this.onStatusChange = params.onStatusChange;
     this.checkoutStatus = Object.freeze({
       code: Code.Idle,
     });
@@ -55,6 +64,7 @@ export class CurrentProject {
 
   private setStatus(status: CheckoutStatus) {
     this.checkoutStatus = Object.freeze({ ...status });
+    this.onStatusChange(this.checkoutStatus);
   }
 
   private toIdle(): void {

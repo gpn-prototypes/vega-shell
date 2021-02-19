@@ -5,15 +5,15 @@ import { CurrentProject, FindProjectResult, FindProjectResultCode } from './curr
 describe('CurrentProject', () => {
   let project: CurrentProject;
   const findProject = jest.fn<Promise<FindProjectResult>, any[]>();
+  const onStatusChange = jest.fn();
 
   beforeEach(() => {
+    findProject.mockClear();
+    onStatusChange.mockClear();
     project = new CurrentProject({
       findProject,
+      onStatusChange,
     });
-  });
-
-  afterEach(() => {
-    findProject.mockClear();
   });
 
   test('проект переключается', async () => {
@@ -26,14 +26,19 @@ describe('CurrentProject', () => {
 
     const checkout = project.checkout(vid);
 
-    expect(project.status()).toStrictEqual({ code: project.codes.InProgress, vid });
+    const inProgressStatus = { code: project.codes.InProgress, vid };
+    expect(onStatusChange).toHaveBeenLastCalledWith(inProgressStatus);
+    expect(project.status()).toStrictEqual(inProgressStatus);
 
     await checkout;
 
-    expect(project.status()).toStrictEqual({
+    const doneStatus = {
       code: project.codes.Done,
       project: { vid, version: 1 },
-    });
+    };
+
+    expect(onStatusChange).toHaveBeenLastCalledWith(doneStatus);
+    expect(project.status()).toStrictEqual(doneStatus);
   });
 
   test('проект не найден', async () => {
@@ -42,7 +47,9 @@ describe('CurrentProject', () => {
     findProject.mockResolvedValueOnce({ code: FindProjectResultCode.NotFound });
     await project.checkout(vid);
 
-    expect(project.status()).toStrictEqual({ code: project.codes.NotFound, vid });
+    const notFoundStatus = { code: project.codes.NotFound, vid };
+    expect(onStatusChange).toHaveBeenLastCalledWith(notFoundStatus);
+    expect(project.status()).toStrictEqual(notFoundStatus);
   });
 
   test('ошибка при запросе проекта', async () => {
@@ -51,7 +58,10 @@ describe('CurrentProject', () => {
     findProject.mockRejectedValueOnce(new Error('test'));
     await project.checkout(vid);
 
-    expect(project.status()).toStrictEqual({ code: project.codes.Error, vid });
+    const errorStatus = { code: project.codes.Error, vid };
+
+    expect(onStatusChange).toHaveBeenLastCalledWith(errorStatus);
+    expect(project.status()).toStrictEqual(errorStatus);
   });
 
   test('ошибка в ответе', async () => {
@@ -60,7 +70,10 @@ describe('CurrentProject', () => {
     findProject.mockResolvedValueOnce({ code: FindProjectResultCode.Error });
     await project.checkout(vid);
 
-    expect(project.status()).toStrictEqual({ code: project.codes.Error, vid });
+    const errorStatus = { code: project.codes.Error, vid };
+
+    expect(onStatusChange).toHaveBeenLastCalledWith(errorStatus);
+    expect(project.status()).toStrictEqual(errorStatus);
   });
 
   test('сброс активного проекта', async () => {
@@ -74,7 +87,9 @@ describe('CurrentProject', () => {
     await project.checkout(vid);
     project.release();
 
-    expect(project.status()).toStrictEqual({ code: project.codes.Idle });
+    const idleStatus = { code: project.codes.Idle };
+    expect(onStatusChange).toHaveBeenLastCalledWith(idleStatus);
+    expect(project.status()).toStrictEqual(idleStatus);
   });
 
   test('если проект не задан, то возвращается статус по умолчанию', () => {

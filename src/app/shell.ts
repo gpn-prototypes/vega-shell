@@ -68,6 +68,15 @@ export class Shell {
       findProject: (vid) => {
         return this.findProject(vid);
       },
+      onStatusChange: (status) => {
+        this.messageBus.send({
+          channel: 'project',
+          topic: 'status',
+          payload: status,
+          self: true,
+          broadcast: false,
+        });
+      },
     });
   }
 
