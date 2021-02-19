@@ -67,7 +67,7 @@ export const AuthPage: AuthPageType = () => {
   }, []);
 
   if (isLoading) {
-    return <Loader aria-label="Загрузка при авторизации" data-testid={testId.loader} />;
+    return <Loader aria-label="Загрузка" data-testid={testId.loader} />;
   }
 
   return (

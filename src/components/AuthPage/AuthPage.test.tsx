@@ -49,6 +49,22 @@ describe('AuthPage', () => {
       fetchMock.mock(`/auth/sso/login`, () => Promise.reject());
     });
 
+    test('авторизует через SSO', async () => {
+      fetchMock.restore();
+      fetchMock.mock(`/auth/sso/login`, {
+        first_name: 'First',
+        last_name: 'Last',
+        jwt_for_access: mockValidToken(),
+        jwt_for_refresh: mockValidToken(),
+      });
+
+      const { shell } = renderComponent();
+
+      await waitFor(() => {
+        expect(shell.identity.isLoggedIn()).toBeTruthy();
+      });
+    });
+
     test('обрабатывает ошибку входа через SSO', async () => {
       const { shell } = renderComponent();
 
@@ -64,11 +80,11 @@ describe('AuthPage', () => {
     test('корректно рендерит лоадер', async () => {
       renderComponent();
 
-      expect(screen.queryByLabelText('Загрузка при авторизации')).toBeInTheDocument();
+      expect(screen.queryByLabelText('Загрузка')).toBeInTheDocument();
       expect(screen.queryByLabelText('Авторизация')).not.toBeInTheDocument();
 
       await waitFor(() => {
-        expect(screen.queryByLabelText('Загрузка при авторизации')).not.toBeInTheDocument();
+        expect(screen.queryByLabelText('Загрузка')).not.toBeInTheDocument();
         expect(screen.queryByLabelText('Авторизация')).toBeInTheDocument();
       });
     });

@@ -50,6 +50,25 @@ describe('ApplicationRoutes', () => {
       });
     });
 
+    test('корректно работает авторизация через SSO', async () => {
+      localStorage.setItem('useUnstableAuthSSO', 'true');
+
+      fetchMock.mock(`/auth/sso/login`, {
+        first_name: 'First',
+        last_name: 'Last',
+        jwt_for_access: mockValidToken(),
+        jwt_for_refresh: mockValidToken(),
+      });
+
+      const { shell } = renderComponent({ isAuth: false, route: '/login' });
+
+      await waitFor(() => {
+        expect(shell.history.location.pathname).toBe('/projects');
+      });
+
+      localStorage.clear();
+    });
+
     test('при авторизации при наличии redirectTo происходит редирект на redirectTo', async () => {
       fetchMock.mock(`/auth/jwt/obtain`, {
         first_name: 'First',
