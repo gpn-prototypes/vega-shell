@@ -29,12 +29,13 @@ interface ShellOptions {
   baseApiUrl?: string;
   customResolvers?: IMocks;
 }
+export type BeforeRenderFn = (context: RenderContext) => void;
 
 export interface Options extends RenderOptions {
   route?: string;
   isAuth?: boolean;
   shell?: ShellOptions;
-  beforeRender?: (context: RenderContext) => void;
+  beforeRender?: BeforeRenderFn;
 }
 
 const baseResolvers = {

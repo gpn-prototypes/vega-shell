@@ -3,7 +3,8 @@ import { act, screen, waitFor } from '@testing-library/react';
 import fetchMock from 'fetch-mock';
 import { v4 as uuid } from 'uuid';
 
-import { Options, render, RenderResult } from '../../testing';
+import { mockValidToken } from '../../services/identity/tokenHandlers';
+import { login, Options, render, RenderResult } from '../../testing';
 
 import { ApplicationRoutes, AUTH_ERROR_MESSAGE } from './ApplicationRoutes';
 
@@ -32,6 +33,61 @@ describe('ApplicationRoutes', () => {
   });
 
   describe('авторизация', () => {
+    test('при авторизации по умолчанию происходит редирект на страницу проектов', async () => {
+      fetchMock.mock(`/auth/jwt/obtain`, {
+        first_name: 'First',
+        last_name: 'Last',
+        jwt_for_access: mockValidToken(),
+        jwt_for_refresh: mockValidToken(),
+      });
+
+      const { shell } = renderComponent({ isAuth: false, route: '/login' });
+
+      login();
+
+      await waitFor(() => {
+        expect(shell.history.location.pathname).toBe('/projects');
+      });
+    });
+
+    test('корректно работает авторизация через SSO', async () => {
+      localStorage.setItem('useUnstableAuthSSO', 'true');
+
+      fetchMock.mock(`/auth/sso/login`, {
+        first_name: 'First',
+        last_name: 'Last',
+        jwt_for_access: mockValidToken(),
+        jwt_for_refresh: mockValidToken(),
+      });
+
+      const { shell } = renderComponent({ isAuth: false, route: '/login' });
+
+      await waitFor(() => {
+        expect(shell.history.location.pathname).toBe('/projects');
+      });
+
+      localStorage.clear();
+    });
+
+    test('при авторизации при наличии redirectTo происходит редирект на redirectTo', async () => {
+      fetchMock.mock(`/auth/jwt/obtain`, {
+        first_name: 'First',
+        last_name: 'Last',
+        jwt_for_access: mockValidToken(),
+        jwt_for_refresh: mockValidToken(),
+      });
+
+      const { shell } = renderComponent({
+        isAuth: false,
+        route: `/login?redirectTo=${encodeURIComponent('/projects/show/projectId')}`,
+      });
+
+      login();
+
+      await waitFor(() => {
+        expect(shell.history.location.pathname).toBe('/projects/show/projectId');
+      });
+    });
     test('при очистке токенов и попытке перейти на другую страницу происходит переход на страницу авторизации', async () => {
       const { shell } = renderComponent({ isAuth: true, route: '/projects' });
 
