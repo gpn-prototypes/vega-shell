@@ -17,10 +17,11 @@ export type HeaderViewProps = {
 
 const cnHeader = cn('Header');
 
-const LS_USER_FIRST_NAME_KEY = 'user-first-name';
-const LS_USER_LAST_NAME_KEY = 'user-last-name';
+export const LS_USER_FIRST_NAME_KEY = 'user-first-name';
+export const LS_USER_LAST_NAME_KEY = 'user-last-name';
 
-const testId = {
+export const testId = {
+  root: 'Header:root',
   userInfo: 'Header:block:userInfo',
   username: 'Header:text:username',
   logout: 'Header:button:logout',
@@ -33,7 +34,11 @@ const testId = {
   fem: 'Header:nav:fem',
 };
 
-export const HeaderView = (props: HeaderViewProps): React.ReactElement => {
+type HeaderViewComponent = React.FC<HeaderViewProps> & {
+  testId: typeof testId;
+};
+
+export const HeaderView: HeaderViewComponent = (props) => {
   const { isLoading, projectName, pathname, onChangeActive } = props;
 
   const [userName, setUserName] = useState<string | null>(null);
@@ -182,6 +187,7 @@ export const HeaderView = (props: HeaderViewProps): React.ReactElement => {
             }}
             className={menuItemProps.className}
             to="/logout"
+            aria-label="Выйти"
             data-testid={testId.logout}
           >
             <Text size="s">Выйти</Text>
@@ -192,7 +198,7 @@ export const HeaderView = (props: HeaderViewProps): React.ReactElement => {
   );
 
   return (
-    <BaseHeader className="header">
+    <BaseHeader data-testid={testId.root} className="header">
       {renderMenu}
       {shouldRenderNavItems && (
         <BaseHeader.Nav
@@ -204,3 +210,5 @@ export const HeaderView = (props: HeaderViewProps): React.ReactElement => {
     </BaseHeader>
   );
 };
+
+HeaderView.testId = testId;

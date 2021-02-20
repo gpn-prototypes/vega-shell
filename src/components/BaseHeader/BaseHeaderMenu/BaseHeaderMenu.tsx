@@ -78,6 +78,7 @@ export const BaseHeaderMenu: BaseHeaderMenuType = (props) => {
                   onClick={toggle}
                   iconLeft={IconHamburger}
                   form="brick"
+                  aria-label="Меню"
                   data-testid={testId.trigger}
                 />
               </div>

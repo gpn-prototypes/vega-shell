@@ -1,8 +1,7 @@
 import React from 'react';
 import { act, RenderResult, screen } from '@testing-library/react';
 
-import { useShell } from '../../app';
-import { getSystemJSMock, render } from '../../testing';
+import { getSystemJSMock, render, renderWithServerError } from '../../testing';
 import { SHELL_LOADER_LABEL } from '../Loader';
 
 import { Application, ApplicationProps, lazyComponentsCache } from './Application';
@@ -68,22 +67,8 @@ describe('Application', () => {
   });
 
   test('если присутствует ошибка от сервера, то компонент не рендерится', async () => {
-    const Component = () => {
-      const shell = useShell();
-
-      React.useEffect(() => {
-        shell.setServerError({
-          code: 404,
-          message: 'not-found',
-        });
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-      }, []);
-
-      return <Application name={APP_NAME_1} />;
-    };
-
     await act(async () => {
-      render(<Component />);
+      renderWithServerError(<Application name={APP_NAME_1} />, { code: 404, message: 'not-found' });
     });
 
     expect(screen.queryByLabelText(TEST_COMPONENT_LABEL_1)).not.toBeInTheDocument();

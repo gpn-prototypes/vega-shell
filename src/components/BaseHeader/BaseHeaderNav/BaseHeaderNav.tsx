@@ -25,6 +25,7 @@ export const BaseHeaderNav: BaseHeaderNavType = (props) => {
   const { navItems, activeItem, onChangeItem } = props;
 
   const handleChangeItem = (item: NavItemType | null): void => {
+    // istanbul ignore else
     if (item !== null) {
       onChangeItem(item);
     }
