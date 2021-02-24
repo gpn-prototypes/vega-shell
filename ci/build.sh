@@ -16,10 +16,12 @@ then
 fi
 
 TAG="$VEGA_REPOPREFIX/$IMAGE_NAME:$FE_BUILDER_VERSION"
+NAME="$VEGA_REPOPREFIX.$IMAGE_NAME"
 
 IS_IMAGE_EXIST=$(docker image ls | grep -w "$VEGA_REPOPREFIX/$IMAGE_NAME")
 
-if [ -n "$IS_IMAGE_EXIST" ]
+
+if [ -n "$IS_IMAGE_EXIST" && -n "$REBUILD"]
 then
   echo "Docker image already exist. Skip build command."
 else
@@ -27,10 +29,13 @@ else
   docker build -t $TAG ./ci
 fi
 
+docker rm $NAME
+
 docker run \
-  --name vega \
+  --name "$NAME" \
   -v "$(pwd):/app" \
   --env NPM_URI=$NPM_URI \
   --env NPM_AUTH_TOKEN=$NPM_AUTH_TOKEN \
+  --env BASE_API_URL=$BASE_API_URL \
   $TAG \
   /app/ci/build-entrypoint.sh

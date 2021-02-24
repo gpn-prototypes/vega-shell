@@ -11,7 +11,12 @@ then
   exit 1;
 fi
 
+TEMP_NPMRC=$(cat .npmrc)
+
 echo -e "@gpn-prototypes:registry=https://$NPM_URI \n//$NPM_URI/:_authToken=$NPM_AUTH_TOKEN" > .npmrc
 
 yarn install --frozen-lockfile
 yarn build
+
+echo -e "$TEMP_NPMRC" > .npmrc
+
