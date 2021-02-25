@@ -71,7 +71,7 @@ describe('AuthPage', () => {
       await waitFor(() => {
         expect(shell.notifications.getAll()).toEqual(
           expect.arrayContaining([
-            expect.objectContaining({ key: AUTH_SSO_ERROR_NOTIFICATION_KEY, status: 'alert' }),
+            expect.objectContaining({ id: AUTH_SSO_ERROR_NOTIFICATION_KEY, view: 'alert' }),
           ]),
         );
       });
@@ -92,8 +92,9 @@ describe('AuthPage', () => {
     test('удаляет нотификацию об ошибке перед запросом', async () => {
       const result = renderComponent(({ shell }) => {
         shell.notifications.add({
-          status: 'alert',
-          key: AUTH_SSO_ERROR_NOTIFICATION_KEY,
+          view: 'alert',
+          body: 'testing',
+          id: AUTH_SSO_ERROR_NOTIFICATION_KEY,
         });
 
         expect(shell.notifications.getAll()).toHaveLength(1);

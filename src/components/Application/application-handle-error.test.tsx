@@ -47,7 +47,7 @@ describe('Application | обработка ошибок', () => {
 
     expect(shell.notifications.getAll()).toEqual(
       expect.arrayContaining([
-        expect.objectContaining({ message: `Ошибка загрузки модуля «${COMPONENT_ERROR_NAME}»` }),
+        expect.objectContaining({ body: `Ошибка загрузки модуля «${COMPONENT_ERROR_NAME}»` }),
       ]),
     );
   });

@@ -49,11 +49,10 @@ export const Application: React.FC<ApplicationProps> = ({
 
   const handleServiceError = (): void => {
     System.delete(System.resolve(name));
-    const key = `${name}-load-error`;
+
     shell.notifications.add({
-      key,
-      message: `Ошибка загрузки модуля «${name}»`,
-      status: 'alert',
+      body: `Ошибка загрузки модуля «${name}»`,
+      view: 'alert',
     });
 
     // istanbul ignore else

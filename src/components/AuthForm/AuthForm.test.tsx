@@ -84,15 +84,17 @@ describe('AuthForm', () => {
     await waitFor(() => {
       expect(shell.notifications.getAll()).toEqual(
         expect.arrayContaining([
-          expect.objectContaining({ key: 'auth-error-alert', message: authErrorMessage }),
+          expect.objectContaining({ id: 'auth-error-alert', body: authErrorMessage }),
         ]),
       );
     });
   });
 
   test('если код ошибки не AUTH_ERROR, то в нотификации отобразится сообщение с сервера', async () => {
-    const message = 'Ошибка валидации';
-    const onLoginError = jest.fn().mockRejectedValueOnce({ code: 'VALIDATION_ERROR', message });
+    const body = 'Ошибка валидации';
+    const onLoginError = jest
+      .fn()
+      .mockRejectedValueOnce({ code: 'VALIDATION_ERROR', message: body });
 
     const { shell } = renderComponent({ onLogin: onLoginError });
 
@@ -100,15 +102,15 @@ describe('AuthForm', () => {
 
     await waitFor(() => {
       expect(shell.notifications.getAll()).toEqual(
-        expect.arrayContaining([expect.objectContaining({ key: 'auth-error-alert', message })]),
+        expect.arrayContaining([expect.objectContaining({ id: 'auth-error-alert', body })]),
       );
     });
   });
 
   test('удаляет нотификации перед запросом', async () => {
     const result = renderComponent({ onLogin }, ({ shell }) => {
-      shell.notifications.add({ key: AUTH_ERROR_KEY, status: 'alert' });
-      shell.notifications.add({ key: 'auth-error-alert', status: 'alert' });
+      shell.notifications.add({ id: AUTH_ERROR_KEY, view: 'alert', body: 'Ошибка' });
+      shell.notifications.add({ id: 'auth-error-alert', view: 'alert', body: 'Ошибка 2' });
 
       expect(shell.notifications.getAll()).toHaveLength(2);
     });

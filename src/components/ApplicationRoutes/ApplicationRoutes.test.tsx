@@ -143,7 +143,7 @@ describe('ApplicationRoutes', () => {
       });
 
       expect(shell.notifications.getAll()).toEqual(
-        expect.arrayContaining([expect.objectContaining({ message: AUTH_ERROR_MESSAGE })]),
+        expect.arrayContaining([expect.objectContaining({ body: AUTH_ERROR_MESSAGE })]),
       );
     });
 

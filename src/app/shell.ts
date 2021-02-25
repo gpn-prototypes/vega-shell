@@ -37,7 +37,7 @@ export class Shell {
   constructor(config: Config) {
     this.history = createBrowserHistory();
     this.messageBus = MessageBus.create();
-    this.notifications = new Notifications();
+    this.notifications = new Notifications({ messageBus: this.messageBus });
 
     this.identity = new Identity({
       apiUrl: config.baseApiUrl,
