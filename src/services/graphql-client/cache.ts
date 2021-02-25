@@ -45,11 +45,16 @@ export const getDataIdFromObject = (
   }`;
 };
 
-export function createCache(): ApolloCache<NormalizedCacheObject> {
+export type Cache = ApolloCache<NormalizedCacheObject>;
+
+export function createCache(): Cache {
   return new InMemoryCache({
     dataIdFromObject: getDataIdFromObject,
     typePolicies: {
       Project: {
+        keyFields: ['vid'],
+      },
+      ProjectInner: {
         keyFields: ['vid'],
       },
     },

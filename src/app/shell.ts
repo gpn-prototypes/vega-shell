@@ -54,16 +54,6 @@ export class Shell {
       },
     });
 
-    this.graphQLClient = createGraphqlClient({
-      uri: `${config.baseApiUrl}/graphql`,
-      fetch: config.fetch,
-      identity: this.identity,
-      link: config.link,
-      onError: (error: ServerError) => {
-        this.handleGraphQLClientError(error);
-      },
-    });
-
     this.currentProject = new CurrentProject({
       findProject: (vid) => {
         return this.findProject(vid);
@@ -76,6 +66,17 @@ export class Shell {
           self: true,
           broadcast: false,
         });
+      },
+    });
+
+    this.graphQLClient = createGraphqlClient({
+      uri: `${config.baseApiUrl}/graphql`,
+      fetch: config.fetch,
+      identity: this.identity,
+      link: config.link,
+      currentProject: this.currentProject,
+      onError: (error: ServerError) => {
+        this.handleGraphQLClientError(error);
       },
     });
   }

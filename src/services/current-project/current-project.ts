@@ -87,6 +87,15 @@ export class CurrentProject {
     this.setStatus({ code: Code.NotFound, vid });
   }
 
+  public setVersion(version: number): void {
+    if (
+      this.checkoutStatus.code === this.codes.Done &&
+      this.checkoutStatus.project.version < version
+    ) {
+      this.toDone({ ...this.checkoutStatus.project, version });
+    }
+  }
+
   public async checkout(vid: ProjectVID): Promise<CheckoutStatus> {
     this.toInProgress(vid);
 

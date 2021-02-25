@@ -34,6 +34,10 @@ const createMockClient = (config?: Partial<GraphQLClientConfig>) =>
     onError: jest.fn(),
     uri: URI,
     identity: new Identity({ apiUrl: '/api' }),
+    currentProject: {
+      get: jest.fn().mockReturnValue(null),
+      setVersion: jest.fn(),
+    },
     ...config,
   });
 

@@ -111,6 +111,40 @@ describe('CurrentProject', () => {
     expect(project.get()).toStrictEqual({ vid, version: 1 });
   });
 
+  test('обновляется версия проекта', async () => {
+    const vid = uuid();
+
+    findProject.mockResolvedValueOnce({
+      code: FindProjectResultCode.Success,
+      project: { vid, version: 1 },
+    });
+
+    await project.checkout(vid);
+
+    onStatusChange.mockClear();
+    project.setVersion(2);
+
+    expect(project.get()).toStrictEqual({ vid, version: 2 });
+    expect(onStatusChange).toBeCalledTimes(1);
+  });
+
+  test('если устанавливаемая версия проекта ниже текущией, то она не выставляется', async () => {
+    const vid = uuid();
+
+    findProject.mockResolvedValueOnce({
+      code: FindProjectResultCode.Success,
+      project: { vid, version: 2 },
+    });
+
+    await project.checkout(vid);
+
+    onStatusChange.mockClear();
+    project.setVersion(1);
+
+    expect(project.get()).toStrictEqual({ vid, version: 2 });
+    expect(onStatusChange).not.toBeCalled();
+  });
+
   test('статус нельзя изменить', async () => {
     const vid = uuid();
 
