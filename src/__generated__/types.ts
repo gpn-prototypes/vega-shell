@@ -718,6 +718,8 @@ export enum ValidationErrorCode {
   ValueIsEmpty = 'VALUE_IS_EMPTY',
   /** VALUE_HAS_WRONG_TYPE */
   ValueHasWrongType = 'VALUE_HAS_WRONG_TYPE',
+  /** VALUE_IS_INCORRECT */
+  ValueIsIncorrect = 'VALUE_IS_INCORRECT',
   /** NOT_UNIQUE */
   NotUnique = 'NOT_UNIQUE'
 }
