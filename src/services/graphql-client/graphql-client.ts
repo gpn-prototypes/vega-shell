@@ -85,7 +85,7 @@ export const getDataIdFromObject = (
 };
 
 export function normalizeUri(uri: string): string {
-  const trimSlashRegxp = /^\/|\/$/g;
+  const trimSlashRegxp = /\/|\/$/g;
   const trimmed = uri.replace(trimSlashRegxp, '').trim();
   let protocol = '';
   let path = trimmed;
