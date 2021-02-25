@@ -1,14 +1,18 @@
+import { MessageBus } from '../message-bus';
+
 import { Notifications } from './notifications';
 
 describe('Notifications', () => {
   let notifications: Notifications;
+  let bus: MessageBus;
 
   beforeEach(() => {
-    notifications = new Notifications();
+    bus = new MessageBus();
+    notifications = new Notifications({ messageBus: bus });
   });
 
   it('нотификация добавляется', () => {
-    const item = { key: 'test-key', message: 'test' };
+    const item = { id: 'test-key', body: 'test' };
     notifications.add(item);
 
     expect(notifications.getAll().length).toBe(1);
@@ -16,7 +20,7 @@ describe('Notifications', () => {
 
   it('нотификация удаляется', () => {
     let items;
-    const item = { key: 'test-key', message: 'test' };
+    const item = { id: 'test-key', body: 'test' };
 
     notifications.add(item);
 
@@ -24,7 +28,7 @@ describe('Notifications', () => {
 
     expect(items.length).toBe(1);
 
-    notifications.remove(item.key);
+    notifications.remove(item.id);
 
     items = notifications.getAll();
 
@@ -35,8 +39,8 @@ describe('Notifications', () => {
     let finded;
 
     const items = [
-      { key: 'test-1', message: 'test' },
-      { key: 'test-2', message: 'test' },
+      { id: 'test-1', body: 'test' },
+      { id: 'test-2', body: 'test' },
     ];
 
     items.forEach((item) => notifications.add(item));
@@ -55,8 +59,8 @@ describe('Notifications', () => {
 
     notifications.subscribe('change', func);
 
-    notifications.add({ key: 'key-1', message: 'test' });
-    notifications.add({ key: 'key-2', message: 'test' });
+    notifications.add({ id: 'key-1', body: 'test' });
+    notifications.add({ id: 'key-2', body: 'test' });
     notifications.remove('key-2');
 
     expect(func).toBeCalledTimes(3);
@@ -67,16 +71,16 @@ describe('Notifications', () => {
 
     const unsubscribe = notifications.subscribe('change', func);
 
-    notifications.add({ key: 'key-1', message: 'test' });
-    notifications.add({ key: 'key-2', message: 'test' });
+    notifications.add({ id: 'key-1', body: 'test' });
+    notifications.add({ id: 'key-2', body: 'test' });
     notifications.remove('key-2');
 
     expect(func).toBeCalledTimes(3);
 
     unsubscribe();
 
-    notifications.add({ key: 'key-1', message: 'test' });
-    notifications.add({ key: 'key-2', message: 'test' });
+    notifications.add({ id: 'key-1', body: 'test' });
+    notifications.add({ id: 'key-2', body: 'test' });
 
     expect(func).toBeCalledTimes(3);
   });
