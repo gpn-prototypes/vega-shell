@@ -1,23 +1,14 @@
-import { readFileSync } from 'fs';
-import { join } from 'path';
-
 import React from 'react';
-import { SchemaLink } from '@apollo/client/link/schema';
-import { addMocksToSchema } from '@graphql-tools/mock';
 import {
   render as defaultRender,
   RenderOptions,
   RenderResult as RTLRenderResult,
 } from '@testing-library/react';
-import { IMocks, makeExecutableSchema } from 'apollo-server';
-import faker from 'faker';
+import { IMocks } from 'apollo-server';
 
 import { Shell, ShellProvider } from '../app';
-import { LS_KEYS } from '../services/identity';
-import { mockValidToken } from '../services/identity/tokenHandlers';
 
-import { addCleanupTask } from './cleanup';
-import { resolveTypes } from './resolve-types';
+import { configureShell } from './configure-shell';
 
 export * from '@testing-library/react';
 
@@ -38,57 +29,22 @@ export interface Options extends RenderOptions {
   beforeRender?: BeforeRenderFn;
 }
 
-const baseResolvers = {
-  Int: () => faker.random.number(10000),
-  UUID: () => faker.random.uuid(),
-  Float: () => faker.random.float(10000),
-  Boolean: () => faker.random.boolean(),
-  String: () => faker.random.words(),
-};
-
 export type RenderResultShell = RTLRenderResult & { shell: Shell };
-
-const SCHEMA_PATH = process.env.VEGA_SCHEMA_PATH ?? join(__dirname, '../../schema.graphql');
-
-const typeDefs = readFileSync(SCHEMA_PATH, 'utf-8');
 
 export const render = (ui: React.ReactElement, options: Options = {}): RenderResultShell => {
   const { shell: shellOptions, beforeRender, isAuth = false, route = '/', ...rtlOptions } = options;
 
   window.history.pushState({}, 'Test page', route);
 
-  const baseSchema = makeExecutableSchema({
-    typeDefs,
-    resolvers: [resolveTypes],
-  });
-
-  const schema = addMocksToSchema({
-    schema: baseSchema,
-    mocks: { ...baseResolvers, ...shellOptions?.customResolvers },
-  });
-
-  const shell = new Shell({
-    baseApiUrl: shellOptions?.baseApiUrl ?? '',
-    link: shellOptions?.customResolvers ? new SchemaLink({ schema }) : undefined,
+  const shell = configureShell({
+    baseApiUrl: shellOptions?.baseApiUrl,
+    resolvers: shellOptions?.customResolvers,
+    isAuth,
   });
 
   if (beforeRender !== undefined) {
     beforeRender({ shell });
   }
-
-  if (isAuth) {
-    localStorage.setItem(LS_KEYS.LS_ACCESS_TOKEN_KEY, mockValidToken());
-    localStorage.setItem(LS_KEYS.LS_REFRESH_TOKEN_KEY, mockValidToken());
-
-    addCleanupTask(() => {
-      localStorage.removeItem(LS_KEYS.LS_ACCESS_TOKEN_KEY);
-      localStorage.removeItem(LS_KEYS.LS_REFRESH_TOKEN_KEY);
-    });
-  }
-
-  addCleanupTask(() => {
-    shell.dispose();
-  });
 
   const TestProviders: React.FC = ({ children }) => {
     return <ShellProvider shell={shell}>{children}</ShellProvider>;
