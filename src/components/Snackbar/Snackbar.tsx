@@ -3,7 +3,7 @@ import { Item } from '@consta/uikit/SnackBar';
 import { SnackBar as BaseSnackbar, usePortalRender } from '@gpn-prototypes/vega-ui';
 
 import { useShell } from '../../app/shell-context';
-import { Notification, View } from '../../services/notifications/notification/notification';
+import { Notification } from '../../services/notifications/notification/notification';
 import { Action } from '../../services/notifications/types';
 
 import './Snackbar.css';
@@ -11,29 +11,6 @@ import './Snackbar.css';
 const styles = {
   container: 'vega-shell-snackbar-container',
   snackbar: 'vega-shell-snackbar',
-};
-type TransformedAction = { label: string; onClick(): void };
-
-type TransformProps = {
-  key: string;
-  message: string;
-  status: View;
-  autoClose?: number;
-  actions: TransformedAction[];
-  onClose(): void;
-};
-
-const transform = (item: TransformProps) => {
-  return {
-    key: item.key,
-    message: item.message,
-    actions: item.actions,
-    status: item.status,
-    autoClose: item.autoClose,
-    onClose: () => {
-      item.onClose();
-    },
-  };
 };
 
 export const Snackbar = (): React.ReactElement => {
@@ -60,7 +37,8 @@ export const Snackbar = (): React.ReactElement => {
                 },
               };
             })
-          : [];
+          : // istanbul ignore next
+            [];
 
         const visibleActionShowMore =
           item.withShowMore && item.rawBody.length > item.truncatedLength;
@@ -80,7 +58,7 @@ export const Snackbar = (): React.ReactElement => {
           ];
         }
 
-        return transform({
+        return {
           key: item.id,
           message: item.body,
           status: item.view,
@@ -98,12 +76,13 @@ export const Snackbar = (): React.ReactElement => {
               );
             }
           },
-        });
+        };
       });
 
       setNotifications(items);
     });
 
+    // istanbul ignore next
     return () => {
       unsubscribe();
     };
