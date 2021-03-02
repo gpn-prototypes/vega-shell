@@ -15,7 +15,6 @@ export type DispatchData = {
 export type DispatchPayload<T> = T;
 
 type AddNotificationProps = { id?: string } & Omit<NotificationProps, 'id'>;
-type AddNotificationCallback = ({ id }: { id: string }) => NotificationProps;
 
 export class Notifications {
   public messageBus: MessageBus;
@@ -76,12 +75,11 @@ export class Notifications {
     );
   }
 
-  public add(props: AddNotificationProps | AddNotificationCallback): void {
+  public add(props: AddNotificationProps): string {
     const uid = uuidv4();
-    const notificationProps =
-      typeof props === 'function' ? props({ id: uid }) : { ...props, id: props.id ?? uid };
+    const values = { ...props, id: props.id ?? uid };
 
-    const item = new Notification(notificationProps);
+    const item = new Notification(values);
 
     this.items = [...this.items, item];
 
@@ -98,13 +96,15 @@ export class Notifications {
         },
       });
     }
+
+    return values.id;
   }
 
   public dispatch<T>(data: DispatchData, payload?: DispatchPayload<T>): void {
-    const { action } = data;
+    const { action, shared } = data;
     this.publish(`action:${action}`, payload);
 
-    if (data.shared) {
+    if (shared) {
       this.messageBus.send({
         channel: 'notifications',
         topic: 'dispatch:action',
