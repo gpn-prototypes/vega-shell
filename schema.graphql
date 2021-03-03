@@ -581,6 +581,7 @@ type Mutation {
   createProject(data: ProjectInputType): CreateProject
   deleteProject(vid: UUID): DeleteProject
   updateProject(data: ProjectUpdateType, vid: UUID): UpdateProject
+  setFavoriteProject(isFavorite: Boolean!, projectId: UUID!): ProjectOrError
   addAttendees(
     attendees: [AttendeeInputType]!
     projectId: UUID!
@@ -843,7 +844,6 @@ input ProjectUpdateType {
   coordinates: String
   description: String
   status: ProjectStatusEnum
-  isFavorite: Boolean
   resourceId: String
   yearStart: Int
   yearEnd: Int
