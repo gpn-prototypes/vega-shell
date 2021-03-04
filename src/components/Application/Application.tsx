@@ -5,6 +5,8 @@ import ParcelComponent from 'single-spa-react/lib/esm/parcel';
 import { useShell } from '../../app/shell-context';
 import { RootLoader } from '../Loader';
 
+import { ErrorBoundary } from './ErrorBoundery';
+
 export type ApplicationProps = {
   name: string;
   type?: 'single-spa' | 'react';
@@ -68,10 +70,20 @@ export const Application: React.FC<ApplicationProps> = ({
 
   if (type === 'react') {
     const Component = toLazyComponent(name);
+
     return (
-      <React.Suspense fallback={<RootLoader />}>
-        <Component {...rest} {...shell} />
-      </React.Suspense>
+      <ErrorBoundary
+        onError={() => {
+          shell.notifications.add({
+            body: `Ошибка загрузки модуля «${name}»`,
+            view: 'alert',
+          });
+        }}
+      >
+        <React.Suspense fallback={<RootLoader />}>
+          <Component {...rest} {...shell} />
+        </React.Suspense>
+      </ErrorBoundary>
     );
   }
 
