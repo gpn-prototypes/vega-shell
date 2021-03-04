@@ -99,6 +99,12 @@ export const ApplicationRoutes = (): React.ReactElement => {
       if (serverError !== null) {
         setServerError(null);
       }
+
+      notifications.getAll().forEach((item) => {
+        if (item.view === 'alert') {
+          notifications.remove(item.id);
+        }
+      });
     }
   });
 
