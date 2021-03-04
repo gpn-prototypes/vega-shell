@@ -4835,6 +4835,12 @@
             "deprecationReason": null
           },
           {
+            "name": "VALUE_IS_INCORRECT",
+            "description": "VALUE_IS_INCORRECT",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "NOT_UNIQUE",
             "description": "NOT_UNIQUE",
             "isDeprecated": false,
@@ -8215,6 +8221,84 @@
             "deprecationReason": null
           },
           {
+            "name": "updateProjectStatus",
+            "description": null,
+            "args": [
+              {
+                "name": "data",
+                "description": null,
+                "type": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "ProjectStatusUpdateType",
+                  "ofType": null
+                },
+                "defaultValue": null
+              },
+              {
+                "name": "vid",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "UUID",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "OBJECT",
+              "name": "UpdateProjectStatus",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "setFavoriteProject",
+            "description": null,
+            "args": [
+              {
+                "name": "isFavorite",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Boolean",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              },
+              {
+                "name": "projectId",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "UUID",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "UNION",
+              "name": "ProjectOrError",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "addAttendees",
             "description": null,
             "args": [
@@ -10442,31 +10526,21 @@
             "defaultValue": null
           },
           {
-            "name": "status",
-            "description": null,
-            "type": {
-              "kind": "ENUM",
-              "name": "ProjectStatusEnum",
-              "ofType": null
-            },
-            "defaultValue": null
-          },
-          {
-            "name": "isFavorite",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Boolean",
-              "ofType": null
-            },
-            "defaultValue": null
-          },
-          {
             "name": "resourceId",
             "description": null,
             "type": {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "status",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "ProjectStatusEnum",
               "ofType": null
             },
             "defaultValue": null
@@ -10488,6 +10562,68 @@
               "kind": "SCALAR",
               "name": "Int",
               "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "version",
+            "description": "Version of the original project.",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            "defaultValue": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "UpdateProjectStatus",
+        "description": null,
+        "fields": [
+          {
+            "name": "result",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "UNION",
+              "name": "ProjectDiffOrError",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "ProjectStatusUpdateType",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "status",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "ProjectStatusEnum",
+                "ofType": null
+              }
             },
             "defaultValue": null
           },

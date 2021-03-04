@@ -718,6 +718,8 @@ export enum ValidationErrorCode {
   ValueIsEmpty = 'VALUE_IS_EMPTY',
   /** VALUE_HAS_WRONG_TYPE */
   ValueHasWrongType = 'VALUE_HAS_WRONG_TYPE',
+  /** VALUE_IS_INCORRECT */
+  ValueIsIncorrect = 'VALUE_IS_INCORRECT',
   /** NOT_UNIQUE */
   NotUnique = 'NOT_UNIQUE'
 }
@@ -798,6 +800,8 @@ export type Mutation = {
   createProject?: Maybe<CreateProject>;
   deleteProject?: Maybe<DeleteProject>;
   updateProject?: Maybe<UpdateProject>;
+  updateProjectStatus?: Maybe<UpdateProjectStatus>;
+  setFavoriteProject?: Maybe<ProjectOrError>;
   addAttendees?: Maybe<AddAttendees>;
   removeAttendees?: Maybe<RemoveAttendees>;
   addAttendeeRole?: Maybe<AttendeeTypeOrError>;
@@ -1293,6 +1297,18 @@ export type MutationUpdateProjectArgs = {
 };
 
 
+export type MutationUpdateProjectStatusArgs = {
+  data?: Maybe<ProjectStatusUpdateType>;
+  vid: Scalars['UUID'];
+};
+
+
+export type MutationSetFavoriteProjectArgs = {
+  isFavorite: Scalars['Boolean'];
+  projectId: Scalars['UUID'];
+};
+
+
 export type MutationAddAttendeesArgs = {
   attendees: Array<Maybe<AttendeeInputType>>;
   projectId: Scalars['UUID'];
@@ -1711,11 +1727,21 @@ export type ProjectUpdateType = {
   coordinateSystem?: Maybe<Scalars['String']>;
   coordinates?: Maybe<Scalars['String']>;
   description?: Maybe<Scalars['String']>;
-  status?: Maybe<ProjectStatusEnum>;
-  isFavorite?: Maybe<Scalars['Boolean']>;
   resourceId?: Maybe<Scalars['String']>;
+  status?: Maybe<ProjectStatusEnum>;
   yearStart?: Maybe<Scalars['Int']>;
   yearEnd?: Maybe<Scalars['Int']>;
+  /** Version of the original project. */
+  version: Scalars['Int'];
+};
+
+export type UpdateProjectStatus = {
+  __typename?: 'UpdateProjectStatus';
+  result?: Maybe<ProjectDiffOrError>;
+};
+
+export type ProjectStatusUpdateType = {
+  status: ProjectStatusEnum;
   /** Version of the original project. */
   version: Scalars['Int'];
 };
