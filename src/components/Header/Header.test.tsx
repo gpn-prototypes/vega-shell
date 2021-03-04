@@ -6,7 +6,7 @@ import { v4 as uuid } from 'uuid';
 import {
   act,
   render,
-  RenderResult,
+  RenderResultShell,
   renderWithServerError,
   screen,
   waitRequests,
@@ -38,7 +38,7 @@ type RenderOptions = {
   initialRoute?: string;
 };
 
-function renderComponent(options: RenderOptions = {}): RenderResult {
+function renderComponent(options: RenderOptions = {}): RenderResultShell {
   return render(<Header />, {
     shell: { customResolvers: resolver },
     isAuth: true,

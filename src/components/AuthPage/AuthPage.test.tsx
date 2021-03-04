@@ -2,11 +2,11 @@ import React from 'react';
 import fetchMock from 'fetch-mock';
 
 import { mockValidToken } from '../../services/identity/tokenHandlers';
-import { BeforeRenderFn, login, render, RenderResult, screen, waitFor } from '../../testing';
+import { BeforeRenderFn, login, render, RenderResultShell, screen, waitFor } from '../../testing';
 
 import { AUTH_SSO_ERROR_NOTIFICATION_KEY, AuthPage } from './AuthPage';
 
-function renderComponent(beforeRender?: BeforeRenderFn): RenderResult {
+function renderComponent(beforeRender?: BeforeRenderFn): RenderResultShell {
   return render(<AuthPage />, {
     beforeRender,
   });
