@@ -51,7 +51,7 @@
   },
   "devDependencies": {
     "@gpn-prototypes/frontend-configs": "^1.2.13",
-    "@graphql-codegen/cli": "^1.20.0",
+    "@graphql-codegen/cli": "^1.21.1",
     "@graphql-codegen/introspection": "^1.18.1",
     "@graphql-codegen/named-operations-object": "^1.17.9",
     "@graphql-codegen/near-operation-file-preset": "^1.17.13",
