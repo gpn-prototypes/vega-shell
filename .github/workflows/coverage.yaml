@@ -26,7 +26,7 @@ jobs:
         if: always()
 
       - name: Проверка покрытия
-        uses: Inzephirum/gha-test-coverage-check@v1
+        uses: Inzephirum/gha-test-coverage-check@1.0.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           min_threshold: '100'
