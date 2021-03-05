@@ -12902,10 +12902,10 @@ signedsource@^1.0.0:
   resolved "https://registry.yarnpkg.com/signedsource/-/signedsource-1.0.0.tgz#1ddace4981798f93bd833973803d80d52e93ad6a"
   integrity sha1-HdrOSYF5j5O9gzlzgD2A1S6TrWo=
 
-single-spa-layout@1.1.5:
-  version "1.1.5"
-  resolved "https://registry.yarnpkg.com/single-spa-layout/-/single-spa-layout-1.1.5.tgz#a676311fedf5b6133529679eede74deb33b499e4"
-  integrity sha512-EhnPB9QX7hi3bqT+q2Dj8YzklsljRu7I0ALOsuYz/8Qq7Lhj08gfF9z4NWAAeoeMh2KY3cbyPnlKLcqIAVLkyw==
+single-spa-layout@1.4.4:
+  version "1.4.4"
+  resolved "https://registry.yarnpkg.com/single-spa-layout/-/single-spa-layout-1.4.4.tgz#1369e9d8d0c33d7db71b5e9aa668f0e0b8534635"
+  integrity sha512-7CmW4FcD4F8MPuQ1hQRrodMk02inNqXNsJm8FP/+AWAor3jeEeLhbfxdJvEEBFcOutQZpjRyBEVVoVQGRkO6RQ==
   dependencies:
     "@types/parse5" "^5.0.3"
     merge2 "^1.4.1"

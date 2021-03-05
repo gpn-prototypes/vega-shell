@@ -44,7 +44,7 @@
     "react-router-dom": "^5.2.0",
     "regenerator-runtime": "^0.13.7",
     "single-spa": "^5.8.0",
-    "single-spa-layout": "1.1.5",
+    "single-spa-layout": "1.4.4",
     "single-spa-react": "^3.2.0",
     "systemjs": "^6.7.1",
     "uuid": "^8.3.2"
