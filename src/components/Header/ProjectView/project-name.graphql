@@ -1,8 +1,10 @@
-query GetProjectName($vid: UUID!) {
+query ProjectName($vid: UUID!) {
+  __typename
   project(vid: $vid) {
     ... on Project {
       vid
       name
+      version
     }
 
     ... on Error {

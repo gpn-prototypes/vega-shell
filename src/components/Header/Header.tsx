@@ -1,51 +1,31 @@
-import React from 'react';
-import { generatePath, useHistory, useLocation } from 'react-router-dom';
+import React, { useEffect } from 'react';
 
 import { useShell } from '../../app';
+import { useForceUpdate } from '../../hooks';
 
-import { useGetProjectName } from './__generated__/get-project-name';
-import { HeaderView } from './HeaderView';
-import { NavLinkType } from './types';
+import { CommonView } from './CommonView';
+import { ProjectView } from './ProjectView';
 
 import './Header.css';
 
 export const Header: React.FC = () => {
-  const { serverError } = useShell();
-  const history = useHistory();
-  const location = useLocation();
+  const { serverError, currentProject, bus } = useShell();
+  const forceUpdate = useForceUpdate();
 
-  const params = location.pathname.match(/\/projects\/show\/([\w|-]*)/);
-  const projectId = params ? params[1] : undefined;
-
-  const { data, loading } = useGetProjectName({
-    skip: projectId === undefined,
-    variables: { vid: projectId as string },
-  });
-
-  const getProjectName = (): string | undefined | null => {
-    if (data?.project?.__typename === 'Project') {
-      return data.project.name;
-    }
-
-    return undefined;
-  };
-
-  const handleChangeActiveLink = (item: NavLinkType): void => {
-    if (item.url && projectId !== undefined) {
-      history.push(generatePath(item.url, { projectId }));
-    }
-  };
+  useEffect(() => bus.subscribe({ channel: 'project', topic: 'status' }, forceUpdate), [
+    forceUpdate,
+    bus,
+  ]);
 
   if (serverError !== null) {
     return null;
   }
 
-  return (
-    <HeaderView
-      isLoading={loading}
-      projectName={getProjectName()}
-      pathname={location.pathname}
-      onChangeActive={handleChangeActiveLink}
-    />
-  );
+  const isProjectView = currentProject.status().code !== currentProject.codes.Idle;
+
+  if (isProjectView) {
+    return <ProjectView />;
+  }
+
+  return <CommonView />;
 };

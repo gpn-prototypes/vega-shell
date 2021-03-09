@@ -1,57 +1,89 @@
-.Header {
+.VegaHeader {
+  --header-height: 40px;
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+
+  height: var(--header-height);
+
+  background: var(--color-bg-secondary);
+  border-bottom: 1px solid var(--color-bg-border);
+
+  &__Title {
+    --title-max-width: 204px;
+    overflow: hidden;
+
+    min-width: 60px;
+    max-width: var(--title-max-width);
+
+    white-space: nowrap;
+
+    text-overflow: ellipsis;
+
+    cursor: default;
+    flex-shrink: 1;
+    flex-grow: 1;
+    flex-basis: var(--title-max-width);
+  }
+
+  &__Delimiter {
+    margin-right: 5px;
+    margin-left: 12px;
+
+    width: 1px;
+    height: 18px;
+
+    background: var(--color-control-bg-border-default);
+    align-self: center;
+  }
+
   &__Menu {
-    &::after {
-      content: '';
-
-      width: 1px;
-      height: 18px;
-
-      background: var(--color-control-bg-border-default);
-    }
-
-    &_disabled {
-      &::after {
-        content: none;
-      }
-    }
+    flex-shrink: 0;
   }
 
-  &__Dropdown {
-    margin-left: calc(var(--space-3xs) + var(--space-s));
-  }
+  &__Nav {
+    flex-shrink: 1;
+    flex-grow: 1;
 
-  &__MenuItems .VegaBaseHeader__MenuItem:not(:last-child) {
-    margin-bottom: var(--space-l);
-  }
+    min-width: 200px;
+    height: 100%;
 
-  &__MenuItem {
-    &_disabled {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-  }
+    .TabsTab {
+      padding: 0;
 
-  &__Avatar {
-    padding-right: var(--space-s);
-    padding-left: var(--space-s);
-    padding-bottom: var(--space-2xs);
-
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-
-    &-img {
-      margin-right: var(--space-xs);
-
-      width: 40px;
-      height: 40px;
+      height: var(--header-height);
     }
 
-    &-name {
-      min-width: 0;
+    .VegaTabs__ScrollRight,
+    .VegaTabs__ScrollLeft {
+      height: calc(var(--header-height) - 1px);
+    }
 
-      word-wrap: break-word;
+    .VegaTabs__InnerContent {
+      padding: 0;
+    }
+
+    .VegaTabs__ScrollButton {
+      padding: var(--space-xs);
+    }
+
+    .VegaTabs__ScrollLeft {
+      background-image: linear-gradient(
+        to left,
+        transparent 0,
+        var(--color-bg-secondary) 24px,
+        var(--color-bg-secondary) 100%
+      );
+    }
+
+    .VegaTabs__ScrollRight {
+      background-image: linear-gradient(
+        to right,
+        transparent 0,
+        var(--color-bg-secondary) 24px,
+        var(--color-bg-secondary) 100%
+      );
     }
   }
 }
