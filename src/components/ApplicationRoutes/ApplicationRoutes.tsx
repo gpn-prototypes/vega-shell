@@ -1,8 +1,9 @@
-import React, { useReducer, useRef } from 'react';
+import React, { useRef } from 'react';
 import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
 import { Loader, useMount, useOnChange, usePreviousRef } from '@gpn-prototypes/vega-ui';
 
 import { useShell } from '../../app';
+import { useForceUpdate } from '../../hooks';
 import { ServerError } from '../../services/graphql-client';
 import { Application } from '../Application';
 import { AUTH_ERROR_KEY } from '../AuthForm';
@@ -17,11 +18,6 @@ const AUTH_PATH = '/login';
 
 export const AUTH_ERROR_MESSAGE =
   'Что-то пошло не так. Для повторного входа в\u00A0систему введите свои e-mail и\u00A0пароль';
-
-const useForceUpdate = () => {
-  const [, forceUpdate] = useReducer((s) => s + 1, 0);
-  return forceUpdate;
-};
 
 const LogoutView = (): React.ReactElement | null => {
   const { identity } = useShell();
