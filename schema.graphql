@@ -581,6 +581,7 @@ type Mutation {
   createProject(data: ProjectInputType): CreateProject
   deleteProject(vid: UUID): DeleteProject
   updateProject(data: ProjectUpdateType, vid: UUID): UpdateProject
+  updateProjectStatus(data: ProjectStatusUpdateType, vid: UUID!): UpdateProjectStatus
   setFavoriteProject(isFavorite: Boolean!, projectId: UUID!): ProjectOrError
   addAttendees(
     attendees: [AttendeeInputType]!
@@ -843,10 +844,18 @@ input ProjectUpdateType {
   coordinateSystem: String
   coordinates: String
   description: String
-  status: ProjectStatusEnum
   resourceId: String
+  status: ProjectStatusEnum
   yearStart: Int
   yearEnd: Int
+  """Version of the original project."""
+  version: Int!
+}
+type UpdateProjectStatus {
+  result: ProjectDiffOrError
+}
+input ProjectStatusUpdateType {
+  status: ProjectStatusEnum!
   """Version of the original project."""
   version: Int!
 }
