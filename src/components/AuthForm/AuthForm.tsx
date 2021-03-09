@@ -64,10 +64,10 @@ export const AuthForm: AuthFormComponent = (props) => {
 
   const handleAuthSubmit = (values: State): void => {
     setIsFetching(true);
-    const key = `auth-error-alert`;
+    const id = `auth-error-alert`;
 
-    if (notifications.find(key) !== undefined) {
-      notifications.remove(key);
+    if (notifications.find(id) !== undefined) {
+      notifications.remove(id);
     }
 
     if (notifications.find(AUTH_ERROR_KEY) !== undefined) {
@@ -75,13 +75,13 @@ export const AuthForm: AuthFormComponent = (props) => {
     }
 
     onLogin(values).catch((error: LoginError) => {
-      const message = error.code === 'AUTH_ERROR' ? authErrorMessage : error.message;
+      const body = error.code === 'AUTH_ERROR' ? authErrorMessage : error.message;
 
       if (error) {
         notifications.add({
-          key,
-          message,
-          status: 'alert',
+          id,
+          body,
+          view: 'alert',
         });
       }
 

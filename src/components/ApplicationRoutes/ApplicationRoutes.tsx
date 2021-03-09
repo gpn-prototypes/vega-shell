@@ -75,9 +75,11 @@ export const ApplicationRoutes = (): React.ReactElement => {
         if (payload.code === 401) {
           identity.logout({ destroyTokens: false });
           notifications.add({
-            key: AUTH_ERROR_KEY,
-            status: 'alert',
-            message: AUTH_ERROR_MESSAGE,
+            id: AUTH_ERROR_KEY,
+            view: 'alert',
+            body: AUTH_ERROR_MESSAGE,
+            // Пока не показывать кнопку "Подробнее"
+            withShowMore: false,
           });
         }
       },

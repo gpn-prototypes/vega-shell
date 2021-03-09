@@ -1,65 +1,129 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Item } from '@consta/uikit/SnackBar';
+import { v4 as uuidv4 } from 'uuid';
 
-type Topics = 'change';
-type Callback = (payload: any) => void;
+import { MessageBus } from '../message-bus';
 
-type Handlers = Map<Topics, Set<Callback>>;
+import { Notification, NotificationProps } from './notification';
 
-interface Unsubscribe {
-  (): void;
-}
+type Callback<T> = (payload: T) => void;
+
+export type DispatchData = {
+  action: string;
+  shared: boolean;
+};
+
+export type DispatchPayload<T> = T;
+
+type AddNotificationProps = { id?: string } & Omit<NotificationProps, 'id'>;
+type AddNotificationCallback = ({ id }: { id: string }) => NotificationProps;
 
 export class Notifications {
-  private items: Item[];
+  public messageBus: MessageBus;
 
-  private handlers: Handlers;
+  private items: Notification[];
 
-  constructor() {
+  constructor({ messageBus }: { messageBus: MessageBus }) {
     this.items = [];
-    this.handlers = new Map();
+    this.messageBus = messageBus;
+
+    this.messageBus.subscribe<{ item: Notification }>(
+      { channel: 'notifications', topic: 'add:notification' },
+      ({ payload }) => {
+        const notification = new Notification(payload.item);
+
+        this.items = [...this.items, notification];
+
+        this.publish('change', {
+          items: this.items,
+        });
+      },
+    );
+
+    this.messageBus.subscribe<{ data: DispatchData; payload: DispatchPayload<any> }>(
+      { channel: 'notifications', topic: 'dispatch:action' },
+      ({ payload }) => {
+        const { data, payload: p } = payload;
+
+        this.publish(`action:${data.action}`, p);
+      },
+    );
   }
 
-  public getAll(): Item[] {
+  public getAll(): Notification[] {
     return this.items;
   }
 
-  private publish(topic: Topics, payload: any): void {
-    if (!this.handlers.has(topic)) return;
-    const handlers = this.handlers.get(topic);
+  public publish<T = any>(topic: string, payload: T): void {
+    this.messageBus.send({
+      channel: 'notifications',
+      topic,
+      payload,
+    });
+  }
 
-    if (handlers) {
-      handlers.forEach((cb) => cb(payload));
+  public subscribe<T = any>(topic: string, cb: Callback<T>): VoidFunction {
+    return this.messageBus.subscribe<any>({ channel: 'notifications', topic }, (message) => {
+      cb(message.payload);
+    });
+  }
+
+  public on<T = any>(action: string, cb: Callback<T>): VoidFunction {
+    return this.messageBus.subscribe<any>(
+      { channel: 'notifications', topic: `action:${action}` },
+      (message) => {
+        cb(message.payload);
+      },
+    );
+  }
+
+  public add(props: AddNotificationProps | AddNotificationCallback): void {
+    const uid = uuidv4();
+    const notificationProps =
+      typeof props === 'function' ? props({ id: uid }) : { ...props, id: props.id ?? uid };
+
+    const item = new Notification(notificationProps);
+
+    this.items = [...this.items, item];
+
+    this.publish('change', { items: this.items });
+
+    if (item.shared) {
+      this.messageBus.send({
+        channel: 'notifications',
+        topic: 'add:notification',
+        self: false,
+        broadcast: true,
+        payload: {
+          item,
+        },
+      });
     }
   }
 
-  public subscribe(topic: Topics, cb: Callback): Unsubscribe {
-    const set = this.handlers.get(topic) ?? new Set();
-    set.add(cb);
+  public dispatch<T>(data: DispatchData, payload?: DispatchPayload<T>): void {
+    const { action } = data;
+    this.publish(`action:${action}`, payload);
 
-    this.handlers.set(topic, set);
-
-    return (): void => {
-      set.delete(cb);
-    };
+    if (data.shared) {
+      this.messageBus.send({
+        channel: 'notifications',
+        topic: 'dispatch:action',
+        broadcast: true,
+        self: false,
+        payload: {
+          data,
+          payload,
+        },
+      });
+    }
   }
 
-  public add(item: Item): void {
-    const newItem = {
-      onClose: () => this.remove(item.key),
-      ...item,
-    };
-    this.items = [...this.items, newItem];
-
-    this.publish('change', { items: this.items });
+  public find(id: string): Notification | undefined {
+    return this.items.find((item) => item.id === id);
   }
 
-  public find(key: string | number): Item | undefined {
-    return this.items.find((item) => item.key === key);
-  }
-
-  public remove(key: string | number): void {
-    this.items = this.items.filter((item) => item.key !== key);
+  public remove(id: string): void {
+    this.items = this.items.filter((item) => item.id !== id);
 
     this.publish('change', { items: this.items });
   }

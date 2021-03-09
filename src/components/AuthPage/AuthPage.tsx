@@ -49,12 +49,12 @@ export const AuthPage: AuthPageType = () => {
       }
 
       identity?.authSSO().catch(() => {
-        const message = 'При входе возникла ошибка, войдите с помощью учетной записи';
+        const body = 'При входе возникла ошибка, войдите с помощью учетной записи';
 
         notifications.add({
-          key: AUTH_SSO_ERROR_NOTIFICATION_KEY,
-          message,
-          status: 'alert',
+          id: AUTH_SSO_ERROR_NOTIFICATION_KEY,
+          body,
+          view: 'alert',
         });
 
         setIsLoading(false);
