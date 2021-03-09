@@ -25,4 +25,5 @@ sed -e "s/\$NPM_URI/$NPM_URI/" \
     -e "s/\$NPM_AUTH_TOKEN/$NPM_AUTH_TOKEN/" ./ci/npmrc-template > .npmrc
 
 yarn install --frozen-lockfile
+yarn generate:types
 yarn build
