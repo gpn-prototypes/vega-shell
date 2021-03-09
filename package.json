@@ -76,7 +76,7 @@
     "jest-cli": "^25.2.7",
     "jsondiffpatch": "^0.4.1",
     "node-fetch": "^2.6.1",
-    "postcss": "^7.0.35",
+    "postcss": "^8.2.7",
     "postcss-loader": "^4.2.0",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
