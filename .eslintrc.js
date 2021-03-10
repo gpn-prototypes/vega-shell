@@ -2,6 +2,7 @@ module.exports = {
   extends: [require.resolve('@gpn-prototypes/frontend-configs/.eslintrc.js')],
   ignorePatterns: ['__generated__'],
   rules: {
+    'react/require-default-props': 'off',
     '@typescript-eslint/no-empty-function': 'off',
     '@typescript-eslint/no-explicit-any': 'error',
     '@typescript-eslint/no-redeclare': ['error'],

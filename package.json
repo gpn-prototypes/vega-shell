@@ -14,14 +14,17 @@
     "generate:dev:types:watch": "yarn generate:dev:types --watch",
     "test": "cross-env BABEL_ENV=test jest --passWithNoTests",
     "test:watch": "yarn test --watch",
+    "build": "rimraf dist && cross-env NODE_ENV=production webpack --mode=production",
+    "lint:fix:ts": "eslint {src,types}/**/*.ts{,x} --fix",
+    "format": "prettier --write '{src,types,scripts}/**/*.{json,{j,t}s{,x},css,}'",
     "coverage": "jest --all --coverage",
     "coverage:changes": "jest --coverage --onlyChanged",
-    "format": "prettier --write {src,types,scripts}/**/*.{json,{j,t}s{,x},css,}",
-    "build": "rimraf dist && cross-env NODE_ENV=production webpack --mode=production",
-    "lint": "npm-run-all lint:*",
-    "lint:fix": "npm-run-all format lint:fix:*",
-    "lint:ts": "eslint {src,types}/**/*.ts{,x}",
-    "lint:fix:ts": "eslint {src,types}/**/*.ts{,x} --fix"
+    "lint:ts": "eslint --ext=.ts,.tsx .",
+    "lint:ts:fix": "eslint --ext=.ts,.tsx . --fix",
+    "lint:css": "stylelint ./src/**/*.css",
+    "lint:css:fix": "stylelint ./src/**/*.css --fix",
+    "lint": "yarn run lint:ts && yarn run lint:css",
+    "lint:fix": "yarn run lint:ts:fix && yarn run lint:css:fix"
   },
   "config": {
     "commitizen": {
@@ -106,7 +109,6 @@
     "cz-customizable": "^6.3.0",
     "eslint-config-ts-important-stuff": "^1.0.0",
     "husky": "^4.2.3",
-    "lint-staged": "^10.4.0",
-    "npm-run-all": "^4.1.5"
+    "lint-staged": "^10.4.0"
   }
 }
