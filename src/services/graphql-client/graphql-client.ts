@@ -41,7 +41,7 @@ type ResponseLinkConfig = {
   handleError: ErrorHandler;
 };
 
-export const createAuthLink = (identity: Identity, config: ResponseLinkConfig): ApolloLink =>
+export const createAuthLink = (identity: Identity): ApolloLink =>
   new ApolloLink((operation, forward) => {
     return new Observable((observer) => {
       const subscriptions = new Set<ZenObservable.Subscription>();
@@ -54,11 +54,12 @@ export const createAuthLink = (identity: Identity, config: ResponseLinkConfig): 
 
       identity.getToken().then((token) => {
         if (token === null) {
-          config.handleError({ code: 401, message: 'unauthorized' });
+          const error = { statusCode: 401 };
 
-          observer.complete();
+          observer.error(error);
           return;
         }
+
         operation.setContext((context: Record<string, unknown>) => ({
           ...context,
           headers: {
@@ -169,7 +170,7 @@ export function createGraphqlClient(config: GraphQLClientConfig): GraphQLClient 
       createSwitchUriLink(uri),
       createProjectVersionSyncerLink({ cache, currentProject }),
       createProjectDiffResolverLink(),
-      createAuthLink(identity, { handleError }),
+      createAuthLink(identity),
       config.link ?? createHttpLink({ fetch }),
     ]),
   });

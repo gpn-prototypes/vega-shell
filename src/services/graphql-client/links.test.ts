@@ -103,7 +103,7 @@ describe('switchUriLink', () => {
     const uriLink = createSwitchUriLink(URI);
 
     const identity = new Identity(CONFIG);
-    const authLink = createAuthLink(identity, { handleError: () => {} });
+    const authLink = createAuthLink(identity);
 
     const link = ApolloLink.from([authLink, uriLink, createHttpLink()]);
 
@@ -134,7 +134,7 @@ describe('switchUriLink', () => {
     const uriLink = createSwitchUriLink(URI);
 
     const identity = new Identity(CONFIG);
-    const authLink = createAuthLink(identity, { handleError: () => {} });
+    const authLink = createAuthLink(identity);
 
     const link = ApolloLink.from([authLink, uriLink, createHttpLink()]);
 
@@ -158,7 +158,7 @@ describe('switchUriLink', () => {
     const uriLink = createSwitchUriLink(URI);
 
     const identity = new Identity(CONFIG);
-    const authLink = createAuthLink(identity, { handleError: () => {} });
+    const authLink = createAuthLink(identity);
 
     const link = ApolloLink.from([authLink, uriLink, createHttpLink()]);
 
@@ -187,7 +187,7 @@ describe('authLink', () => {
       refreshToken: tokens['refresh-token'],
     });
 
-    const authLink = createAuthLink(identity, { handleError: () => {} });
+    const authLink = createAuthLink(identity);
     const link = ApolloLink.from([authLink, createHttpLink()]);
 
     await toPromise(
