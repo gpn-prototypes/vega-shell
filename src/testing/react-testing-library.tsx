@@ -8,7 +8,7 @@ import { IMocks } from 'apollo-server';
 
 import { Shell, ShellProvider } from '../app';
 
-import { configureShell } from './configure-shell';
+import { configureShell, User } from './configure-shell';
 
 export * from '@testing-library/react';
 
@@ -25,6 +25,7 @@ export type BeforeRenderFn = (context: RenderContext) => void;
 export interface Options extends RenderOptions {
   route?: string;
   isAuth?: boolean;
+  user?: Partial<User>;
   shell?: ShellOptions;
   beforeRender?: BeforeRenderFn;
 }
@@ -32,14 +33,22 @@ export interface Options extends RenderOptions {
 export type RenderResultShell = RTLRenderResult & { shell: Shell };
 
 export const render = (ui: React.ReactElement, options: Options = {}): RenderResultShell => {
-  const { shell: shellOptions, beforeRender, isAuth = false, route = '/', ...rtlOptions } = options;
+  const {
+    shell: shellOptions,
+    user,
+    beforeRender,
+    isAuth = false,
+    route = '/',
+    ...rtlOptions
+  } = options;
 
   window.history.pushState({}, 'Test page', route);
 
   const shell = configureShell({
+    user,
+    isAuth,
     baseApiUrl: shellOptions?.baseApiUrl,
     resolvers: shellOptions?.customResolvers,
-    isAuth,
   });
 
   if (beforeRender !== undefined) {
