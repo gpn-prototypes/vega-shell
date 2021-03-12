@@ -59,7 +59,7 @@ describe('APIClient', () => {
       const responseBody = '401: Unauthorized';
       const error = {
         code: 401,
-        message: ERROR_MESSAGE_FUNCTIONS.AUTH('Unauthorized'),
+        message: ERROR_MESSAGE_FUNCTIONS.AUTH('401 Unauthorized'),
       };
 
       fetchMock.mock(mockOptions, {
@@ -118,7 +118,7 @@ describe('APIClient', () => {
       const responseBody = '401: Unauthorized';
       const error = {
         code: 401,
-        message: ERROR_MESSAGE_FUNCTIONS.AUTH('Unauthorized'),
+        message: ERROR_MESSAGE_FUNCTIONS.AUTH('401 Unauthorized'),
       };
 
       fetchMock.mock(mockOptions, {
@@ -176,7 +176,7 @@ describe('APIClient', () => {
       const responseBody = '401: Unauthorized';
       const error = {
         code: 401,
-        message: ERROR_MESSAGE_FUNCTIONS.DEFAULT('Unauthorized'),
+        message: ERROR_MESSAGE_FUNCTIONS.DEFAULT('401 Unauthorized'),
       };
 
       fetchMock.mock(mockOptions, {
@@ -233,7 +233,7 @@ describe('APIClient', () => {
       const responseBody = '401: Unauthorized';
       const error = {
         code: 401,
-        message: ERROR_MESSAGE_FUNCTIONS.DEFAULT('Unauthorized'),
+        message: ERROR_MESSAGE_FUNCTIONS.DEFAULT('401 Unauthorized'),
       };
 
       fetchMock.mock(mockOptions, {

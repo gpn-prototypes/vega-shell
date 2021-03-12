@@ -48,7 +48,9 @@ const handleResponseError = async <T>(
   } catch {
     const error = {
       code: response.status,
-      message: getErrorMessage(response.statusText || response.status),
+      message: getErrorMessage(
+        response.status + (response.statusText ? ` ${response.statusText}` : ''),
+      ),
     };
 
     return Promise.reject(error);
