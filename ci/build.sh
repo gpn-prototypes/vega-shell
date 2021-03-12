@@ -29,12 +29,14 @@ else
   docker build -t $TAG --no-cache ./ci
 fi
 
-docker rm $NAME
+docker 2>/dev/null 1>&2 rm $NAME || true
 
 docker run \
   --name "$NAME" \
   -v "$(pwd):/app" \
   --env NPM_URI=$NPM_URI \
   --env NPM_AUTH_TOKEN=$NPM_AUTH_TOKEN \
+  --env BASE_API_URL=$BASE_API_URL \
+  --env VEGA_SCHEMA_PATH=$VEGA_SCHEMA_PATH \
   $TAG \
   /app/ci/build-entrypoint.sh
