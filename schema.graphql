@@ -46,7 +46,7 @@ type Query {
   domainEntityList: [DomainEntity]
   domainEntity(vid: UUID): DomainEntity
   project(vid: UUID, version: Int): ProjectOrError
-  projectList(includeBlank: Boolean = false, pageNumber: Int = 1, pageSize: Int = 20, orderBy: ProjectOrderByEnum, sortBy: SortType): ProjectListOrError
+  projectList(includeBlank: Boolean = false, pageNumber: Int = 1, pageSize: Int = 20, orderBy: ProjectOrderByEnum, sortBy: SortType, useWhole: Boolean = false): ProjectListOrError
   me: User
 }
 type ProjectLibrary {
@@ -338,9 +338,9 @@ type Project {
   vid: ID
   code: String
   isDeleted: Boolean
-  name: String
   createdAt: DateTime
   editedAt: DateTime
+  name: String
   type: ProjectTypeEnum
   createdBy: User
   editedBy: User
@@ -350,12 +350,12 @@ type Project {
   coordinates: String
   coordinateSystem: String
   description: String
-  rootEntity: String
   status: ProjectStatusEnum
-  resourceId: String
   yearStart: Int
   yearEnd: Int
   version: Int
+  rootEntity: String
+  resourceId: String
 }
 type Attendee {
   user: User
@@ -459,6 +459,8 @@ enum ErrorCodesEnum {
   INVALID_PAGE_NUMBER
   """Ошибка валидации"""
   VALIDATION
+  """Неверный размер страницы"""
+  INVALID_PAGE_SIZE
 }
 scalar DictType
 type ValidationError implements ErrorInterface {
@@ -812,11 +814,11 @@ type CreateProject {
 }
 input ProjectInputType {
   name: String
+  description: String
   region: UUID
   coordinateSystem: String
   type: ProjectTypeEnum
   coordinates: String
-  description: String
   resourceId: String
   yearStart: Int
   yearEnd: Int
@@ -840,10 +842,10 @@ type UpdateProjectDiff {
 }
 input ProjectUpdateType {
   name: String
+  description: String
   region: UUID
   coordinateSystem: String
   coordinates: String
-  description: String
   resourceId: String
   status: ProjectStatusEnum
   yearStart: Int
