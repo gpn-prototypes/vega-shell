@@ -51,11 +51,16 @@ export const Application: React.FC<ApplicationProps> = ({
 
   const handleServiceError = (): void => {
     System.delete(System.resolve(name));
+    const body = `Ошибка загрузки модуля «${name}»`;
 
-    shell.notifications.add({
-      body: `Ошибка загрузки модуля «${name}»`,
-      view: 'alert',
-    });
+    const errorNotification = shell.notifications.getAll().find((n) => n.body === body);
+
+    if (errorNotification === undefined) {
+      shell.notifications.add({
+        body,
+        view: 'alert',
+      });
+    }
 
     // istanbul ignore else
     if (isLoading) {
