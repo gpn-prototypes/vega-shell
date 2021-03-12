@@ -9,13 +9,13 @@ import {
   incorrectLogin,
   login,
   render,
-  RenderResult,
+  RenderResultShell,
   waitFor,
 } from '../../testing';
 
 import { AUTH_ERROR_KEY, authErrorMessage, AuthForm, AuthFormProps } from './AuthForm';
 
-function renderComponent(props: AuthFormProps, beforeRender?: BeforeRenderFn): RenderResult {
+function renderComponent(props: AuthFormProps, beforeRender?: BeforeRenderFn): RenderResultShell {
   return render(<AuthForm {...props} />, { beforeRender });
 }
 

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { render, RenderResult, screen } from '../../testing';
+import { render, RenderResultShell, screen } from '../../testing';
 
 import { HeaderView, HeaderViewProps } from './HeaderView';
 
@@ -9,7 +9,7 @@ const defaultProps: HeaderViewProps = {
   pathname: '/projects',
 };
 
-const renderComponent = (props: Partial<HeaderViewProps> = {}): RenderResult => {
+const renderComponent = (props: Partial<HeaderViewProps> = {}): RenderResultShell => {
   const headerViewProps = { ...defaultProps, ...props };
   return render(<HeaderView {...headerViewProps} />);
 };

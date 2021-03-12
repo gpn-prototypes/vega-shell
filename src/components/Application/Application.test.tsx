@@ -1,7 +1,7 @@
 import React from 'react';
-import { act, RenderResult, screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 
-import { getSystemJSMock, render, renderWithServerError } from '../../testing';
+import { getSystemJSMock, render, RenderResultShell, renderWithServerError } from '../../testing';
 import { SHELL_LOADER_LABEL } from '../Loader';
 
 import { Application, ApplicationProps, lazyComponentsCache } from './Application';
@@ -10,6 +10,7 @@ jest.unmock('single-spa-react/lib/esm/parcel');
 
 const APP_NAME_1 = 'app-name-1';
 const APP_NAME_2 = 'app-name-2';
+const APP_ERROR = 'app-error';
 
 const TEST_COMPONENT_LABEL_1 = 'test-component-1';
 const TEST_COMPONENT_LABEL_2 = 'test-component-2';
@@ -23,6 +24,9 @@ beforeEach(() => {
   global.System = getSystemJSMock({
     [APP_NAME_1]: TestComponent,
     [APP_NAME_2]: () => <div aria-label={TEST_COMPONENT_LABEL_2} />,
+    [APP_ERROR]: () => {
+      throw new Error('Boom');
+    },
   });
 });
 
@@ -30,7 +34,7 @@ afterEach(() => {
   delete global.System;
 });
 
-export function renderComponent(props: Partial<ApplicationProps> = {}): RenderResult {
+export function renderComponent(props: Partial<ApplicationProps> = {}): RenderResultShell {
   const { name = APP_NAME_1 } = props;
   return render(<Application {...props} name={name} />);
 }
@@ -106,6 +110,24 @@ describe('Application', () => {
       expect(screen.queryByLabelText(SHELL_LOADER_LABEL)).toBeVisible();
       expect(screen.queryByLabelText(TEST_COMPONENT_LABEL_2)).not.toBeInTheDocument();
       expect(await screen.findByLabelText(TEST_COMPONENT_LABEL_2)).toBeInTheDocument();
+    });
+
+    it('добавляет сообщение об ошибке загрузки модуля', async () => {
+      const originalError = console.error;
+      console.error = jest.fn();
+
+      let spy;
+
+      await act(async () => {
+        const { shell } = render(<Application name={APP_ERROR} type="react" />);
+        spy = jest.spyOn(shell.notifications, 'add');
+      });
+
+      expect(spy).toBeCalledWith(
+        expect.objectContaining({ body: `Ошибка загрузки модуля «${APP_ERROR}»` }),
+      );
+
+      console.error = originalError;
     });
   });
 });

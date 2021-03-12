@@ -4,7 +4,7 @@ import fetchMock from 'fetch-mock';
 import { v4 as uuid } from 'uuid';
 
 import { mockValidToken } from '../../services/identity/tokenHandlers';
-import { login, Options, render, RenderResult } from '../../testing';
+import { login, Options, render, RenderResultShell } from '../../testing';
 
 import { ApplicationRoutes, AUTH_ERROR_MESSAGE } from './ApplicationRoutes';
 
@@ -19,7 +19,7 @@ beforeEach(() => {
   localStorage.clear();
 });
 
-function renderComponent(params?: Options): RenderResult {
+function renderComponent(params?: Options): RenderResultShell {
   return render(<ApplicationRoutes />, params);
 }
 

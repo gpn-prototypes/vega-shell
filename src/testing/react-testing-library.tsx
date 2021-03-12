@@ -46,13 +46,13 @@ const baseResolvers = {
   String: () => faker.random.words(),
 };
 
-export type RenderResult = RTLRenderResult & { shell: Shell };
+export type RenderResultShell = RTLRenderResult & { shell: Shell };
 
 const SCHEMA_PATH = process.env.VEGA_SCHEMA_PATH ?? join(__dirname, '../../schema.graphql');
 
 const typeDefs = readFileSync(SCHEMA_PATH, 'utf-8');
 
-export const render = (ui: React.ReactElement, options: Options = {}): RenderResult => {
+export const render = (ui: React.ReactElement, options: Options = {}): RenderResultShell => {
   const { shell: shellOptions, beforeRender, isAuth = false, route = '/', ...rtlOptions } = options;
 
   window.history.pushState({}, 'Test page', route);
