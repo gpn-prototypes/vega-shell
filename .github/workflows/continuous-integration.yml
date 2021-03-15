@@ -27,7 +27,7 @@ jobs:
       - name: Генерация типов
         run: yarn generate:types
         env:
-          VEGA_SCHEMA_PATH: graphql.schema.json
+          VEGA_SCHEMA_PATH: schema.graphql
         if: always()
 
       - run: yarn test
