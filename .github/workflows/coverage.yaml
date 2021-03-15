@@ -21,6 +21,12 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Генерация типов
+        run: yarn generate:types
+        env:
+          VEGA_SCHEMA_PATH: graphql.schema.json
+        if: always()
+
       - name: Создание отчета покрытия
         run: yarn coverage
         if: always()
@@ -31,4 +37,3 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           min_threshold: '100'
           report_file_path: './coverage/lcov.info'
-
