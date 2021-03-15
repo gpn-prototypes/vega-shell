@@ -14,4 +14,12 @@ module.exports = {
     'no-use-before-define': 'off',
     'no-useless-constructor': 'off',
   },
+  overrides: [
+    {
+      files: ['*.test.{ts,tsx}'],
+      rules: {
+        '@typescript-eslint/no-explicit-any': 'off',
+      },
+    },
+  ],
 };

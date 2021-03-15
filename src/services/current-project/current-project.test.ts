@@ -1,41 +1,55 @@
 import { v4 as uuid } from 'uuid';
 
-import { CurrentProject, FindProjectResult } from './current-project';
+import { CurrentProject, FindProjectResult, FindProjectResultCode } from './current-project';
 
 describe('CurrentProject', () => {
   let project: CurrentProject;
-  const findProject = jest.fn();
+  const findProject = jest.fn<Promise<FindProjectResult>, any[]>();
+  const onStatusChange = jest.fn();
 
   beforeEach(() => {
+    findProject.mockClear();
+    onStatusChange.mockClear();
     project = new CurrentProject({
       findProject,
+      onStatusChange,
     });
-  });
-
-  afterEach(() => {
-    findProject.mockClear();
   });
 
   test('проект переключается', async () => {
     const vid = uuid();
 
-    findProject.mockResolvedValueOnce(FindProjectResult.Success);
+    findProject.mockResolvedValueOnce({
+      code: FindProjectResultCode.Success,
+      project: { vid, version: 1 },
+    });
+
     const checkout = project.checkout(vid);
 
-    expect(project.status()).toStrictEqual({ code: project.codes.InProgress, vid });
+    const inProgressStatus = { code: project.codes.InProgress, vid };
+    expect(onStatusChange).toHaveBeenLastCalledWith(inProgressStatus);
+    expect(project.status()).toStrictEqual(inProgressStatus);
 
     await checkout;
 
-    expect(project.status()).toStrictEqual({ code: project.codes.Done, project: { vid } });
+    const doneStatus = {
+      code: project.codes.Done,
+      project: { vid, version: 1 },
+    };
+
+    expect(onStatusChange).toHaveBeenLastCalledWith(doneStatus);
+    expect(project.status()).toStrictEqual(doneStatus);
   });
 
   test('проект не найден', async () => {
     const vid = uuid();
 
-    findProject.mockResolvedValueOnce(FindProjectResult.NotFound);
+    findProject.mockResolvedValueOnce({ code: FindProjectResultCode.NotFound });
     await project.checkout(vid);
 
-    expect(project.status()).toStrictEqual({ code: project.codes.NotFound, vid });
+    const notFoundStatus = { code: project.codes.NotFound, vid };
+    expect(onStatusChange).toHaveBeenLastCalledWith(notFoundStatus);
+    expect(project.status()).toStrictEqual(notFoundStatus);
   });
 
   test('ошибка при запросе проекта', async () => {
@@ -44,26 +58,38 @@ describe('CurrentProject', () => {
     findProject.mockRejectedValueOnce(new Error('test'));
     await project.checkout(vid);
 
-    expect(project.status()).toStrictEqual({ code: project.codes.Error, vid });
+    const errorStatus = { code: project.codes.Error, vid };
+
+    expect(onStatusChange).toHaveBeenLastCalledWith(errorStatus);
+    expect(project.status()).toStrictEqual(errorStatus);
   });
 
   test('ошибка в ответе', async () => {
     const vid = uuid();
 
-    findProject.mockResolvedValueOnce(FindProjectResult.Error);
+    findProject.mockResolvedValueOnce({ code: FindProjectResultCode.Error });
     await project.checkout(vid);
 
-    expect(project.status()).toStrictEqual({ code: project.codes.Error, vid });
+    const errorStatus = { code: project.codes.Error, vid };
+
+    expect(onStatusChange).toHaveBeenLastCalledWith(errorStatus);
+    expect(project.status()).toStrictEqual(errorStatus);
   });
 
   test('сброс активного проекта', async () => {
     const vid = uuid();
 
-    findProject.mockResolvedValueOnce(FindProjectResult.Success);
+    findProject.mockResolvedValueOnce({
+      code: FindProjectResultCode.Success,
+      project: { vid, version: 1 },
+    });
+
     await project.checkout(vid);
     project.release();
 
-    expect(project.status()).toStrictEqual({ code: project.codes.Idle });
+    const idleStatus = { code: project.codes.Idle };
+    expect(onStatusChange).toHaveBeenLastCalledWith(idleStatus);
+    expect(project.status()).toStrictEqual(idleStatus);
   });
 
   test('если проект не задан, то возвращается статус по умолчанию', () => {
@@ -72,12 +98,93 @@ describe('CurrentProject', () => {
 
   test('возвращает данные выбранного проекта', async () => {
     const vid = uuid();
-    findProject.mockResolvedValueOnce(FindProjectResult.Success);
+
+    findProject.mockResolvedValueOnce({
+      code: FindProjectResultCode.Success,
+      project: { vid, version: 1 },
+    });
 
     expect(project.get()).toBe(null);
 
     await project.checkout(vid);
 
-    expect(project.get()).toStrictEqual({ vid });
+    expect(project.get()).toStrictEqual({ vid, version: 1 });
+  });
+
+  test('обновляется версия проекта', async () => {
+    const vid = uuid();
+
+    findProject.mockResolvedValueOnce({
+      code: FindProjectResultCode.Success,
+      project: { vid, version: 1 },
+    });
+
+    await project.checkout(vid);
+
+    onStatusChange.mockClear();
+    project.setVersion(2);
+
+    expect(project.get()).toStrictEqual({ vid, version: 2 });
+    expect(onStatusChange).toBeCalledTimes(1);
+  });
+
+  test('если устанавливаемая версия проекта ниже текущией, то она не выставляется', async () => {
+    const vid = uuid();
+
+    findProject.mockResolvedValueOnce({
+      code: FindProjectResultCode.Success,
+      project: { vid, version: 2 },
+    });
+
+    await project.checkout(vid);
+
+    onStatusChange.mockClear();
+    project.setVersion(1);
+
+    expect(project.get()).toStrictEqual({ vid, version: 2 });
+    expect(onStatusChange).not.toBeCalled();
+  });
+
+  test('статус нельзя изменить', async () => {
+    const vid = uuid();
+
+    function assertStatusMutationFails() {
+      const status = project.status();
+      expect(() => {
+        // @ts-expect-error: специальная попытка мутировать невалидным статусом
+        // eslint-disable-next-line no-param-reassign
+        status.code = '';
+      }).toThrow();
+    }
+
+    assertStatusMutationFails();
+
+    findProject.mockResolvedValueOnce({
+      code: FindProjectResultCode.Success,
+      project: { vid, version: 1 },
+    });
+
+    const checkout = project.checkout(vid);
+
+    assertStatusMutationFails();
+
+    await checkout;
+
+    assertStatusMutationFails();
+
+    findProject.mockResolvedValueOnce({ code: FindProjectResultCode.NotFound });
+    await project.checkout(vid);
+
+    assertStatusMutationFails();
+
+    findProject.mockResolvedValueOnce({ code: FindProjectResultCode.Error });
+    await project.checkout(vid);
+
+    assertStatusMutationFails();
+
+    findProject.mockRejectedValueOnce({ code: FindProjectResultCode.Error });
+    await project.checkout(vid);
+
+    assertStatusMutationFails();
   });
 });

@@ -55,4 +55,18 @@ describe('utils', () => {
       expect(utils.omitTypename(complexInput)).toStrictEqual(complexOutput);
     });
   });
+
+  describe('normalizeUri', () => {
+    test('удалает последний слэш', () => {
+      expect(utils.normalizeUri('/test/')).toBe('/test');
+    });
+
+    test('удаляет повторения слэшей', () => {
+      expect(utils.normalizeUri('//test///foo/bar///')).toBe('/test/foo/bar');
+    });
+
+    test('учитывает протокол', () => {
+      expect(utils.normalizeUri('/http:///foo.bar//graphql')).toBe('http://foo.bar/graphql');
+    });
+  });
 });

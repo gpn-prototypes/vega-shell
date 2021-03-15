@@ -11,7 +11,6 @@ import {
   createHttpLink,
   createSwitchUriLink,
   ErrorHandler,
-  normalizeUri,
 } from './graphql-client';
 import { queries } from './mocks';
 
@@ -46,20 +45,6 @@ beforeEach(() => {
 
 afterEach(() => {
   fetchMock.restore();
-});
-
-describe('normalizeUri', () => {
-  test('удалает последний слэш', () => {
-    expect(normalizeUri('/test/')).toBe('/test');
-  });
-
-  test('удаляет повторения слэшей', () => {
-    expect(normalizeUri('//test///foo/bar///')).toBe('/test/foo/bar');
-  });
-
-  test('учитывает протокол', () => {
-    expect(normalizeUri('/http:///foo.bar//graphql')).toBe('http://foo.bar/graphql');
-  });
 });
 
 describe('errorLink', () => {

@@ -29,3 +29,22 @@ export function omitTypename(input: AnyValue): AnyValue {
 
   return input;
 }
+
+export function normalizeUri(uri: string): string {
+  const trimSlashRegxp = /^\/|\/$/g;
+  const trimmed = uri.replace(trimSlashRegxp, '').trim();
+  let protocol = '';
+  let path = trimmed;
+
+  if (trimmed.startsWith('http')) {
+    [protocol, path] = trimmed.split('://');
+  }
+
+  path = path.replace(/\/{2,}/g, '/').replace(trimSlashRegxp, '');
+
+  if (protocol !== '') {
+    return `${protocol}://${path}`;
+  }
+
+  return `/${path}`;
+}

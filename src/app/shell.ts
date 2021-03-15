@@ -2,7 +2,11 @@ import { ApolloLink } from '@apollo/client';
 import type { History } from 'history';
 import { createBrowserHistory } from 'history';
 
-import { CurrentProject, FindProjectResult } from '../services/current-project';
+import {
+  CurrentProject,
+  FindProjectResult,
+  FindProjectResultCode,
+} from '../services/current-project';
 import type { GraphQLClient, GraphQLClientConfig } from '../services/graphql-client';
 import { createGraphqlClient, ServerError } from '../services/graphql-client';
 import { Identity } from '../services/identity';
@@ -46,6 +50,22 @@ export class Shell {
       },
       onLogout: () => {
         this.handleLoggedInChange({ isLoggedIn: false });
+        this.graphQLClient.clearStore();
+      },
+    });
+
+    this.currentProject = new CurrentProject({
+      findProject: (vid) => {
+        return this.findProject(vid);
+      },
+      onStatusChange: (status) => {
+        this.messageBus.send({
+          channel: 'project',
+          topic: 'status',
+          payload: status,
+          self: true,
+          broadcast: false,
+        });
       },
     });
 
@@ -54,14 +74,9 @@ export class Shell {
       fetch: config.fetch,
       identity: this.identity,
       link: config.link,
+      currentProject: this.currentProject,
       onError: (error: ServerError) => {
         this.handleGraphQLClientError(error);
-      },
-    });
-
-    this.currentProject = new CurrentProject({
-      findProject: (vid) => {
-        return this.findProject(vid);
       },
     });
   }
@@ -90,18 +105,26 @@ export class Shell {
     const { data } = result;
 
     if (data.project?.__typename === 'Project') {
-      return FindProjectResult.Success;
+      const project = {
+        vid: data.project.vid as string,
+        version: data.project.version as number,
+      };
+
+      return { code: FindProjectResultCode.Success, project };
     }
 
     if (data.project?.__typename === 'Error' && data.project.code === 'PROJECT_NOT_FOUND') {
-      return FindProjectResult.NotFound;
+      return { code: FindProjectResultCode.NotFound };
     }
 
-    return FindProjectResult.Error;
+    return { code: FindProjectResultCode.Error };
   }
 
   dispose(): void {
     this.messageBus.dispose();
     this.identity.clear();
+    this.currentProject.release();
+    this.graphQLClient.clearStore();
+    this.graphQLClient.stop();
   }
 }
