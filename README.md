@@ -19,6 +19,7 @@
 ## Службы
 
 - [Identity](src/services/identity/README.md)
+- [Notifications](src/services/notifications/README.md)
 - [MessageBus](src/services/message-bus/README.md)
 - [CurrentProject](src/services/current-project/README.md)
 - [GraphQLClient](src/services/graphql-client/README.md)
