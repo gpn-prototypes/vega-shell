@@ -19,3 +19,4 @@
 ## Службы
 
 - [Identity](src/services/identity/README.md)
+- [MessageBus](src/services/message-bus/README.md)
