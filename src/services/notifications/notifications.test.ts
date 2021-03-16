@@ -18,6 +18,14 @@ describe('Notifications', () => {
     expect(notifications.getAll().length).toBe(1);
   });
 
+  it('не добавляется нотификации с одинаковым id', () => {
+    const item = { id: 'test-key', body: 'test' };
+    notifications.add(item);
+    notifications.add(item);
+
+    expect(notifications.getAll().length).toBe(1);
+  });
+
   it('нотификация удаляется', () => {
     let items;
     const item = { id: 'test-key', body: 'test' };
