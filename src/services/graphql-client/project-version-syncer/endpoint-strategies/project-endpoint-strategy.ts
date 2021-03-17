@@ -26,6 +26,7 @@ export class ProjectEndpointStrategy extends AbstractEndpointStrategy {
       return result;
     }
 
+    // в Mutation смотрим только на поле version
     if (typeof data.version === 'number') {
       return { ...project, version: data.version };
     }

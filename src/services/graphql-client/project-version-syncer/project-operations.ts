@@ -37,6 +37,7 @@ export class ProjectOperations {
 
     tracked.forEach((op) => {
       if (!hasOperationName(operation) && !hasOperationName(op)) {
+        // анонимные запросы сравниваются по телу
         if (print(operation.query) === print(op.query)) {
           tracked.delete(op);
         }
@@ -44,6 +45,8 @@ export class ProjectOperations {
         return;
       }
 
+      // если операция с таким именем уже отслеживается,
+      // то удаляем старую и добавляем новую
       if (op.operationName === operation.operationName) {
         tracked.delete(op);
       }
@@ -97,10 +100,14 @@ export class ProjectOperations {
     const staled = this.getStaledSet(vid);
 
     tracked.forEach((operation) => {
+      // игнорируем операцию, которая вызвала обновление
       if (operation === triggeredOperation) {
         return;
       }
 
+      // Считаем, что если данных нет в кэше, то они
+      // больше не используется на клиенте, и перезапрашивать
+      // их уже не нужно. Поэтому удаляем их из списка отслеживаемых
       if (!this.ctx.isCached(operation.query, operation.variables)) {
         tracked.delete(operation);
         return;

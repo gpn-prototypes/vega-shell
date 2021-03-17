@@ -45,3 +45,6 @@ if (status.code === currentProject.codes.Idle) {
 Получение текущего проекта
 
 > Для приложений, которые работают только с проектом, всегда возвращается `Project`. Обвязка делает `checkout(vid)` до того, как отрисует приложение.
+
+Любое изменение статуса регистрируется в [MessageBus](../message-bus/README.md)
+по шаблону `{ channel: 'project', topic: 'status' }`

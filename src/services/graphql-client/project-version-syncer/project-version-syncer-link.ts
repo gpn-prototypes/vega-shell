@@ -63,6 +63,8 @@ export class ProjectVersionSyncerLink extends ApolloLink {
   }
 
   onProjectOff(project: Project): void {
+    // очищаем из кэша проект,
+    // который больше не используется на клиенте
     this.cache.evict({
       id: this.cache.identify({ __typename: 'Project', vid: project.vid }),
     });
@@ -108,6 +110,10 @@ export class ProjectVersionSyncerLink extends ApolloLink {
         const staledQueriesPromises = staledOperations.map((staledOperation) => {
           return toPromise(this.request(staledOperation, forward)).then((result) => {
             this.operations.resetAttempt(staledOperation);
+
+            // обновляем кэш сами, потому что
+            // эти запросы не пойдут обратно по цепочке линков,
+            // и apollo не обновит кэш автоматически
             this.cache.writeQuery({
               query: staledOperation.query,
               variables: staledOperation.variables,
