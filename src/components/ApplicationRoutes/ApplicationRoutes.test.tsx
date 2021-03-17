@@ -1,5 +1,6 @@
 import React from 'react';
 import { act, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import fetchMock from 'fetch-mock';
 import { v4 as uuid } from 'uuid';
 
@@ -164,6 +165,25 @@ describe('ApplicationRoutes', () => {
         expect(shell.history.location.pathname).toBe('/projects/show/projectId');
         expect(screen.getByText('@vega/sp')).toBeInTheDocument();
       });
+    });
+
+    test('разлогин через кнопку', async () => {
+      fetchMock.mock(`/auth/jwt/destroy`, {
+        ok: 'ok',
+      });
+
+      const { shell } = renderComponent({ isAuth: true, route: '/projects' });
+
+      const menuButton = screen.getByLabelText('Меню');
+
+      userEvent.click(menuButton);
+
+      const logoutButton = await screen.findByLabelText('Выйти');
+
+      userEvent.click(logoutButton);
+
+      expect(shell.history.location.pathname).toBe('/login');
+      expect(screen.getByLabelText('Авторизация')).toBeInTheDocument();
     });
 
     test('если пользователь авторизан, то происходит редирект на страницу проектов', () => {
