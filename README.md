@@ -15,3 +15,7 @@
 Для запуска в dev-режиме выполните команду `yarn start`.
 
 Для сборки проекта в prod-режиме выполните `yarn build`.
+
+## Службы
+
+- [Identity](src/services/identity/README.md)
