@@ -53,7 +53,8 @@ type AuthFormComponent = React.FC<AuthFormProps> & {
 export const authErrorMessage =
   'Неверный e-mail или пароль. Проверьте введенные данные и повторите попытку.';
 
-export const AUTH_ERROR_KEY = 'auth-error';
+export const AUTH_ERROR_NOTIFICATION_KEY = 'auth-error-alert';
+export const LOGIN_ERROR_NOTIFICATION_KEY = 'login-error-alert';
 
 export const AuthForm: AuthFormComponent = (props) => {
   const { onLogin, containerClassName } = props;
@@ -64,14 +65,13 @@ export const AuthForm: AuthFormComponent = (props) => {
 
   const handleAuthSubmit = (values: State): void => {
     setIsFetching(true);
-    const id = `auth-error-alert`;
 
-    if (notifications.find(id) !== undefined) {
-      notifications.remove(id);
+    if (notifications.find(LOGIN_ERROR_NOTIFICATION_KEY) !== undefined) {
+      notifications.remove(LOGIN_ERROR_NOTIFICATION_KEY);
     }
 
-    if (notifications.find(AUTH_ERROR_KEY) !== undefined) {
-      notifications.remove(AUTH_ERROR_KEY);
+    if (notifications.find(AUTH_ERROR_NOTIFICATION_KEY) !== undefined) {
+      notifications.remove(AUTH_ERROR_NOTIFICATION_KEY);
     }
 
     onLogin(values).catch((error: LoginError) => {
@@ -79,7 +79,7 @@ export const AuthForm: AuthFormComponent = (props) => {
 
       if (error) {
         notifications.add({
-          id,
+          id: LOGIN_ERROR_NOTIFICATION_KEY,
           body,
           view: 'alert',
         });

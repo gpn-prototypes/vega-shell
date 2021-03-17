@@ -1,6 +1,6 @@
 import fetchMock from 'fetch-mock';
 
-import { Identity, IdentityConfigType } from './identity';
+import { Identity, IDENTITY_LS_KEYS, IdentityConfigType } from './identity';
 
 beforeEach(() => {
   fetchMock.reset();
@@ -54,6 +54,16 @@ describe('Identity', () => {
       expect(refreshToken).toEqual(responseBody.jwt_for_refresh);
       expect(userName?.firstName).toEqual(responseBody.first_name);
       expect(userName?.lastName).toEqual(responseBody.last_name);
+      expect(localStorage.getItem(IDENTITY_LS_KEYS.ACCESS_TOKEN)).toEqual(
+        responseBody.jwt_for_access,
+      );
+      expect(localStorage.getItem(IDENTITY_LS_KEYS.REFRESH_TOKEN)).toEqual(
+        responseBody.jwt_for_refresh,
+      );
+      expect(localStorage.getItem(IDENTITY_LS_KEYS.USER_FIRST_NAME)).toEqual(
+        responseBody.first_name,
+      );
+      expect(localStorage.getItem(IDENTITY_LS_KEYS.USER_LAST_NAME)).toEqual(responseBody.last_name);
       expect(onAuthCallback).toBeCalledTimes(1);
     });
 
@@ -87,6 +97,10 @@ describe('Identity', () => {
       expect(accessToken).toEqual(null);
       expect(refreshToken).toEqual(null);
       expect(userName).toEqual(null);
+      expect(localStorage.getItem(IDENTITY_LS_KEYS.ACCESS_TOKEN)).toEqual(null);
+      expect(localStorage.getItem(IDENTITY_LS_KEYS.REFRESH_TOKEN)).toEqual(null);
+      expect(localStorage.getItem(IDENTITY_LS_KEYS.USER_FIRST_NAME)).toEqual(null);
+      expect(localStorage.getItem(IDENTITY_LS_KEYS.USER_LAST_NAME)).toEqual(null);
       expect(onAuthCallback).toBeCalledTimes(0);
     });
   });
@@ -129,6 +143,16 @@ describe('Identity', () => {
       expect(refreshToken).toEqual(responseBody.jwt_for_refresh);
       expect(userName?.firstName).toEqual(responseBody.first_name);
       expect(userName?.lastName).toEqual(responseBody.last_name);
+      expect(localStorage.getItem(IDENTITY_LS_KEYS.ACCESS_TOKEN)).toEqual(
+        responseBody.jwt_for_access,
+      );
+      expect(localStorage.getItem(IDENTITY_LS_KEYS.REFRESH_TOKEN)).toEqual(
+        responseBody.jwt_for_refresh,
+      );
+      expect(localStorage.getItem(IDENTITY_LS_KEYS.USER_FIRST_NAME)).toEqual(
+        responseBody.first_name,
+      );
+      expect(localStorage.getItem(IDENTITY_LS_KEYS.USER_LAST_NAME)).toEqual(responseBody.last_name);
       expect(onAuthCallback).toBeCalledTimes(1);
     });
 
@@ -162,6 +186,10 @@ describe('Identity', () => {
       expect(accessToken).toEqual(null);
       expect(refreshToken).toEqual(null);
       expect(userName).toEqual(null);
+      expect(localStorage.getItem(IDENTITY_LS_KEYS.ACCESS_TOKEN)).toEqual(null);
+      expect(localStorage.getItem(IDENTITY_LS_KEYS.REFRESH_TOKEN)).toEqual(null);
+      expect(localStorage.getItem(IDENTITY_LS_KEYS.USER_FIRST_NAME)).toEqual(null);
+      expect(localStorage.getItem(IDENTITY_LS_KEYS.USER_LAST_NAME)).toEqual(null);
       expect(onAuthCallback).toBeCalledTimes(0);
     });
   });
@@ -359,6 +387,10 @@ describe('Identity', () => {
       expect(accessToken).toEqual(null);
       expect(refreshToken).toEqual(null);
       expect(userName).toEqual(null);
+      expect(localStorage.getItem(IDENTITY_LS_KEYS.ACCESS_TOKEN)).toEqual(null);
+      expect(localStorage.getItem(IDENTITY_LS_KEYS.REFRESH_TOKEN)).toEqual(null);
+      expect(localStorage.getItem(IDENTITY_LS_KEYS.USER_FIRST_NAME)).toEqual(null);
+      expect(localStorage.getItem(IDENTITY_LS_KEYS.USER_LAST_NAME)).toEqual(null);
       expect(onLogoutCallback).toBeCalledTimes(1);
       expect(fetchMock.calls().length).toEqual(1);
     });
@@ -392,6 +424,10 @@ describe('Identity', () => {
       expect(accessToken).toEqual(null);
       expect(refreshToken).toEqual(null);
       expect(userName).toEqual(null);
+      expect(localStorage.getItem(IDENTITY_LS_KEYS.ACCESS_TOKEN)).toEqual(null);
+      expect(localStorage.getItem(IDENTITY_LS_KEYS.REFRESH_TOKEN)).toEqual(null);
+      expect(localStorage.getItem(IDENTITY_LS_KEYS.USER_FIRST_NAME)).toEqual(null);
+      expect(localStorage.getItem(IDENTITY_LS_KEYS.USER_LAST_NAME)).toEqual(null);
       expect(onLogoutCallback).toBeCalledTimes(1);
       expect(fetchMock.calls().length).toEqual(0);
     });

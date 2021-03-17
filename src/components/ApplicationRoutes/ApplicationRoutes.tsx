@@ -6,7 +6,7 @@ import { useShell } from '../../app';
 import { useForceUpdate } from '../../hooks';
 import { ServerError } from '../../services/graphql-client';
 import { Application } from '../Application';
-import { AUTH_ERROR_KEY } from '../AuthForm';
+import { AUTH_ERROR_NOTIFICATION_KEY } from '../AuthForm';
 import { AuthPage } from '../AuthPage';
 import { ErrorView } from '../Error';
 import { Header } from '../Header';
@@ -33,17 +33,16 @@ const LogoutView = (): React.ReactElement | null => {
 
 export const ApplicationRoutes = (): React.ReactElement => {
   const shell = useShell();
-  const { serverError, setServerError } = shell;
-  const { bus, identity, notifications } = shell;
-
-  const lastAuthorizedRoute = useRef<string | null>(null);
-
-  const location = useLocation();
-
-  const forceUpdate = useForceUpdate();
+  const { bus, identity, notifications, serverError, setServerError } = shell;
 
   const isLoggedIn = identity.isLoggedIn();
 
+  const location = useLocation();
+  const forceUpdate = useForceUpdate();
+
+  const previousPathname = usePreviousRef(location.pathname).current;
+
+  const lastAuthorizedRoute = useRef<string | null>(null);
   const lastAuthMessage = useRef(bus.peek({ channel: 'auth', topic: 'login' }));
 
   useMount(() => {
@@ -71,7 +70,7 @@ export const ApplicationRoutes = (): React.ReactElement => {
         if (payload.code === 401) {
           identity.logout({ destroyTokens: false });
           notifications.add({
-            id: AUTH_ERROR_KEY,
+            id: AUTH_ERROR_NOTIFICATION_KEY,
             view: 'alert',
             body: AUTH_ERROR_MESSAGE,
             // Пока не показывать кнопку "Подробнее"
@@ -86,8 +85,6 @@ export const ApplicationRoutes = (): React.ReactElement => {
       errorUnsub();
     };
   });
-
-  const previousPathname = usePreviousRef(location.pathname).current;
 
   useOnChange(location.pathname, () => {
     if (previousPathname !== null && previousPathname !== location.pathname) {

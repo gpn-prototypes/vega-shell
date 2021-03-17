@@ -13,16 +13,11 @@ export type IdentityConfigType = {
   onLogout?: () => void;
 };
 
-const LS_ACCESS_TOKEN_KEY = 'access-token';
-const LS_REFRESH_TOKEN_KEY = 'refresh-token';
-const LS_USER_FIRST_NAME_KEY = 'user-first-name';
-const LS_USER_LAST_NAME_KEY = 'user-last-name';
-
-export const LS_KEYS = {
-  LS_ACCESS_TOKEN_KEY,
-  LS_REFRESH_TOKEN_KEY,
-  LS_USER_FIRST_NAME_KEY,
-  LS_USER_LAST_NAME_KEY,
+export const IDENTITY_LS_KEYS = {
+  ACCESS_TOKEN: 'access-token',
+  REFRESH_TOKEN: 'refresh-token',
+  USER_FIRST_NAME: 'user-first-name',
+  USER_LAST_NAME: 'user-last-name',
 };
 
 export class Identity {
@@ -37,7 +32,7 @@ export class Identity {
   private refreshIsActive = false;
 
   constructor(config: IdentityConfigType) {
-    const { apiUrl, accessToken = null, refreshToken = null, onAuth, onLogout } = config;
+    const { apiUrl, accessToken, refreshToken, onAuth, onLogout } = config;
 
     this.apiClient = new APIClient(apiUrl);
     this.onAuth = onAuth;
@@ -175,28 +170,28 @@ export class Identity {
   }
 
   private setTokens = (accessToken: string, refreshToken: string): void => {
-    localStorage.setItem(LS_ACCESS_TOKEN_KEY, accessToken);
-    localStorage.setItem(LS_REFRESH_TOKEN_KEY, refreshToken);
+    localStorage.setItem(IDENTITY_LS_KEYS.ACCESS_TOKEN, accessToken);
+    localStorage.setItem(IDENTITY_LS_KEYS.REFRESH_TOKEN, refreshToken);
   };
 
   public getAccessToken = (): string | null => {
-    const accessToken = localStorage.getItem(LS_ACCESS_TOKEN_KEY);
+    const accessToken = localStorage.getItem(IDENTITY_LS_KEYS.ACCESS_TOKEN);
     return accessToken;
   };
 
   public getRefreshToken = (): string | null => {
-    const refreshToken = localStorage.getItem(LS_REFRESH_TOKEN_KEY);
+    const refreshToken = localStorage.getItem(IDENTITY_LS_KEYS.REFRESH_TOKEN);
     return refreshToken;
   };
 
   private setUserName = (firstName: string, lastName: string): void => {
-    localStorage.setItem(LS_USER_FIRST_NAME_KEY, firstName);
-    localStorage.setItem(LS_USER_LAST_NAME_KEY, lastName);
+    localStorage.setItem(IDENTITY_LS_KEYS.USER_FIRST_NAME, firstName);
+    localStorage.setItem(IDENTITY_LS_KEYS.USER_LAST_NAME, lastName);
   };
 
   public getUserName = (): { firstName: string; lastName: string } | null => {
-    const firstName = localStorage.getItem(LS_USER_FIRST_NAME_KEY);
-    const lastName = localStorage.getItem(LS_USER_LAST_NAME_KEY);
+    const firstName = localStorage.getItem(IDENTITY_LS_KEYS.USER_FIRST_NAME);
+    const lastName = localStorage.getItem(IDENTITY_LS_KEYS.USER_LAST_NAME);
 
     if (firstName && lastName) {
       return { firstName, lastName };
@@ -206,9 +201,9 @@ export class Identity {
   };
 
   public clear = (): void => {
-    localStorage.removeItem(LS_ACCESS_TOKEN_KEY);
-    localStorage.removeItem(LS_REFRESH_TOKEN_KEY);
-    localStorage.removeItem(LS_USER_FIRST_NAME_KEY);
-    localStorage.removeItem(LS_USER_LAST_NAME_KEY);
+    localStorage.removeItem(IDENTITY_LS_KEYS.ACCESS_TOKEN);
+    localStorage.removeItem(IDENTITY_LS_KEYS.REFRESH_TOKEN);
+    localStorage.removeItem(IDENTITY_LS_KEYS.USER_FIRST_NAME);
+    localStorage.removeItem(IDENTITY_LS_KEYS.USER_LAST_NAME);
   };
 }
