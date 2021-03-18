@@ -20,6 +20,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  localStorage.clear();
   fetchMock.restore();
 });
 
@@ -29,17 +30,26 @@ const URI = '/graphql-uri';
 
 const fetchResult: FetchResult = { data: { foo: 'bar' } };
 
-const createMockClient = (config?: Partial<GraphQLClientConfig>) =>
-  createGraphqlClient({
+const createMockClient = (config: Partial<GraphQLClientConfig> = {}) => {
+  const { identity, ...rest } = config;
+
+  return createGraphqlClient({
     onError: jest.fn(),
     uri: URI,
-    identity: new Identity({ apiUrl: '/api' }),
+    identity:
+      identity ??
+      new Identity({
+        apiUrl: '/api',
+        accessToken: mockValidToken(),
+        refreshToken: mockValidToken(),
+      }),
     currentProject: {
       get: jest.fn().mockReturnValue(null),
       setVersion: jest.fn(),
     },
-    ...config,
+    ...rest,
   });
+};
 
 describe('createGraphqlClient', () => {
   test('выставляет хедер Authorization при наличии токена', async () => {
@@ -66,6 +76,24 @@ describe('createGraphqlClient', () => {
     expect(request?.headers).toMatchObject({
       Authorization: `Bearer ${token}`,
     });
+  });
+
+  test('бросает ошибку при отсутствии токена', async () => {
+    fetchMock.post(`${URI}`, makePromise(fetchResult));
+
+    const defaultIdentity = new Identity({ apiUrl: '/api' });
+
+    const handleError = jest.fn();
+
+    const client = createMockClient({ identity: defaultIdentity, onError: handleError });
+
+    await expect(
+      client.query({
+        query: queries.sample,
+      }),
+    ).rejects.toThrow();
+
+    expect(handleError).toBeCalledWith({ code: 401, message: 'unauthorized' });
   });
 
   test('меняет uri, если в контексте содержится projectVid', async () => {
