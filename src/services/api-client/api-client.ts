@@ -6,10 +6,10 @@ export type UserDataType = {
 };
 
 type AuthObtainResponse = {
-  first_name: string;
-  last_name: string;
-  jwt_for_access: string;
-  jwt_for_refresh: string;
+  first_name?: string;
+  last_name?: string;
+  jwt_for_access?: string;
+  jwt_for_refresh?: string;
 };
 
 type AuthRefreshResponse = {
