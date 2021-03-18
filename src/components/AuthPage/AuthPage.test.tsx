@@ -33,7 +33,7 @@ describe('AuthPage', () => {
 
       const { shell } = renderComponent();
 
-      expect(shell.identity.isLoggedIn()).not.toBeTruthy();
+      expect(shell.identity.isLoggedIn()).toBeFalsy();
 
       login();
 
@@ -58,7 +58,7 @@ describe('AuthPage', () => {
 
       const { shell } = renderComponent();
 
-      expect(shell.identity.isLoggedIn()).not.toBeTruthy();
+      expect(shell.identity.isLoggedIn()).toBeFalsy();
 
       login();
 
