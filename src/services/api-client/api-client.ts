@@ -30,12 +30,12 @@ type FailedResponse = {
   Error: ErrorType;
 };
 
-type ErrorMessageFunction = (statusText: string) => string;
+type ErrorMessageFunction = (error: string | number) => string;
 
 export const ERROR_MESSAGE_FUNCTIONS = {
-  AUTH: (statusText: string): string =>
-    `При входе в систему возникла ошибка: ${statusText}. Попробуйте снова или обратитесь в Службу технической поддержки`,
-  DEFAULT: (statusText: string): string => statusText,
+  AUTH: (error: string | number): string =>
+    `При входе в систему возникла ошибка: ${error}. Попробуйте снова или обратитесь в Службу технической поддержки`,
+  DEFAULT: (error: string | number): string => error.toString(),
 };
 
 const handleResponseError = async <T>(
@@ -48,7 +48,9 @@ const handleResponseError = async <T>(
   } catch {
     const error = {
       code: response.status,
-      message: getErrorMessage(response.statusText),
+      message: getErrorMessage(
+        response.status + (response.statusText ? ` ${response.statusText}` : ''),
+      ),
     };
 
     return Promise.reject(error);
