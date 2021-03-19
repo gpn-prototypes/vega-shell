@@ -16,14 +16,14 @@ describe('Notification', () => {
     });
 
     it('текст обрезается', () => {
-      expect(notification.body).toEqual('Lorem...');
+      expect(notification.body).toEqual('Lo...');
     });
 
     it('переключение текста', () => {
       notification.toggleShowMore();
       expect(notification.body).toEqual('Lorem ipsum dolor sit amet');
       notification.toggleShowMore();
-      expect(notification.body).toEqual('Lorem...');
+      expect(notification.body).toEqual('Lo...');
     });
   });
   it('скрытие текста не происходит, если недостаточно символов', () => {

@@ -68,7 +68,7 @@ export const Snackbar = (): React.ReactElement => {
         if (visibleActionShowMore) {
           actions = [
             {
-              label: !item.visibleMore ? 'Показать' : 'Свернуть',
+              label: !item.visibleMore ? 'Подробнее' : 'Свернуть',
               onClick() {
                 item.toggleShowMore();
                 shell.notifications.publish('change', {
@@ -111,7 +111,11 @@ export const Snackbar = (): React.ReactElement => {
 
   return renderPortalWithTheme(
     <div className={styles.container}>
-      <BaseSnackbar items={notifications} className={styles.snackbar} data-testid="Notifications" />
+      <BaseSnackbar
+        items={notifications.slice(-2)}
+        className={styles.snackbar}
+        data-testid="Notifications"
+      />
     </div>,
     document.body,
   );

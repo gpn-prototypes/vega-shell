@@ -3,7 +3,7 @@ import { Action } from '../types';
 
 export type View = 'normal' | 'system' | 'success' | 'warning' | 'alert';
 
-const TWO_ROW_SYMBOLS = 75;
+const TWO_ROW_SYMBOLS = 81;
 
 type OnCloseAction = { action: string; payload: any };
 
@@ -56,7 +56,7 @@ export class Notification {
       view = 'normal',
       shared = false,
       closable = true,
-      withShowMore = false,
+      withShowMore = true,
       truncatedLength = TWO_ROW_SYMBOLS,
     } = props;
 
@@ -77,7 +77,7 @@ export class Notification {
   }
 
   static truncate(text: string, length: number): string {
-    return `${text.slice(0, length)}...`;
+    return `${text.slice(0, length - 3)}...`;
   }
 
   public toggleShowMore(): void {

@@ -78,12 +78,19 @@ export class Notifications {
 
   public add(props: AddNotificationProps | AddNotificationCallback): void {
     const uid = uuidv4();
+
+    const isNotificationExists = typeof props !== 'function' && props.id && this.find(props.id);
+
+    if (isNotificationExists) {
+      return;
+    }
+
     const notificationProps =
       typeof props === 'function' ? props({ id: uid }) : { ...props, id: props.id ?? uid };
 
     const item = new Notification(notificationProps);
 
-    this.items = [...this.items, item];
+    this.items = [item, ...this.items];
 
     this.publish('change', { items: this.items });
 
