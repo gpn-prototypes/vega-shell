@@ -39,4 +39,4 @@ docker run \
   --env BASE_API_URL=$BASE_API_URL \
   --env VEGA_SCHEMA_PATH=$VEGA_SCHEMA_PATH \
   $TAG \
-  /app/ci/build-entrypoint.sh
+  /app/ci/build-entrypoint.sh $@

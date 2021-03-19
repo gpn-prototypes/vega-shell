@@ -38,4 +38,10 @@ sed -e "s/\$NPM_URI/$NPM_URI/" \
 
 yarn install --frozen-lockfile
 yarn generate:types
-yarn build
+
+if [ "$1" = "--withTest" ]
+then
+  yarn test && yarn build
+else
+  yarn build
+fi
