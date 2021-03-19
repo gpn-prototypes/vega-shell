@@ -21,3 +21,8 @@
 - [Identity](src/services/identity/README.md)
 - [MessageBus](src/services/message-bus/README.md)
 - [CurrentProject](src/services/current-project/README.md)
+- [GraphQLClient](src/services/graphql-client/README.md)
+
+## Конкурентный доступ
+
+- [Синхронизация версии проекта](src/services/graphql-client/project-version-syncer/README.md)
