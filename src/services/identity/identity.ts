@@ -18,6 +18,8 @@ const LS_REFRESH_TOKEN_KEY = 'refresh-token';
 const LS_USER_FIRST_NAME_KEY = 'user-first-name';
 const LS_USER_LAST_NAME_KEY = 'user-last-name';
 
+const LS_AUTH_KEY = 'user-auth';
+
 export const LS_KEYS = {
   LS_ACCESS_TOKEN_KEY,
   LS_REFRESH_TOKEN_KEY,
@@ -48,13 +50,19 @@ export class Identity {
     }
   }
 
-  public auth = async (userData: UserDataType): Promise<string> => {
+  public auth = async (userData: UserDataType): Promise<string | undefined> => {
     try {
       const res = await this.apiClient.auth(userData);
 
-      this.setTokens(res.jwt_for_access, res.jwt_for_refresh);
-      this.setUserName(res.first_name, res.last_name);
+      if (res.jwt_for_access !== undefined && res.jwt_for_refresh !== undefined) {
+        this.setTokens(res.jwt_for_access, res.jwt_for_refresh);
+      } else {
+        this.setAuth(true);
+      }
 
+      if (res.first_name !== undefined && res.last_name !== undefined) {
+        this.setUserName(res.first_name, res.last_name);
+      }
       if (this.onAuth) {
         this.onAuth();
       }
@@ -65,12 +73,19 @@ export class Identity {
     }
   };
 
-  public authSSO = async (): Promise<string> => {
+  public authSSO = async (): Promise<string | undefined> => {
     try {
       const res = await this.apiClient.authSSO();
 
-      this.setTokens(res.jwt_for_access, res.jwt_for_refresh);
-      this.setUserName(res.first_name, res.last_name);
+      if (res.jwt_for_access !== undefined && res.jwt_for_refresh !== undefined) {
+        this.setTokens(res.jwt_for_access, res.jwt_for_refresh);
+      } else {
+        this.setAuth(true);
+      }
+
+      if (res.first_name !== undefined && res.last_name !== undefined) {
+        this.setUserName(res.first_name, res.last_name);
+      }
 
       if (this.onAuth) {
         this.onAuth();
@@ -167,6 +182,10 @@ export class Identity {
     const accessToken = this.getAccessToken();
     const refreshToken = this.getRefreshToken();
 
+    if (this.getAuth() === 'true') {
+      return true;
+    }
+
     if (accessToken !== null && refreshToken !== null && isTokenValid(refreshToken)) {
       return true;
     }
@@ -187,6 +206,14 @@ export class Identity {
   public getRefreshToken = (): string | null => {
     const refreshToken = localStorage.getItem(LS_REFRESH_TOKEN_KEY);
     return refreshToken;
+  };
+
+  public getAuth = (): string | null => {
+    return localStorage.getItem(LS_AUTH_KEY);
+  };
+
+  private setAuth = (isAuth: boolean): void => {
+    localStorage.setItem(LS_AUTH_KEY, String(isAuth));
   };
 
   private setUserName = (firstName: string, lastName: string): void => {
@@ -210,5 +237,6 @@ export class Identity {
     localStorage.removeItem(LS_REFRESH_TOKEN_KEY);
     localStorage.removeItem(LS_USER_FIRST_NAME_KEY);
     localStorage.removeItem(LS_USER_LAST_NAME_KEY);
+    localStorage.removeItem(LS_AUTH_KEY);
   };
 }
