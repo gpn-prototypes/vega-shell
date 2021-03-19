@@ -17,6 +17,9 @@ export type DispatchPayload<T> = T;
 type AddNotificationProps = { id?: string } & Omit<NotificationProps, 'id'>;
 type AddNotificationCallback = ({ id }: { id: string }) => NotificationProps;
 
+/**
+ * Нотификации
+ */
 export class Notifications {
   public messageBus: MessageBus;
 
