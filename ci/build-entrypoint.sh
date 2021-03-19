@@ -19,6 +19,18 @@ then
   exit 1;
 fi
 
+if [ -z "$BASE_URL" ]
+then
+  echo "BASE_URL is required to continue. Abort."
+  exit 1;
+fi
+
+if [ -z "$HOST_NAME" ]
+then
+  echo "HOST_NAME is required to continue. Abort."
+  exit 1;
+fi
+
 if [ -z "$VEGA_SCHEMA_PATH" ]
 then
   echo "VEGA_SCHEMA_PATH is required to continue. Abort."

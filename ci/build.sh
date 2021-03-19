@@ -17,6 +17,13 @@ then
   FE_BUILDER_VERSION="1"
 fi
 
+if [ -z "$BASE_URL" ]
+then
+  echo "BASE_URL is required to continue. Abort."
+  exit 1;
+fi
+
+
 TAG="$VEGA_REPOPREFIX/$IMAGE_NAME:$FE_BUILDER_VERSION"
 NAME="$VEGA_REPOPREFIX.$IMAGE_NAME"
 
@@ -37,6 +44,10 @@ docker run \
   --env NPM_URI=$NPM_URI \
   --env NPM_AUTH_TOKEN=$NPM_AUTH_TOKEN \
   --env BASE_API_URL=$BASE_API_URL \
+  --env BASE_URL=$BASE_URL \
+  --env HOST_NAME=$HOST_NAME \
+  --env YC_DEPLOYMENT=$YC_DEPLOYMENT \
+  --env VEGA_ENV=$VEGA_ENV \
   --env VEGA_SCHEMA_PATH=$VEGA_SCHEMA_PATH \
   $TAG \
   /app/ci/build-entrypoint.sh
