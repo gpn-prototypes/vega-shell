@@ -32,6 +32,26 @@ describe('ApplicationRoutes', () => {
     expect(renderComponent).not.toThrow();
   });
 
+  test('уведомления с ошибкой пропадают при смене роута', () => {
+    const { shell } = renderComponent({ isAuth: true, route: '/projects' });
+
+    function getAlertNotifications() {
+      return shell.notifications.getAll().filter((n) => n.view === 'alert');
+    }
+
+    act(() => {
+      shell.notifications.add({ body: 'test', view: 'alert' });
+    });
+
+    expect(getAlertNotifications()).not.toStrictEqual([]);
+
+    act(() => {
+      shell.history.push('/');
+    });
+
+    expect(getAlertNotifications()).toStrictEqual([]);
+  });
+
   describe('авторизация', () => {
     test('при авторизации по умолчанию происходит редирект на страницу проектов', async () => {
       fetchMock.mock(`/auth/jwt/obtain`, {
