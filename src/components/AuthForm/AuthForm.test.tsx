@@ -13,7 +13,13 @@ import {
   waitFor,
 } from '../../testing';
 
-import { AUTH_ERROR_KEY, authErrorMessage, AuthForm, AuthFormProps } from './AuthForm';
+import {
+  AUTH_ERROR_NOTIFICATION_KEY,
+  authErrorMessage,
+  AuthForm,
+  AuthFormProps,
+  LOGIN_ERROR_NOTIFICATION_KEY,
+} from './AuthForm';
 
 function renderComponent(props: AuthFormProps, beforeRender?: BeforeRenderFn): RenderResultShell {
   return render(<AuthForm {...props} />, { beforeRender });
@@ -84,7 +90,7 @@ describe('AuthForm', () => {
     await waitFor(() => {
       expect(shell.notifications.getAll()).toEqual(
         expect.arrayContaining([
-          expect.objectContaining({ id: 'auth-error-alert', body: authErrorMessage }),
+          expect.objectContaining({ id: LOGIN_ERROR_NOTIFICATION_KEY, body: authErrorMessage }),
         ]),
       );
     });
@@ -102,15 +108,21 @@ describe('AuthForm', () => {
 
     await waitFor(() => {
       expect(shell.notifications.getAll()).toEqual(
-        expect.arrayContaining([expect.objectContaining({ id: 'auth-error-alert', body })]),
+        expect.arrayContaining([
+          expect.objectContaining({ id: LOGIN_ERROR_NOTIFICATION_KEY, body }),
+        ]),
       );
     });
   });
 
   test('удаляет нотификации перед запросом', async () => {
     const result = renderComponent({ onLogin }, ({ shell }) => {
-      shell.notifications.add({ id: AUTH_ERROR_KEY, view: 'alert', body: 'Ошибка' });
-      shell.notifications.add({ id: 'auth-error-alert', view: 'alert', body: 'Ошибка 2' });
+      shell.notifications.add({ id: AUTH_ERROR_NOTIFICATION_KEY, view: 'alert', body: 'Ошибка' });
+      shell.notifications.add({
+        id: LOGIN_ERROR_NOTIFICATION_KEY,
+        view: 'alert',
+        body: 'Ошибка 2',
+      });
 
       expect(shell.notifications.getAll()).toHaveLength(2);
     });

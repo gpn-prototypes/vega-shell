@@ -7,7 +7,7 @@ import { IMocks, makeExecutableSchema } from 'apollo-server';
 import faker from 'faker';
 
 import { Shell } from '../app';
-import { LS_KEYS } from '../services/identity';
+import { IDENTITY_LS_KEYS } from '../services/identity';
 import { mockValidToken } from '../services/identity/tokenHandlers';
 
 import { addCleanupTask } from './cleanup';
@@ -69,16 +69,16 @@ export const configureShell = (options: Options = {}): Shell => {
       lastName: userOpts?.lastName ?? 'Last',
     };
 
-    localStorage.setItem(LS_KEYS.LS_ACCESS_TOKEN_KEY, mockValidToken());
-    localStorage.setItem(LS_KEYS.LS_REFRESH_TOKEN_KEY, mockValidToken());
-    localStorage.setItem(LS_KEYS.LS_USER_FIRST_NAME_KEY, user.firstName);
-    localStorage.setItem(LS_KEYS.LS_USER_LAST_NAME_KEY, user.lastName);
+    localStorage.setItem(IDENTITY_LS_KEYS.ACCESS_TOKEN, mockValidToken());
+    localStorage.setItem(IDENTITY_LS_KEYS.REFRESH_TOKEN, mockValidToken());
+    localStorage.setItem(IDENTITY_LS_KEYS.USER_FIRST_NAME, user.firstName);
+    localStorage.setItem(IDENTITY_LS_KEYS.USER_LAST_NAME, user.lastName);
 
     addCleanupTask(() => {
-      localStorage.removeItem(LS_KEYS.LS_ACCESS_TOKEN_KEY);
-      localStorage.removeItem(LS_KEYS.LS_REFRESH_TOKEN_KEY);
-      localStorage.removeItem(LS_KEYS.LS_USER_FIRST_NAME_KEY);
-      localStorage.removeItem(LS_KEYS.LS_USER_LAST_NAME_KEY);
+      localStorage.removeItem(IDENTITY_LS_KEYS.ACCESS_TOKEN);
+      localStorage.removeItem(IDENTITY_LS_KEYS.REFRESH_TOKEN);
+      localStorage.removeItem(IDENTITY_LS_KEYS.USER_FIRST_NAME);
+      localStorage.removeItem(IDENTITY_LS_KEYS.USER_LAST_NAME);
     });
   }
 

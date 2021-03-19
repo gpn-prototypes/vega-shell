@@ -1,5 +1,6 @@
 import React from 'react';
 import { act, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import fetchMock from 'fetch-mock';
 import { v4 as uuid } from 'uuid';
 
@@ -67,6 +68,7 @@ describe('ApplicationRoutes', () => {
 
       await waitFor(() => {
         expect(shell.history.location.pathname).toBe('/projects');
+        expect(screen.getByText('@vega/sp')).toBeInTheDocument();
       });
     });
 
@@ -84,9 +86,8 @@ describe('ApplicationRoutes', () => {
 
       await waitFor(() => {
         expect(shell.history.location.pathname).toBe('/projects');
+        expect(screen.getByText('@vega/sp')).toBeInTheDocument();
       });
-
-      localStorage.clear();
     });
 
     test('при авторизации при наличии redirectTo происходит редирект на redirectTo', async () => {
@@ -108,6 +109,7 @@ describe('ApplicationRoutes', () => {
         expect(shell.history.location.pathname).toBe('/projects/show/projectId');
       });
     });
+
     test('при очистке токенов и попытке перейти на другую страницу происходит переход на страницу авторизации', async () => {
       const { shell } = renderComponent({ isAuth: true, route: '/projects' });
 
@@ -127,6 +129,64 @@ describe('ApplicationRoutes', () => {
         shell.identity.logout({ destroyTokens: false });
       });
 
+      expect(screen.getByLabelText('Авторизация')).toBeInTheDocument();
+    });
+
+    test('при разавторизации происходит переход на страницу авторизации, при повторной авторизации пользователя редиректит обратно', async () => {
+      const createSuccessMock = (id: string) => ({
+        data: {
+          project: {
+            __typename: 'Project',
+            vid: id,
+          },
+        },
+      });
+
+      fetchMock.mock('/graphql', createSuccessMock);
+
+      const { shell } = renderComponent({ isAuth: true, route: '/projects/show/projectId' });
+
+      act(() => {
+        shell.identity.logout({ destroyTokens: false });
+      });
+
+      expect(screen.getByLabelText('Авторизация')).toBeInTheDocument();
+
+      fetchMock.mock(`/auth/jwt/obtain`, {
+        first_name: 'First',
+        last_name: 'Last',
+        jwt_for_access: mockValidToken(),
+        jwt_for_refresh: mockValidToken(),
+      });
+
+      login();
+
+      await waitFor(() => {
+        expect(shell.history.location.pathname).toBe('/projects/show/projectId');
+        expect(screen.getByText('@vega/sp')).toBeInTheDocument();
+      });
+    });
+
+    test('разлогин через кнопку', async () => {
+      fetchMock.mock(`/auth/jwt/destroy`, {
+        ok: 'ok',
+      });
+
+      const { shell } = renderComponent({ isAuth: true, route: '/projects' });
+
+      const menuButton = screen.getByRole('button', { name: 'Меню' });
+
+      userEvent.click(menuButton);
+
+      await act(async () => {
+        // без этого появлятеся ворнинг на act
+      });
+
+      const logoutButton = screen.getByText('Выйти');
+
+      userEvent.click(logoutButton);
+
+      expect(shell.history.location.pathname).toBe('/login');
       expect(screen.getByLabelText('Авторизация')).toBeInTheDocument();
     });
 

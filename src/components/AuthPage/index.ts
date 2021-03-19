@@ -1,1 +1,1 @@
-export { AuthPage, AUTH_SSO_ERROR_NOTIFICATION_KEY } from './AuthPage';
+export { AuthPage, LOGIN_SSO_ERROR_NOTIFICATION_KEY } from './AuthPage';

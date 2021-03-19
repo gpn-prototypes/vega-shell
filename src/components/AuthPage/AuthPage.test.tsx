@@ -4,7 +4,7 @@ import fetchMock from 'fetch-mock';
 import { mockValidToken } from '../../services/identity/tokenHandlers';
 import { BeforeRenderFn, login, render, RenderResultShell, screen, waitFor } from '../../testing';
 
-import { AUTH_SSO_ERROR_NOTIFICATION_KEY, AuthPage } from './AuthPage';
+import { AuthPage, LOGIN_SSO_ERROR_NOTIFICATION_KEY } from './AuthPage';
 
 function renderComponent(beforeRender?: BeforeRenderFn): RenderResultShell {
   return render(<AuthPage />, {
@@ -23,7 +23,7 @@ describe('AuthPage', () => {
   });
 
   describe('авторизация по логину и паролю', () => {
-    test('авторизует пользователя', async () => {
+    test('успешная авторизация', async () => {
       fetchMock.mock(`/auth/jwt/obtain`, {
         first_name: 'First',
         last_name: 'Last',
@@ -33,7 +33,7 @@ describe('AuthPage', () => {
 
       const { shell } = renderComponent();
 
-      expect(shell.identity.isLoggedIn()).not.toBeTruthy();
+      expect(shell.identity.isLoggedIn()).toBeFalsy();
 
       login();
 
@@ -41,16 +41,39 @@ describe('AuthPage', () => {
         expect(shell.identity.isLoggedIn()).toBeTruthy();
       });
     });
+
+    test('обработка ошибки', async () => {
+      fetchMock.mock(
+        { url: `/auth/jwt/obtain`, method: 'POST' },
+        {
+          status: 401,
+          body: JSON.stringify({
+            Error: {
+              code: 'Ошибка',
+              message: 'Описание ошибки',
+            },
+          }),
+        },
+      );
+
+      const { shell } = renderComponent();
+
+      expect(shell.identity.isLoggedIn()).toBeFalsy();
+
+      login();
+
+      await waitFor(() => {
+        expect(shell.identity.isLoggedIn()).toBeFalsy();
+      });
+    });
   });
 
-  describe('SSO', () => {
+  describe('авторизация через SSO', () => {
     beforeEach(() => {
       localStorage.setItem('useUnstableAuthSSO', 'true');
-      fetchMock.mock(`/auth/sso/login`, () => Promise.reject());
     });
 
-    test('авторизует через SSO', async () => {
-      fetchMock.restore();
+    test('успешная авторизация', async () => {
       fetchMock.mock(`/auth/sso/login`, {
         first_name: 'First',
         last_name: 'Last',
@@ -65,13 +88,15 @@ describe('AuthPage', () => {
       });
     });
 
-    test('обрабатывает ошибку входа через SSO', async () => {
+    test('обработка ошибки', async () => {
+      fetchMock.mock(`/auth/sso/login`, () => Promise.reject());
+
       const { shell } = renderComponent();
 
       await waitFor(() => {
         expect(shell.notifications.getAll()).toEqual(
           expect.arrayContaining([
-            expect.objectContaining({ id: AUTH_SSO_ERROR_NOTIFICATION_KEY, view: 'alert' }),
+            expect.objectContaining({ id: LOGIN_SSO_ERROR_NOTIFICATION_KEY, view: 'alert' }),
           ]),
         );
       });
@@ -94,7 +119,7 @@ describe('AuthPage', () => {
         shell.notifications.add({
           view: 'alert',
           body: 'testing',
-          id: AUTH_SSO_ERROR_NOTIFICATION_KEY,
+          id: LOGIN_SSO_ERROR_NOTIFICATION_KEY,
         });
 
         expect(shell.notifications.getAll()).toHaveLength(1);
