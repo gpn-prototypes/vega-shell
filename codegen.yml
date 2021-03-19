@@ -17,9 +17,6 @@ generates:
     config:
       scalars:
         UUID: string
-  ./graphql.schema.json:
-    plugins:
-      - 'introspection'
   src/:
     preset: near-operation-file
     presetConfig:
