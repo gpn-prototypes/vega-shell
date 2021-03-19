@@ -94,7 +94,11 @@ export const ApplicationRoutes = (): React.ReactElement => {
       }
 
       notifications.getAll().forEach((item) => {
-        if (item.view === 'alert' && item.id === AUTH_ERROR_KEY && location.pathname === '/login') {
+        if (
+          item.view === 'alert' &&
+          item.id === AUTH_ERROR_NOTIFICATION_KEY &&
+          location.pathname === '/login'
+        ) {
           return;
         }
 

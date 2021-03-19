@@ -174,11 +174,15 @@ describe('ApplicationRoutes', () => {
 
       const { shell } = renderComponent({ isAuth: true, route: '/projects' });
 
-      const menuButton = screen.getByLabelText('Меню');
+      const menuButton = screen.getByRole('button', { name: 'Меню' });
 
       userEvent.click(menuButton);
 
-      const logoutButton = await screen.findByLabelText('Выйти');
+      await act(async () => {
+        // без этого появлятеся ворнинг на act
+      });
+
+      const logoutButton = screen.getByText('Выйти');
 
       userEvent.click(logoutButton);
 
