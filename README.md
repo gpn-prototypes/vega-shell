@@ -20,3 +20,4 @@
 
 - [Identity](src/services/identity/README.md)
 - [MessageBus](src/services/message-bus/README.md)
+- [CurrentProject](src/services/current-project/README.md)
