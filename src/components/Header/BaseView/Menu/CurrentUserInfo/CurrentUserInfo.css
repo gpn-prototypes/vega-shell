@@ -1,0 +1,22 @@
+.CurrentUserInfo {
+  padding-right: var(--space-s);
+  padding-left: var(--space-s);
+  padding-bottom: var(--space-2xs);
+
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+
+  &__avatar {
+    margin-right: var(--space-xs);
+
+    width: 40px;
+    height: 40px;
+  }
+
+  &__name {
+    min-width: 0;
+
+    word-wrap: break-word;
+  }
+}

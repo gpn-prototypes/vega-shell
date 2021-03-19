@@ -13,12 +13,15 @@ import { mockValidToken } from '../services/identity/tokenHandlers';
 import { addCleanupTask } from './cleanup';
 import { resolveTypes } from './resolve-types';
 
-export * from '@testing-library/react';
-
 export type SchemaResolvers = IMocks;
 
+export interface User {
+  firstName: string;
+  lastName: string;
+}
 interface Options {
   isAuth?: boolean;
+  user?: Partial<User>;
   baseApiUrl?: string;
   resolvers?: SchemaResolvers;
 }
@@ -58,15 +61,24 @@ function createSchemaLink(resolvers: SchemaResolvers): SchemaLink {
 }
 
 export const configureShell = (options: Options = {}): Shell => {
-  const { isAuth = false, baseApiUrl = '', resolvers } = options;
+  const { user: userOpts, isAuth = false, baseApiUrl = '', resolvers } = options;
 
   if (isAuth) {
+    const user: User = {
+      firstName: userOpts?.firstName ?? 'First',
+      lastName: userOpts?.lastName ?? 'Last',
+    };
+
     localStorage.setItem(LS_KEYS.LS_ACCESS_TOKEN_KEY, mockValidToken());
     localStorage.setItem(LS_KEYS.LS_REFRESH_TOKEN_KEY, mockValidToken());
+    localStorage.setItem(LS_KEYS.LS_USER_FIRST_NAME_KEY, user.firstName);
+    localStorage.setItem(LS_KEYS.LS_USER_LAST_NAME_KEY, user.lastName);
 
     addCleanupTask(() => {
       localStorage.removeItem(LS_KEYS.LS_ACCESS_TOKEN_KEY);
       localStorage.removeItem(LS_KEYS.LS_REFRESH_TOKEN_KEY);
+      localStorage.removeItem(LS_KEYS.LS_USER_FIRST_NAME_KEY);
+      localStorage.removeItem(LS_KEYS.LS_USER_LAST_NAME_KEY);
     });
   }
 

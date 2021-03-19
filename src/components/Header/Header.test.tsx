@@ -5,16 +5,15 @@ import { v4 as uuid } from 'uuid';
 
 import {
   act,
+  Options,
   render,
   RenderResultShell,
   renderWithServerError,
   screen,
   waitRequests,
 } from '../../testing';
-import { BaseHeaderMenu } from '../BaseHeader/BaseHeaderMenu';
 
 import { Header } from './Header';
-import { HeaderView, LS_USER_FIRST_NAME_KEY, LS_USER_LAST_NAME_KEY } from './HeaderView';
 
 const vid = uuid();
 
@@ -34,50 +33,49 @@ const resolver = {
   },
 };
 
-type RenderOptions = {
-  initialRoute?: string;
-};
-
-function renderComponent(options: RenderOptions = {}): RenderResultShell {
-  return render(<Header />, {
-    shell: { customResolvers: resolver },
-    isAuth: true,
-    route: options.initialRoute ?? `/projects/show/${vid}`,
-  });
-}
-
 describe('Header', () => {
-  test('рендерится без ошибок', async () => {
-    await act(async () => {
-      expect(renderComponent).not.toThrow();
-    });
-  });
-
   describe('Проектный хедер', () => {
+    function renderComponent(options: Options = {}): RenderResultShell {
+      return render(<Header />, {
+        shell: { customResolvers: resolver },
+        isAuth: true,
+        route: `/projects/show/${vid}`,
+        ...options,
+      });
+    }
+
     test('отображается название проекта', async () => {
+      const { shell } = renderComponent();
+
       await act(async () => {
-        renderComponent();
+        const checkout = shell.currentProject.checkout(vid);
+        expect(await screen.findByLabelText('Загрузка имени проекта')).toBeInTheDocument();
+        await checkout;
       });
 
-      await waitRequests();
-
-      expect(await screen.findByTestId(BaseHeaderMenu.testId.title)).toHaveTextContent(name);
+      expect(screen.getByText(name)).toBeInTheDocument();
     });
 
-    test('не отображает название проекта при загрузке', async () => {
-      renderComponent();
+    test('отображаются разделы проекта', async () => {
+      const { shell } = renderComponent();
 
-      expect(screen.queryByTestId(BaseHeaderMenu.testId.title)).not.toBeInTheDocument();
+      await act(async () => {
+        await shell.currentProject.checkout(vid);
+      });
 
-      await waitRequests();
-
-      expect(screen.queryByTestId(BaseHeaderMenu.testId.title)).toBeInTheDocument();
+      expect(screen.getByLabelText('Разделы проекта')).toBeInTheDocument();
+      expect(screen.getByText('О проекте')).toBeInTheDocument();
+      expect(screen.getByText('Ресурсная база')).toBeInTheDocument();
+      expect(screen.getByText('Логика проекта')).toBeInTheDocument();
+      expect(screen.getByText('Экономика проекта')).toBeInTheDocument();
     });
 
     test('управляет переходом по вкладкам', async () => {
       const { shell } = renderComponent();
 
-      await waitRequests();
+      await act(async () => {
+        await shell.currentProject.checkout(vid);
+      });
 
       const tabList = screen.getAllByRole('tab');
 
@@ -98,28 +96,52 @@ describe('Header', () => {
   });
 
   describe('Общий хедер', () => {
+    function renderComponent(options: Options = {}): RenderResultShell {
+      return render(<Header />, {
+        shell: { customResolvers: resolver },
+        isAuth: true,
+        route: '/projects',
+        ...options,
+      });
+    }
+
+    async function openMenu() {
+      const menuButton = screen.getByRole('button', { name: 'Меню' });
+
+      userEvent.click(menuButton);
+
+      await act(async () => {
+        // без этого появлятеся ворнинг на act
+      });
+    }
+
     test('не отображается при наличии ошибки', async () => {
       renderWithServerError(<Header />, { code: 500, message: 'server-error' });
 
       await waitRequests();
 
-      expect(screen.queryByTestId(HeaderView.testId.root)).not.toBeInTheDocument();
+      expect(screen.queryByRole('header')).not.toBeInTheDocument();
+    });
+
+    test('меню закрывается при клике вне меню', async () => {
+      renderComponent();
+
+      await openMenu();
+
+      expect(screen.queryByRole('menu')).toBeVisible();
+
+      userEvent.click(document.body);
+
+      expect(screen.queryByRole('menu')).not.toBeInTheDocument();
     });
 
     test('отображает имя и фамилию пользователя', async () => {
-      localStorage.setItem(LS_USER_LAST_NAME_KEY, 'Last');
-      localStorage.setItem(LS_USER_FIRST_NAME_KEY, 'First');
-      renderComponent();
+      renderComponent({ user: { firstName: 'First', lastName: 'Last' } });
 
       await waitRequests();
+      await openMenu();
 
-      const menuButton = screen.getByLabelText('Меню');
-
-      userEvent.click(menuButton);
-
-      expect(await screen.findByTestId(HeaderView.testId.username)).toHaveTextContent('First Last');
-
-      localStorage.clear();
+      expect(screen.queryByText('First Last')).toBeInTheDocument();
     });
 
     test('выход из системы', async () => {
@@ -127,15 +149,25 @@ describe('Header', () => {
 
       await waitRequests();
 
-      const menuButton = screen.getByLabelText('Меню');
+      await openMenu();
 
-      userEvent.click(menuButton);
-
-      const logoutButton = await screen.findByLabelText('Выйти');
+      const logoutButton = screen.getByText('Выйти');
 
       userEvent.click(logoutButton);
 
       expect(shell.history.location.pathname).toBe('/logout');
+    });
+
+    test('на странице списка проектов в заголовке отображается "Проекты"', () => {
+      renderComponent({ route: '/projects' });
+
+      expect(screen.getByRole('heading')).toHaveTextContent('Проекты');
+    });
+
+    test('на странице создания проекта в заголовке отображается "Создание проекта"', () => {
+      renderComponent({ route: '/projects/create' });
+
+      expect(screen.getByRole('heading')).toHaveTextContent('Создание проекта');
     });
   });
 });
