@@ -1785,10 +1785,10 @@
     webpack "^4.42.1"
     webpack-bundle-analyzer "^3.9.0"
 
-"@gpn-prototypes/vega-ui@^3.1.7":
-  version "3.1.7"
-  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-ui/3.1.7/ccf06298049830c4065e45d3fd115ef34b451e7cfcd7df9f5aac4d396e24f3cc#e043095a81f9fe7be67c5d69783514029da97a56"
-  integrity sha512-fHRXFyXonnEOgWmzLyOF7iAofiSYCfMBWMBf5qoLdzbLevhQj9jcN1FVde4ZGnC7MBFbF4yy0FifqibeJYH02Q==
+"@gpn-prototypes/vega-ui@^3.1.10":
+  version "3.1.10"
+  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-ui/3.1.10/76ad35b7a1f0c6e91e841f9c96b3256fb234b8420830115f059669dfa20f565d#8e4defeb6a9fd98c971cdb18753c8f519e71d582"
+  integrity sha512-7MrzHA2VOxP9tAI0PW3eOMW863g56DoAcLsBtBclkS+1b8tlBdCtEhpVi2Y9kHNWuZXMuFDAA2rPIMMZcqAixA==
   dependencies:
     "@babel/cli" "^7.12.13"
     "@babel/core" "^7.12.10"
