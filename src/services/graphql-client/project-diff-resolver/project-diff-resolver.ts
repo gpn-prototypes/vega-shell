@@ -98,7 +98,7 @@ export class ProjectDiffResolver {
     };
 
     if (this.mergeStrategy.default === 'smart') {
-      const diff = this.diffPatcher.diff(local, localChanges);
+      const diff = this.diffPatcher.diff(remote, local);
 
       if (diff !== undefined) {
         if (this.mergeStrategy.resolvers.length) {
