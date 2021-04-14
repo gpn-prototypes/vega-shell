@@ -355,7 +355,7 @@ describe('ProjectDiffResolverLink', () => {
         testMutationOne: {
           result: {
             vid,
-            data: [{ a: 2 }, { b: 2 }],
+            data: [{ a: 1 }, { b: 2 }], // TODO update test
             version: 3,
             __typename: 'Test',
           },
@@ -427,7 +427,7 @@ describe('ProjectDiffResolverLink', () => {
                   remote: data.result.remote,
                   local: {
                     vid,
-                    data: [{ a: 1 }, { b: 1 }],
+                    data: [{ a: 1 }, { b: 2 }],
                     version: 1,
                   },
                 };
@@ -440,7 +440,7 @@ describe('ProjectDiffResolverLink', () => {
 
     expect(patchedVars).toStrictEqual({
       vid,
-      data: [{ a: 2 }, { b: 2 }],
+      data: [{ a: 1 }, { b: 2 }],
       version: 2,
     });
 

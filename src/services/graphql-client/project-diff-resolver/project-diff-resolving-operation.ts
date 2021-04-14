@@ -13,9 +13,10 @@ import { omitTypename } from '../utils';
 
 import { CombinedFetchResult } from './combined-fetch-result';
 import { ProjectDiffResolverError } from './error';
-import { ProjectDiffResolver } from './project-diff-resolver';
+import { MergeStrategy, ProjectDiffResolver } from './project-diff-resolver';
 
 export type Data = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+
 interface MutationResult {
   __typename: string;
   result: Data & {
@@ -35,10 +36,6 @@ export interface ProjectAccessor<
   ): { local: ProjectData; remote: ProjectData };
   fromVariables(variables: Variables): ProjectData;
   toVariables(variables: Variables, data: ProjectData): Variables;
-}
-
-export interface MergeStrategy {
-  default: 'replace' | 'smart';
 }
 
 interface Options<V = OperationVariables, D = Data> {
