@@ -13,4 +13,14 @@ module.exports = {
   collectCoverageFrom: ['**/*.{ts,tsx}', '!**/*.d.ts', '!**/__generated__/**'],
   transformIgnorePatterns: ['node_modules/?!(@gpn-prototypes)/'],
   coverageReporters: ['lcov', 'json-summary', 'text', 'text-summary'],
+  reporters: [
+    'default',
+    [
+      'jest-junit',
+      {
+        outputDirectory: './reports',
+        suiteName: 'Jest Tests',
+      },
+    ],
+  ],
 };
