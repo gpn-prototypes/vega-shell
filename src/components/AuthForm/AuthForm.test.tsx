@@ -96,6 +96,23 @@ describe('AuthForm', () => {
     });
   });
 
+  test('если код ошибки PERMISSION_DENIED, то проиcходит переход на страницу ошибки', async () => {
+    const body = 'permission_denied';
+    const onLoginError = jest
+      .fn()
+      .mockRejectedValueOnce({ code: 'PERMISSION_DENIED', message: body });
+
+    const { shell } = renderComponent({ onLogin: onLoginError });
+
+    login();
+
+    await waitFor(() => {
+      expect(shell.history.location.pathname).toBe('/permission_denied');
+    });
+
+    expect(shell.notifications.getAll()).toEqual([]);
+  });
+
   test('если код ошибки не AUTH_ERROR, то в нотификации отобразится сообщение с сервера', async () => {
     const body = 'Ошибка валидации';
     const onLoginError = jest

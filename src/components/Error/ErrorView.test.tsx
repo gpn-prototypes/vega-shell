@@ -38,6 +38,10 @@ function findProjectsButton(): HTMLElement {
   return findButton(labels.projectButton);
 }
 
+function findCreateAppealButton(): HTMLElement {
+  return findButton(labels.createAppeal);
+}
+
 function renderComponent(props: Partial<ErrorViewProps> = {}): RenderResult {
   return render(
     <Router history={history}>
@@ -112,6 +116,36 @@ describe('ErrorView', () => {
 
     test('отображается корректный текст ошибки при наличии userMessage', () => {
       expect(screen.getByLabelText(labels.errorText)).toHaveTextContent(USER_MESSAGE);
+    });
+  });
+
+  describe('401 ошибка', () => {
+    const userMessage =
+      'Ошибка аутентификации. Вы не включены в рабочую группу Вега 2.0. Обратитесь в службу технической поддержки';
+    beforeEach(() => {
+      renderComponent({
+        code: 401,
+        message: 'permission_denied',
+        userMessage,
+      });
+    });
+
+    test('рендерится кнопка отправления обращения в техподдержку', () => {
+      expect(findCreateAppealButton()).toBeInTheDocument();
+    });
+
+    test('при нажатии на кнопку происходит открытие страницы выбор', () => {
+      const spy = jest.spyOn(window, 'open');
+
+      const button = findCreateAppealButton();
+
+      userEvent.click(button);
+
+      expect(spy).toBeCalledWith('https://suid.gazprom-neft.local/', '_blank', 'noreferrer=true');
+    });
+
+    test('отображается корректный текст ошибки при наличии userMessage', () => {
+      expect(screen.getByLabelText(labels.errorText)).toHaveTextContent(userMessage);
     });
   });
 });
