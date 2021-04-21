@@ -160,6 +160,7 @@ export const ApplicationRoutes = (): React.ReactElement => {
         <LogoutView />
       </Route>
       <Route path={PERMISSION_DENIED_PATH}>
+        {isLoggedIn && <Redirect to="/projects" />}
         <PermissionDeniedView />
       </Route>
       <Route path="/projects">

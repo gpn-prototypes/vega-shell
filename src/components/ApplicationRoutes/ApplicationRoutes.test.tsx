@@ -131,6 +131,26 @@ describe('ApplicationRoutes', () => {
       });
     });
 
+    test('при авторизации при redirectTo = permission_denied не происходит редирект', async () => {
+      fetchMock.mock(`/auth/jwt/obtain`, {
+        first_name: 'First',
+        last_name: 'Last',
+        jwt_for_access: mockValidToken(),
+        jwt_for_refresh: mockValidToken(),
+      });
+
+      const { shell } = renderComponent({
+        isAuth: false,
+        route: `/login?redirectTo=${encodeURIComponent('/permission_denied')}`,
+      });
+
+      login();
+
+      await waitFor(() => {
+        expect(shell.history.location.pathname).toBe('/projects');
+      });
+    });
+
     test('при очистке токенов и попытке перейти на другую страницу происходит переход на страницу авторизации', async () => {
       const { shell } = renderComponent({ isAuth: true, route: '/projects' });
 
