@@ -89,7 +89,18 @@ describe('AuthPage', () => {
     });
 
     test('обработка ошибки', async () => {
-      fetchMock.mock(`/auth/sso/login`, () => Promise.reject());
+      fetchMock.mock(
+        { url: `/auth/sso/login`, method: 'POST' },
+        {
+          status: 401,
+          body: JSON.stringify({
+            Error: {
+              code: 'Ошибка',
+              message: 'Описание ошибки',
+            },
+          }),
+        },
+      );
 
       const { shell } = renderComponent();
 

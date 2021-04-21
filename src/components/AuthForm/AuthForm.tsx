@@ -13,7 +13,7 @@ import { createValidate, validators } from './validation';
 
 import './AuthForm.css';
 
-type LoginError = {
+export type LoginError = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 };
