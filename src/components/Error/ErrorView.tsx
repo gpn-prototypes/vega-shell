@@ -26,6 +26,7 @@ export enum labels {
   reloadButton = 'Попробовать снова',
   projectButton = 'В список проектов',
   suidButton = 'Перейти в суид',
+  returnButton = 'Назад',
   body = 'Ошибка от сервера',
 }
 
@@ -74,16 +75,30 @@ const ErrorViewButton = (props: ErrorViewButtonProps): React.ReactElement => {
   };
 
   return (
-    <Button
-      onClick={handleClick}
-      size="s"
-      role="button"
-      name={buttonText}
-      view="ghost"
-      label={buttonText}
-      aria-label={buttonText}
-      className={cnErrorView('Button').toString()}
-    />
+    <div className={cnErrorView('ButtonsWrapper')}>
+      {code === 401 && (
+        <Button
+          onClick={() => history.push('/login')}
+          size="s"
+          role="button"
+          name={labels.returnButton}
+          view="ghost"
+          label={labels.returnButton}
+          aria-label={labels.returnButton}
+          className={cnErrorView('Button').toString()}
+        />
+      )}
+      <Button
+        onClick={handleClick}
+        size="s"
+        role="button"
+        name={buttonText}
+        view="ghost"
+        label={buttonText}
+        aria-label={buttonText}
+        className={cnErrorView('Button').toString()}
+      />
+    </div>
   );
 };
 

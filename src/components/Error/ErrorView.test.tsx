@@ -38,8 +38,12 @@ function findProjectsButton(): HTMLElement {
   return findButton(labels.projectButton);
 }
 
-function findCreateAppealButton(): HTMLElement {
+function findSuidButton(): HTMLElement {
   return findButton(labels.suidButton);
+}
+
+function findReturnButton(): HTMLElement {
+  return findButton(labels.returnButton);
 }
 
 function renderComponent(props: Partial<ErrorViewProps> = {}): RenderResult {
@@ -130,17 +134,31 @@ describe('ErrorView', () => {
     });
 
     test('рендерится кнопка отправления обращения в техподдержку', () => {
-      expect(findCreateAppealButton()).toBeInTheDocument();
+      expect(findSuidButton()).toBeInTheDocument();
     });
 
-    test('при нажатии на кнопку происходит открытие страницы выбор', () => {
+    test('рендерится кнопка возвращения на страницу логина', () => {
+      expect(findReturnButton()).toBeInTheDocument();
+    });
+
+    test('при нажатии на кнопку перехода в суид происходит открытие новой страницы', () => {
       const spy = jest.spyOn(window, 'open');
 
-      const button = findCreateAppealButton();
+      const button = findSuidButton();
 
       userEvent.click(button);
 
       expect(spy).toBeCalledWith('https://suid.gazprom-neft.local/', '_blank', 'noreferrer=true');
+    });
+
+    test('при нажатии на кнопку назад происходит переход на страницу логина', () => {
+      const spy = jest.spyOn(history, 'push');
+
+      const button = findReturnButton();
+
+      userEvent.click(button);
+
+      expect(spy).toBeCalledWith('/login');
     });
 
     test('отображается корректный текст ошибки при наличии userMessage', () => {
