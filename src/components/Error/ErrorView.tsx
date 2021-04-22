@@ -25,7 +25,7 @@ export enum labels {
   errorText = 'Текст ошибки',
   reloadButton = 'Попробовать снова',
   projectButton = 'В список проектов',
-  createAppeal = 'Создать обращение',
+  suidButton = 'Перейти в суид',
   body = 'Ошибка от сервера',
 }
 
@@ -47,7 +47,7 @@ const ErrorViewButton = (props: ErrorViewButtonProps): React.ReactElement => {
 
   switch (code) {
     case 401: {
-      buttonText = labels.createAppeal;
+      buttonText = labels.suidButton;
       break;
     }
     case 404: {

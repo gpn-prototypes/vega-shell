@@ -96,8 +96,7 @@ describe('ApplicationRoutes', () => {
         status: 401,
       });
 
-      const userMessage =
-        'Ошибка аутентификации. Вы не включены в рабочую группу Вега 2.0. Обратитесь в службу технической поддержки';
+      const userMessage = 'Ошибка аутентификации. Права доступа в систему Вега 2.0 отсутствуют';
 
       const { shell } = renderComponent({ isAuth: false, route: '/login' });
 

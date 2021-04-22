@@ -39,7 +39,7 @@ function findProjectsButton(): HTMLElement {
 }
 
 function findCreateAppealButton(): HTMLElement {
-  return findButton(labels.createAppeal);
+  return findButton(labels.suidButton);
 }
 
 function renderComponent(props: Partial<ErrorViewProps> = {}): RenderResult {
@@ -120,8 +120,7 @@ describe('ErrorView', () => {
   });
 
   describe('401 ошибка', () => {
-    const userMessage =
-      'Ошибка аутентификации. Вы не включены в рабочую группу Вега 2.0. Обратитесь в службу технической поддержки';
+    const userMessage = 'Ошибка аутентификации. Права доступа в систему Вега 2.0 отсутствуют';
     beforeEach(() => {
       renderComponent({
         code: 401,
