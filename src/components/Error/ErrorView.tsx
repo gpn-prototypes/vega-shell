@@ -47,7 +47,7 @@ const ErrorViewButton = (props: ErrorViewButtonProps): React.ReactElement => {
   let buttonText = labels.reloadButton;
 
   switch (code) {
-    case 401: {
+    case 403: {
       buttonText = labels.suidButton;
       break;
     }
@@ -60,7 +60,7 @@ const ErrorViewButton = (props: ErrorViewButtonProps): React.ReactElement => {
   }
 
   const handleClick = (): void => {
-    if (code === 401) {
+    if (code === 403) {
       window.open('https://suid.gazprom-neft.local/', '_blank', 'noreferrer=true');
     }
 
@@ -76,7 +76,7 @@ const ErrorViewButton = (props: ErrorViewButtonProps): React.ReactElement => {
 
   return (
     <div className={cnErrorView('ButtonsWrapper')}>
-      {code === 401 && (
+      {code === 403 && (
         <Button
           onClick={() => history.push('/login')}
           size="s"

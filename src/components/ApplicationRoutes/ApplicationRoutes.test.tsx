@@ -90,10 +90,10 @@ describe('ApplicationRoutes', () => {
       });
     });
 
-    test('при ошибке авторизации со статусом 401 и кодом "PERMISSION_DENIED" происходит редирект на страницу ошибки', async () => {
+    test('при ошибке авторизации со статусом 403 и кодом "PERMISSION_DENIED" происходит редирект на страницу ошибки', async () => {
       fetchMock.mock(`/auth/jwt/obtain`, {
         body: { Error: { code: 'PERMISSION_DENIED', message: 'permission_denied' } },
-        status: 401,
+        status: 403,
       });
 
       const userMessage = 'Ошибка аутентификации. Права доступа в систему Вега 2.0 отсутствуют';

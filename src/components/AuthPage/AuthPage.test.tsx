@@ -71,7 +71,7 @@ describe('AuthPage', () => {
       fetchMock.mock(
         { url: `/auth/jwt/obtain`, method: 'POST' },
         {
-          status: 401,
+          status: 403,
           body: JSON.stringify({
             Error: {
               code: 'PERMISSION_DENIED',
@@ -142,7 +142,7 @@ describe('AuthPage', () => {
       fetchMock.mock(
         { url: `/auth/sso/login`, method: 'GET' },
         {
-          status: 401,
+          status: 403,
           body: JSON.stringify({
             Error: {
               code: 'PERMISSION_DENIED',

@@ -123,11 +123,11 @@ describe('ErrorView', () => {
     });
   });
 
-  describe('401 ошибка', () => {
+  describe('403 ошибка', () => {
     const userMessage = 'Ошибка аутентификации. Права доступа в систему Вега 2.0 отсутствуют';
     beforeEach(() => {
       renderComponent({
-        code: 401,
+        code: 403,
         message: 'permission_denied',
         userMessage,
       });

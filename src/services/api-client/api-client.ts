@@ -33,6 +33,8 @@ type FailedResponse = {
 type ErrorMessageFunction = (error: string | number) => string;
 
 export const ERROR_MESSAGE_FUNCTIONS = {
+  PERMISSION_DENIED: (): string =>
+    'Ошибка аутентификации. Права доступа в систему Вега 2.0 отсутствуют',
   AUTH: (error: string | number): string =>
     `При входе в систему возникла ошибка: ${error}. Попробуйте снова или обратитесь в Службу технической поддержки`,
   DEFAULT: (error: string | number): string => error.toString(),
@@ -87,7 +89,12 @@ export class APIClient {
       return data;
     }
 
-    const errorMessageFunction = ERROR_MESSAGE_FUNCTIONS.AUTH;
+    let errorMessageFunction = ERROR_MESSAGE_FUNCTIONS.AUTH;
+
+    if (response.status === 403) {
+      errorMessageFunction = ERROR_MESSAGE_FUNCTIONS.PERMISSION_DENIED;
+    }
+
     return handleResponseError(response, errorMessageFunction);
   };
 
@@ -103,7 +110,12 @@ export class APIClient {
       return data;
     }
 
-    const errorMessageFunction = ERROR_MESSAGE_FUNCTIONS.AUTH;
+    let errorMessageFunction = ERROR_MESSAGE_FUNCTIONS.AUTH;
+
+    if (response.status === 403) {
+      errorMessageFunction = ERROR_MESSAGE_FUNCTIONS.PERMISSION_DENIED;
+    }
+
     return handleResponseError(response, errorMessageFunction);
   };
 
