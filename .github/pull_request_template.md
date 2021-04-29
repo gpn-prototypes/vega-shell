@@ -1,16 +1,38 @@
-## Описание изменений
+## Problem statement
 
-## Чек-лист
+_{Jira issue number, description or crucial excerpts}_
 
-- [ ] PR: направлен в правильную ветку
-- [ ] PR: назначен исполнитель PR и указаны нужные лейблы
-- [ ] PR: проверен diff, ничего лишнего в PR не попало
-- [ ] PR: есть описание изменений или приложена ссылка на задачу с описанием, оставлены пояснительные комментарии к diff
-- [ ] Документация: отражены все изменения в API конфигов и описаны важные особенности реализации или использования
-- [ ] Конфигурационные файлы: новые файлы или изменения текущих были проверены в тестовых репозиториях
+## Solution details
 
-## Опционально
+_{What has been done (list of details)}_
 
-- [ ] PR: прилинкованы затронутые issue и связанные PR
-- [ ] Доработки: заведены задачи для дальнейшей работы, если что-то решено не править в текущем PR
-- [ ] Коммиты: проименованы в соответствии с [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
+## Type
+- [ ] Feature
+- [ ] Bug Fix
+- [ ] Refactoring
+- [ ] Test
+- [ ] Other
+
+## Associated issues
+
+_{Jira issues or PRs related to this one}_
+
+## Quality control
+- [ ] PR: Based on a correct branch
+- [ ] PR: Head branch is rebased on the base branch
+- [ ] PR: Assignee chosen and necessary labels are set
+- [ ] PR: Current form is filled out (where it makes sense)
+- [ ] PR: Diff checked for irrelevant changes
+- [ ] PR: Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specs
+- [ ] PR: Checked for spelling, grammar and typos
+- [ ] Docs: All the important changes and features are described
+- [ ] Tests: New unit tests developed
+- [ ] Tests: New E2E tests developed
+- [ ] Tests: Existing unit tests passed successfully
+- [ ] Tests: Existing E2E tests passed successfully
+- [ ] Tests: Manually tested on personal instance
+
+## Notable statements
+- [ ] Affects configuration files
+- [ ] Brings new packages or updates existing
+- [ ] Opened follow-up tasks to resolve
