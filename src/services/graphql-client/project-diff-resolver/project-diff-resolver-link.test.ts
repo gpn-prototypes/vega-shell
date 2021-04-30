@@ -472,7 +472,13 @@ describe('ProjectDiffResolverLink', () => {
         testMutationOne: {
           result: {
             vid,
-            data: { a: { b: 2, c: 2 }, d: [{ e: 4 }, { e: 3 }] },
+            data: {
+              a: { b: 2, c: 2 },
+              d: [
+                { e: 4, d: 5 },
+                { e: 5, d: 2 },
+              ],
+            },
             version: 3,
             __typename: 'Test',
           },
@@ -494,7 +500,13 @@ describe('ProjectDiffResolverLink', () => {
             result: {
               remote: {
                 vid,
-                data: { a: { b: 2, c: 1 }, d: [{ e: 2 }, { e: 5 }] },
+                data: {
+                  a: { b: 2, c: 1 },
+                  d: [
+                    { e: 2, d: 5 },
+                    { e: 5, d: 2 },
+                  ],
+                },
                 version: 2,
                 __typename: 'Test',
               },
@@ -524,7 +536,13 @@ describe('ProjectDiffResolverLink', () => {
 
     const variables = {
       vid,
-      data: { a: { b: 1, c: 2 }, d: [{ e: 4 }, { e: 3 }] },
+      data: {
+        a: { b: 1, c: 2 },
+        d: [
+          { e: 4, d: 5 },
+          { e: 3, d: 7 },
+        ],
+      },
       version: 1,
     };
 
@@ -545,7 +563,13 @@ describe('ProjectDiffResolverLink', () => {
                   remote: data.result.remote,
                   local: {
                     vid,
-                    data: { a: { b: 1, c: 1 }, d: [{ e: 2 }, { e: 3 }] },
+                    data: {
+                      a: { b: 1, c: 1 },
+                      d: [
+                        { e: 2, d: 5 },
+                        { e: 3, d: 7 },
+                      ],
+                    },
                     version: 1,
                   },
                 };
@@ -558,7 +582,13 @@ describe('ProjectDiffResolverLink', () => {
 
     expect(patchedVars).toStrictEqual({
       vid,
-      data: { a: { b: 2, c: 2 }, d: [{ e: 4 }, { e: 3 }] },
+      data: {
+        a: { b: 2, c: 2 },
+        d: [
+          { e: 4, d: 5 },
+          { e: 5, d: 2 },
+        ],
+      },
       version: 2,
     });
 

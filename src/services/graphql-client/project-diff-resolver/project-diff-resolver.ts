@@ -105,14 +105,19 @@ export class ProjectDiffResolver {
           let patched = this.diffPatcher.patch(remote, diff);
           this.mergeStrategy.resolvers.forEach(([matcher, resolver]) => {
             if (typeof matcher === 'string') {
-              const localData = getDataByMatcher(matcher, localChanges);
+              const localData = getDataByMatcher(matcher, local);
+              const localChangesData = getDataByMatcher(matcher, localChanges);
               const remoteData = getDataByMatcher(matcher, remote);
 
-              if (Array.isArray(localData) && Array.isArray(remoteData)) {
+              if (
+                Array.isArray(localData) &&
+                Array.isArray(localChangesData) &&
+                Array.isArray(remoteData)
+              ) {
                 const patchedRows = remoteData.map((remoteRow, index) => {
-                  const rowDiff = this.diffPatcher.diff(remoteRow, localData[index]);
+                  const rowDiff = this.diffPatcher.diff(localData[index], localChangesData[index]);
                   if (rowDiff) {
-                    return resolver(localData[index], remoteRow);
+                    return resolver(localChangesData[index], remoteRow);
                   }
 
                   return remoteRow;
@@ -120,7 +125,7 @@ export class ProjectDiffResolver {
 
                 patched = setDataByMatcher(matcher, patched, patchedRows);
               } else {
-                const patchedData = resolver(localData, remoteData);
+                const patchedData = resolver(localChangesData, remoteData);
                 patched = setDataByMatcher(matcher, patched, patchedData);
               }
             }
