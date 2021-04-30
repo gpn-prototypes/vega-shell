@@ -98,14 +98,14 @@ export class ProjectDiffResolver {
     };
 
     if (this.mergeStrategy.default === 'smart') {
-      const diff = this.diffPatcher.diff(remote, local);
+      const diff = this.diffPatcher.diff(local, localChanges);
 
       if (diff !== undefined) {
         if (this.mergeStrategy.resolvers.length) {
           let patched = this.diffPatcher.patch(remote, diff);
           this.mergeStrategy.resolvers.forEach(([matcher, resolver]) => {
             if (typeof matcher === 'string') {
-              const localData = getDataByMatcher(matcher, local);
+              const localData = getDataByMatcher(matcher, localChanges);
               const remoteData = getDataByMatcher(matcher, remote);
 
               if (Array.isArray(localData) && Array.isArray(remoteData)) {

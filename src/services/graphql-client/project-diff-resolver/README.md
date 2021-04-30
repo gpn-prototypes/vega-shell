@@ -11,10 +11,11 @@
     - [replace](#replace)
     - [smart](#smart)
   - [Пример своего способа решения конфликтов](#пример-своего-способа-решения-конфликтов)
-  - [Детальное решение конфликтов (TODO)](#детальное-решение-конфликтов-todo)
-    - [Рекурсивная стратегия](#рекурсивная-стратегия)
+  - [Детальное решение конфликтов](#детальное-решение-конфликтов)
     - [Резолверы по матчерам](#резолверы-по-матчерам)
-    - [Резолверы по типу поля](#резолверы-по-типу-поля)
+    - [Варианты решений](#варианты-решений)
+      - [Рекурсивная стратегия](#рекурсивная-стратегия)
+      - [Резолверы по типу поля](#резолверы-по-типу-поля)
 
 ## Мотивация
 
@@ -183,11 +184,38 @@ async function saveProject() {
 }
 ```
 
-## Детальное решение конфликтов (TODO)
+## Детальное решение конфликтов
 
-Рассматривается несколько вариантов реализации `mergeStrategy`
+Для `mergeStrategy` была реализована версия с розолверами по матчерам
 
-### Рекурсивная стратегия
+### Резолверы по матчерам
+
+```ts
+type Matcher<T = any> = (data: any) => T;
+type Resolver<T = any> = (local: T, remote: T) => T;
+type MatchedResolver = [Matcher | string, Resolver];
+
+type MergeStrategy = {
+  default: 'replace' | 'smart';
+  resolvers: MatchedResolver[];
+};
+
+const mergeStrategy: MergeStrategy = {
+  default: 'smart',
+  resolvers: [
+    // resolver для вложенного поля
+    ['foo.bar.baz', (local, remote, diff) => local],
+    // resolver для элементов массива
+    ['some.nested.array[*]', (local, remote, diff) => local],
+  ],
+};
+```
+
+### Варианты решений
+
+Рассматривались несколько вариантов реализации `mergeStrategy`
+
+#### Рекурсивная стратегия
 
 ```ts
 type FieldResovler<T = any> = (local: T, remote: T, diff) => T;
@@ -215,32 +243,7 @@ const mergeStrategy: MergeStrategy = {
 };
 ```
 
-### Резолверы по матчерам
-
-```ts
-type Matcher<T = any> = (data: any) => T;
-type Resolver<T = any> = (local: T, remote: T) => T;
-type MatchedResolver = [Matcher | string, Resolver];
-
-type MergeStrategy = {
-  default: 'replace' | 'smart';
-  resolvers: MatchedResolver[];
-};
-
-const mergeStrategy: MergeStrategy = {
-  default: 'smart',
-  resolvers: [
-    // resolver для вложенного поля
-    ['foo.bar.baz', (local, remote, diff) => local],
-    // resolver для элементов массива
-    ['some.nested.array[*]', (local, remote, diff) => local],
-    // функция, которой будет передаваться версия проекта либо diff
-    [matcher, (local, remote, diff) => local],
-  ],
-};
-```
-
-### Резолверы по типу поля
+#### Резолверы по типу поля
 
 ```ts
 /**
