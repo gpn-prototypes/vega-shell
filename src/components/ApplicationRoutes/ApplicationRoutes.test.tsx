@@ -96,7 +96,8 @@ describe('ApplicationRoutes', () => {
         status: 403,
       });
 
-      const userMessage = 'Ошибка аутентификации. Права доступа в систему Вега 2.0 отсутствуют';
+      const userMessage =
+        'Вы не включены в рабочую группу ВЕГА 2.0. Необходимо запросить доступ к Вега 2.0 через СУИД';
 
       const { shell } = renderComponent({ isAuth: false, route: '/login' });
 

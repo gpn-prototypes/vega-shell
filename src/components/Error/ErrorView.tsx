@@ -25,7 +25,7 @@ export enum labels {
   errorText = 'Текст ошибки',
   reloadButton = 'Попробовать снова',
   projectButton = 'В список проектов',
-  suidButton = 'Перейти в суид',
+  suidButton = 'Перейти в СУИД',
   returnButton = 'Назад',
   body = 'Ошибка от сервера',
 }
