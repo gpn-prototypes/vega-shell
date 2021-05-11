@@ -1,6 +1,8 @@
 import type { Config as DiffPatcherConfig } from 'jsondiffpatch';
 import * as jsonDiffPatch from 'jsondiffpatch';
 
+import { getDataByMatcher, setDataByMatcher } from '../utils';
+
 interface ResolverParams {
   mergeStrategy: MergeStrategy;
 }
@@ -48,54 +50,6 @@ export class ProjectDiffResolver {
 
   merge<T extends AnyObject>(input: Input<T>): T {
     const { local, remote, localChanges } = input;
-
-    const getDataByMatcher = (
-      matcher: string,
-      object: AnyObject,
-    ): AnyObject | AnyObject[] | null => {
-      const matchedProperty =
-        matcher.indexOf('.') !== -1 ? matcher.slice(0, matcher.indexOf('.')) : matcher;
-      if (matchedProperty) {
-        if (matchedProperty.indexOf('[*]') === -1) {
-          if (!object[matchedProperty]) {
-            return null;
-          }
-          return getDataByMatcher(matcher.slice(matcher.indexOf('.') + 1), object[matchedProperty]);
-        }
-
-        const data = object[matchedProperty.slice(0, matchedProperty.indexOf('[*]'))];
-        if (!data) {
-          return null;
-        }
-
-        return data;
-      }
-      return object;
-    };
-
-    const setDataByMatcher = (matcher: string, object: T, data: AnyObject | AnyObject[]): T => {
-      const matcherProperties = matcher.split('.');
-      if (matcherProperties) {
-        const lastIndex = matcherProperties.length - 1;
-        if (matcherProperties[lastIndex].indexOf('[*]') !== -1) {
-          matcherProperties[lastIndex] = matcherProperties[lastIndex].slice(
-            0,
-            matcherProperties[lastIndex].indexOf('[*]'),
-          );
-        }
-
-        let currInstance: AnyObject = object;
-        matcherProperties.forEach((matcherProperty, index) => {
-          if (index !== matcherProperties.length - 1) {
-            currInstance = currInstance[matcherProperty];
-          } else {
-            currInstance[matcherProperty] = data;
-          }
-        });
-      }
-
-      return { ...object };
-    };
 
     if (this.mergeStrategy.default === 'smart') {
       const diff = this.diffPatcher.diff(local, localChanges);
