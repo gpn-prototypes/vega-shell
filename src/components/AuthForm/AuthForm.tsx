@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Form as FinalForm } from 'react-final-form';
+import { useHistory } from 'react-router-dom';
 import { Button, Form, Logo, Text } from '@gpn-prototypes/vega-ui';
 
 import { useShell } from '../../app';
@@ -12,7 +13,7 @@ import { createValidate, validators } from './validation';
 
 import './AuthForm.css';
 
-type LoginError = {
+export type LoginError = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 };
@@ -59,6 +60,8 @@ export const LOGIN_ERROR_NOTIFICATION_KEY = 'login-error-alert';
 export const AuthForm: AuthFormComponent = (props) => {
   const { onLogin, containerClassName } = props;
 
+  const history = useHistory();
+
   const { notifications } = useShell();
 
   const [isFetching, setIsFetching] = useState(false);
@@ -75,6 +78,13 @@ export const AuthForm: AuthFormComponent = (props) => {
     }
 
     onLogin(values).catch((error: LoginError) => {
+      setIsFetching(false);
+
+      if (error.code === 'PERMISSION_DENIED') {
+        history.push('/permission_denied');
+        return;
+      }
+
       const body = error.code === 'AUTH_ERROR' ? authErrorMessage : error.message;
 
       if (error) {
@@ -84,8 +94,6 @@ export const AuthForm: AuthFormComponent = (props) => {
           view: 'alert',
         });
       }
-
-      setIsFetching(false);
     });
   };
 

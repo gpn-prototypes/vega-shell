@@ -38,6 +38,14 @@ function findProjectsButton(): HTMLElement {
   return findButton(labels.projectButton);
 }
 
+function findSuidButton(): HTMLElement {
+  return findButton(labels.suidButton);
+}
+
+function findReturnButton(): HTMLElement {
+  return findButton(labels.returnButton);
+}
+
 function renderComponent(props: Partial<ErrorViewProps> = {}): RenderResult {
   return render(
     <Router history={history}>
@@ -112,6 +120,49 @@ describe('ErrorView', () => {
 
     test('отображается корректный текст ошибки при наличии userMessage', () => {
       expect(screen.getByLabelText(labels.errorText)).toHaveTextContent(USER_MESSAGE);
+    });
+  });
+
+  describe('403 ошибка', () => {
+    const userMessage = 'Ошибка аутентификации. Права доступа в систему Вега 2.0 отсутствуют';
+    beforeEach(() => {
+      renderComponent({
+        code: 403,
+        message: 'permission_denied',
+        userMessage,
+      });
+    });
+
+    test('рендерится кнопка отправления обращения в техподдержку', () => {
+      expect(findSuidButton()).toBeInTheDocument();
+    });
+
+    test('рендерится кнопка возвращения на страницу логина', () => {
+      expect(findReturnButton()).toBeInTheDocument();
+    });
+
+    test('при нажатии на кнопку перехода в суид происходит открытие новой страницы', () => {
+      const spy = jest.spyOn(window, 'open');
+
+      const button = findSuidButton();
+
+      userEvent.click(button);
+
+      expect(spy).toBeCalledWith('https://suid.gazprom-neft.local/', '_blank', 'noreferrer=true');
+    });
+
+    test('при нажатии на кнопку назад происходит переход на страницу логина', () => {
+      const spy = jest.spyOn(history, 'push');
+
+      const button = findReturnButton();
+
+      userEvent.click(button);
+
+      expect(spy).toBeCalledWith('/login');
+    });
+
+    test('отображается корректный текст ошибки при наличии userMessage', () => {
+      expect(screen.getByLabelText(labels.errorText)).toHaveTextContent(userMessage);
     });
   });
 });

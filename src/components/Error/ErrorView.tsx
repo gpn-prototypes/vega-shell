@@ -21,12 +21,14 @@ import './Error.css';
 
 export type ErrorViewProps = ServerError;
 
-export const labels = {
-  errorText: 'Текст ошибки',
-  reloadButton: 'Попробовать снова',
-  projectButton: 'В список проектов',
-  body: 'Ошибка от сервера',
-} as const;
+export enum labels {
+  errorText = 'Текст ошибки',
+  reloadButton = 'Попробовать снова',
+  projectButton = 'В список проектов',
+  suidButton = 'Перейти в СУИД',
+  returnButton = 'Назад',
+  body = 'Ошибка от сервера',
+}
 
 export const TIME_TO_RELOAD_SEC = 60;
 
@@ -42,9 +44,26 @@ type ErrorViewButtonProps = Pick<ErrorViewProps, 'code'> & {
 const ErrorViewButton = (props: ErrorViewButtonProps): React.ReactElement => {
   const { code, reloadInterval } = props;
   const history = useHistory();
-  const buttonText = code === 500 ? labels.reloadButton : labels.projectButton;
+  let buttonText = labels.reloadButton;
+
+  switch (code) {
+    case 403: {
+      buttonText = labels.suidButton;
+      break;
+    }
+    case 404: {
+      buttonText = labels.projectButton;
+      break;
+    }
+    default:
+      break;
+  }
 
   const handleClick = (): void => {
+    if (code === 403) {
+      window.open('https://suid.gazprom-neft.local/', '_blank', 'noreferrer=true');
+    }
+
     if (code === 404) {
       history.push('/projects');
     }
@@ -56,16 +75,30 @@ const ErrorViewButton = (props: ErrorViewButtonProps): React.ReactElement => {
   };
 
   return (
-    <Button
-      onClick={handleClick}
-      size="s"
-      role="button"
-      name={buttonText}
-      view="ghost"
-      label={buttonText}
-      aria-label={buttonText}
-      className={cnErrorView('Button').toString()}
-    />
+    <div className={cnErrorView('ButtonsWrapper')}>
+      {code === 403 && (
+        <Button
+          onClick={() => history.push('/login')}
+          size="s"
+          role="button"
+          name={labels.returnButton}
+          view="ghost"
+          label={labels.returnButton}
+          aria-label={labels.returnButton}
+          className={cnErrorView('Button').toString()}
+        />
+      )}
+      <Button
+        onClick={handleClick}
+        size="s"
+        role="button"
+        name={buttonText}
+        view="ghost"
+        label={buttonText}
+        aria-label={buttonText}
+        className={cnErrorView('Button').toString()}
+      />
+    </div>
   );
 };
 

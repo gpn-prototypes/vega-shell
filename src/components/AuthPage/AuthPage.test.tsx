@@ -66,6 +66,31 @@ describe('AuthPage', () => {
         expect(shell.identity.isLoggedIn()).toBeFalsy();
       });
     });
+
+    test('обработка ошибки PERMISSION_DENIED', async () => {
+      fetchMock.mock(
+        { url: `/auth/jwt/obtain`, method: 'POST' },
+        {
+          status: 403,
+          body: JSON.stringify({
+            Error: {
+              code: 'PERMISSION_DENIED',
+              message: 'permission_denied',
+            },
+          }),
+        },
+      );
+
+      const { shell } = renderComponent();
+
+      expect(shell.identity.isLoggedIn()).toBeFalsy();
+
+      login();
+
+      await waitFor(() => {
+        expect(shell.history.location.pathname).toBe('/permission_denied');
+      });
+    });
   });
 
   describe('авторизация через SSO', () => {
@@ -89,7 +114,18 @@ describe('AuthPage', () => {
     });
 
     test('обработка ошибки', async () => {
-      fetchMock.mock(`/auth/sso/login`, () => Promise.reject());
+      fetchMock.mock(
+        { url: `/auth/sso/login`, method: 'GET' },
+        {
+          status: 401,
+          body: JSON.stringify({
+            Error: {
+              code: 'Ошибка',
+              message: 'Описание ошибки',
+            },
+          }),
+        },
+      );
 
       const { shell } = renderComponent();
 
@@ -99,6 +135,27 @@ describe('AuthPage', () => {
             expect.objectContaining({ id: LOGIN_SSO_ERROR_NOTIFICATION_KEY, view: 'alert' }),
           ]),
         );
+      });
+    });
+
+    test('обработка ошибки PERMISSION_DENIED', async () => {
+      fetchMock.mock(
+        { url: `/auth/sso/login`, method: 'GET' },
+        {
+          status: 403,
+          body: JSON.stringify({
+            Error: {
+              code: 'PERMISSION_DENIED',
+              message: 'permission_denied',
+            },
+          }),
+        },
+      );
+
+      const { shell } = renderComponent();
+
+      await waitFor(() => {
+        expect(shell.history.location.pathname).toBe('/permission_denied');
       });
     });
 

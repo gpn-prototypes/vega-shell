@@ -12,9 +12,11 @@ import { ErrorView } from '../Error';
 import { Header } from '../Header';
 
 import { NotFoundView } from './NotFoundView';
+import { PermissionDeniedView } from './PermissionDeniedView';
 import { ProjectRoutes } from './ProjectRoutes';
 
 const AUTH_PATH = '/login';
+const PERMISSION_DENIED_PATH = '/permission_denied';
 
 export const AUTH_ERROR_MESSAGE =
   'Что-то пошло не так. Для повторного входа в\u00A0систему введите свои e-mail и\u00A0пароль';
@@ -131,7 +133,11 @@ export const ApplicationRoutes = (): React.ReactElement => {
     return path;
   };
 
-  if (!isLoggedIn && location.pathname !== AUTH_PATH) {
+  if (
+    !isLoggedIn &&
+    location.pathname !== AUTH_PATH &&
+    location.pathname !== PERMISSION_DENIED_PATH
+  ) {
     return <Redirect to={getLoginPath()} />;
   }
 
@@ -152,6 +158,10 @@ export const ApplicationRoutes = (): React.ReactElement => {
       </Route>
       <Route path="/logout">
         <LogoutView />
+      </Route>
+      <Route path={PERMISSION_DENIED_PATH}>
+        {isLoggedIn && <Redirect to="/projects" />}
+        <PermissionDeniedView />
       </Route>
       <Route path="/projects">
         <Header />
