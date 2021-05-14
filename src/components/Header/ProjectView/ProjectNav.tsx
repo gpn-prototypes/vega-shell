@@ -35,7 +35,7 @@ export const ProjectNav: React.FC<Props> = (props) => {
     () => [
       { name: 'О проекте', url: `/projects/show/${vid}`, testId: testId.about },
       { name: 'Ресурсная база', url: `/projects/show/${vid}/rb`, testId: testId.rb },
-      // { name: 'Логгика проекта', url: `/projects/show/${vid}/lc`, testId: testId.lc },
+      // { name: 'Логика проекта', url: `/projects/show/${vid}/lc`, testId: testId.lc },
       // {
       //   name: 'Экономика проекта',
       //   url: `/projects/show/${vid}/fem`,
