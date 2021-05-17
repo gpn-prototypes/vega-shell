@@ -37,7 +37,14 @@
     white-space: pre-line;
   }
 
+  &__ButtonWrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
   &__Button {
+    margin: 0 var(--space-2xs);
     margin-top: var(--space-s);
   }
 

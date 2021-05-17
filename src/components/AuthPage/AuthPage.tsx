@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { Carousel, Loader } from '@gpn-prototypes/vega-ui';
 
 import { useShell } from '../../app';
-import { AuthForm } from '../AuthForm';
+import { AuthForm, LoginError } from '../AuthForm';
 
 import imgCreate from './images/carousel-create-project.png';
 import imgRb from './images/carousel-rb.png';
@@ -36,6 +37,7 @@ export const LOGIN_SSO_ERROR_NOTIFICATION_KEY = 'login-sso-error-alert';
 
 export const AuthPage: AuthPageType = () => {
   const { identity, notifications } = useShell();
+  const history = useHistory();
 
   const [slideIdx, setSlideIdx] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -48,7 +50,12 @@ export const AuthPage: AuthPageType = () => {
         notifications.remove(LOGIN_SSO_ERROR_NOTIFICATION_KEY);
       }
 
-      identity?.authSSO().catch(() => {
+      identity?.authSSO().catch((error: LoginError) => {
+        if (error.code === 'PERMISSION_DENIED') {
+          history.push('/permission_denied');
+          return;
+        }
+
         const body = 'При входе возникла ошибка, войдите с помощью учетной записи';
 
         notifications.add({

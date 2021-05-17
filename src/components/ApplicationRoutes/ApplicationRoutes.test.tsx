@@ -90,6 +90,27 @@ describe('ApplicationRoutes', () => {
       });
     });
 
+    test('при ошибке авторизации со статусом 403 и кодом "PERMISSION_DENIED" происходит редирект на страницу ошибки', async () => {
+      fetchMock.mock(`/auth/jwt/obtain`, {
+        body: { Error: { code: 'PERMISSION_DENIED', message: 'permission_denied' } },
+        status: 403,
+      });
+
+      const userMessage =
+        'Вы не включены в рабочую группу ВЕГА 2.0. Необходимо запросить доступ к Вега 2.0 через СУИД';
+
+      const { shell } = renderComponent({ isAuth: false, route: '/login' });
+
+      login();
+
+      await act(async () => {
+        await fetchMock.flush();
+      });
+
+      expect(shell.history.location.pathname).toBe('/permission_denied');
+      expect(screen.getByText(userMessage)).toBeInTheDocument();
+    });
+
     test('при авторизации при наличии redirectTo происходит редирект на redirectTo', async () => {
       fetchMock.mock(`/auth/jwt/obtain`, {
         first_name: 'First',
@@ -107,6 +128,26 @@ describe('ApplicationRoutes', () => {
 
       await waitFor(() => {
         expect(shell.history.location.pathname).toBe('/projects/show/projectId');
+      });
+    });
+
+    test('при авторизации при redirectTo = permission_denied не происходит редирект', async () => {
+      fetchMock.mock(`/auth/jwt/obtain`, {
+        first_name: 'First',
+        last_name: 'Last',
+        jwt_for_access: mockValidToken(),
+        jwt_for_refresh: mockValidToken(),
+      });
+
+      const { shell } = renderComponent({
+        isAuth: false,
+        route: `/login?redirectTo=${encodeURIComponent('/permission_denied')}`,
+      });
+
+      login();
+
+      await waitFor(() => {
+        expect(shell.history.location.pathname).toBe('/projects');
       });
     });
 
@@ -213,7 +254,7 @@ describe('ApplicationRoutes', () => {
       expect(await screen.findByText(/500/)).toBeInTheDocument();
     });
 
-    test('при ошибке с кодом 401 создается уведомление', async () => {
+    test('при ошибке со статусом 401', async () => {
       fetchMock.mock('/graphql', { status: 401 });
 
       const { shell } = renderComponent({ isAuth: true, route: createProjectRoute(uuid()) });
@@ -227,7 +268,7 @@ describe('ApplicationRoutes', () => {
       );
     });
 
-    test('при ошибке с кодом 401 происходит разлогин пользователя', async () => {
+    test('при ошибке со статусом 401 происходит разлогин пользователя', async () => {
       fetchMock.mock('/graphql', { status: 401 });
 
       renderComponent();
