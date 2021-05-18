@@ -1693,10 +1693,10 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
-"@gpn-prototypes/frontend-configs@^1.3.1":
-  version "1.3.1"
-  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/frontend-configs/1.3.1/ad63775eb5adb0d6328e69363760b01b4bed50cdf016a48e3b18f55ec48f2d40#153aefd61e6edc8c1963f30b09b94fb9c3343eaf"
-  integrity sha512-VaiSBEGnNYzlJn1aFlzSvgcsF/AYcfpd/lvN9ARfmhNrJLKTWMN6usl+2sbBEHpzZOU6T4SMhOiv5jKFusls4g==
+"@gpn-prototypes/frontend-configs@^1.3.4":
+  version "1.3.4"
+  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/frontend-configs/1.3.4/f0f0a05bac756dcde58ad8a6de07bcac87f5d3bc59da22d12d870aad4f68cedc#a56cfe3a327f677b06c432b25a144b37ab7e29c0"
+  integrity sha512-fTKT5yN0x82iQJRxPPpy2GYIncXRlmino8HRP3JiD7G29lsDDXFDYGufe7BC9J8i5ettgrt/4d27xTqCy0mltw==
   dependencies:
     "@babel/core" "^7.11.6"
     "@babel/plugin-transform-runtime" "^7.10.1"
@@ -1709,6 +1709,7 @@
     babel-loader "^8.1.0"
     clean-webpack-plugin "^3.0.0"
     css-loader "^3.5.2"
+    elliptic "^6.5.4"
     eslint "^7.2.0"
     eslint-config-airbnb "^18.1.0"
     eslint-config-prettier "^6.11.0"
@@ -1719,13 +1720,17 @@
     eslint-plugin-react "^7.19.0"
     eslint-plugin-react-hooks "^2.5.0"
     eslint-plugin-simple-import-sort "^5.0.2"
+    highlight.js "^10.4.1"
     html-webpack-plugin "^4.5.0"
+    ini "^1.3.6"
     jest "^26.6.3"
     mini-css-extract-plugin "^0.9.0"
+    node-notifier "^8.0.1"
     postcss "^7.0.35"
     postcss-loader "^4.2.0"
     postcss-nested "^4.2.3"
     prettier "^2.2.1"
+    ssri "^8.0.1"
     style-loader "^1.1.4"
     stylelint "^13.3.3"
     stylelint-config-prettier "^8.0.2"
@@ -1738,57 +1743,12 @@
     typescript "^4.0.3"
     webpack "^4.42.1"
     webpack-bundle-analyzer "^3.9.0"
+    y18n "^4.0.1"
 
-"@gpn-prototypes/frontend-configs@^1.3.2":
-  version "1.3.2"
-  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/frontend-configs/1.3.2/58aa847ca1cf27e6aa504456470c6c877b16968c85d2302fdf5f5a12bc001936#a955af7f7d70d1d43ccaf673222b297f670659ae"
-  integrity sha512-SJcD3EqQJ2gjSgmJ6RGYZSADsxKXeilLDFPda35xfvtzViMI2irJFuvbNm9FPUX/BbQl2oGgR4JRsJOF6jUU3w==
-  dependencies:
-    "@babel/core" "^7.11.6"
-    "@babel/plugin-transform-runtime" "^7.10.1"
-    "@babel/preset-env" "^7.9.5"
-    "@babel/preset-react" "^7.9.4"
-    "@babel/preset-typescript" "^7.9.0"
-    "@types/jest" "^26.0.19"
-    "@typescript-eslint/eslint-plugin" "^4.2.0"
-    "@typescript-eslint/parser" "^4.2.0"
-    babel-loader "^8.1.0"
-    clean-webpack-plugin "^3.0.0"
-    css-loader "^3.5.2"
-    eslint "^7.2.0"
-    eslint-config-airbnb "^18.1.0"
-    eslint-config-prettier "^6.11.0"
-    eslint-import-resolver-typescript "^2.3.0"
-    eslint-plugin-import "^2.20.2"
-    eslint-plugin-jsx-a11y "^6.4.1"
-    eslint-plugin-prettier "^3.1.3"
-    eslint-plugin-react "^7.19.0"
-    eslint-plugin-react-hooks "^2.5.0"
-    eslint-plugin-simple-import-sort "^5.0.2"
-    html-webpack-plugin "^4.5.0"
-    jest "^26.6.3"
-    mini-css-extract-plugin "^0.9.0"
-    postcss "^7.0.35"
-    postcss-loader "^4.2.0"
-    postcss-nested "^4.2.3"
-    prettier "^2.2.1"
-    style-loader "^1.1.4"
-    stylelint "^13.3.3"
-    stylelint-config-prettier "^8.0.2"
-    stylelint-config-standard "^20.0.0"
-    stylelint-order "^4.1.0"
-    stylelint-prettier "^1.1.2"
-    terser-webpack-plugin "^4.2.2"
-    ts-loader "^7.0.1"
-    tsconfig-paths-webpack-plugin "^3.3.0"
-    typescript "^4.0.3"
-    webpack "^4.42.1"
-    webpack-bundle-analyzer "^3.9.0"
-
-"@gpn-prototypes/vega-ui@^3.1.10":
-  version "3.1.10"
-  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-ui/3.1.10/76ad35b7a1f0c6e91e841f9c96b3256fb234b8420830115f059669dfa20f565d#8e4defeb6a9fd98c971cdb18753c8f519e71d582"
-  integrity sha512-7MrzHA2VOxP9tAI0PW3eOMW863g56DoAcLsBtBclkS+1b8tlBdCtEhpVi2Y9kHNWuZXMuFDAA2rPIMMZcqAixA==
+"@gpn-prototypes/vega-ui@^3.1.11":
+  version "3.1.11"
+  resolved "https://npm.pkg.github.com/download/@gpn-prototypes/vega-ui/3.1.11/132f2722ed56d91a92a9cc8d8e2c6f946d7ee469a8761cfbbb8e27367c47265a#37ca1f420e62590ced3eee9522f9685aa9ff2313"
+  integrity sha512-28+RcdDZZJDRk4GyhB1Yi/klP6dvcWMBesLusEeb4gq9xQY3U4M1QIOOLKhFsYahhxrzOF4CTC6BXApvVHAA9A==
   dependencies:
     "@babel/cli" "^7.12.13"
     "@babel/core" "^7.12.10"
@@ -1800,7 +1760,7 @@
     "@emotion/babel-preset-css-prop" "^10.0.27"
     "@emotion/core" "^10.0.35"
     "@emotion/styled" "^10.0.27"
-    "@gpn-prototypes/frontend-configs" "^1.3.1"
+    "@gpn-prototypes/frontend-configs" "^1.3.4"
     "@popperjs/core" "^2.6.0"
     "@storybook/addon-actions" "^6.1.20"
     "@storybook/addon-knobs" "^6.1.20"
@@ -7648,7 +7608,7 @@ element-resize-detector@^1.2.1:
   dependencies:
     batch-processor "1.0.0"
 
-elliptic@^6.5.3:
+elliptic@^6.5.3, elliptic@^6.5.4:
   version "6.5.4"
   resolved "https://registry.yarnpkg.com/elliptic/-/elliptic-6.5.4.tgz#da37cebd31e79a1367e941b592ed1fbebd58abbb"
   integrity sha512-iLhC6ULemrljPZb+QutR5TQGB+pdW6KGD5RSegS+8sorOZT+rdQFbsQFJgvN3eRqNALqJer4oQ16YvJHlU8hzQ==
@@ -9606,6 +9566,11 @@ highlight.js@^10.1.1, highlight.js@~10.6.0:
   resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-10.6.0.tgz#0073aa71d566906965ba6e1b7be7b2682f5e18b6"
   integrity sha512-8mlRcn5vk/r4+QcqerapwBYTe+iPL5ih6xrNylxrnBdHQiijDETfXX7VIxC3UiCRiINBJfANBAsPzAvRQj8RpQ==
 
+highlight.js@^10.4.1:
+  version "10.7.2"
+  resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-10.7.2.tgz#89319b861edc66c48854ed1e6da21ea89f847360"
+  integrity sha512-oFLl873u4usRM9K63j4ME9u3etNF0PLiJhSQ8rdfuL51Wn3zkD6drf9ZW0dOzjnZI22YYG24z30JcmfCZjMgYg==
+
 history@^4.9.0:
   version "4.10.1"
   resolved "https://registry.yarnpkg.com/history/-/history-4.10.1.tgz#33371a65e3a83b267434e2b3f3b1b4c58aad4cf3"
@@ -10048,7 +10013,7 @@ ini@^1.3.4:
   resolved "https://registry.yarnpkg.com/ini/-/ini-1.3.5.tgz#eee25f56db1c9ec6085e0c22778083f596abf927"
   integrity sha512-RZY5huIKCMRWDUqZlEi72f/lmXKMvuszcMBduliQ3nnWbx9X/ZBQO7DijMEYS9EhHBb2qacRUMtC7svLwe0lcw==
 
-ini@^1.3.5, ini@~1.3.0:
+ini@^1.3.5, ini@^1.3.6, ini@~1.3.0:
   version "1.3.8"
   resolved "https://registry.yarnpkg.com/ini/-/ini-1.3.8.tgz#a29da425b48806f34767a4efce397269af28432c"
   integrity sha512-JV/yugV2uzW5iMRSiZAyDtQd+nxtUnjeLt0acNdw98kKLrvuRVyB80tsREOE7yvGVgalhZ6RNXCmEHkUKBKxew==
@@ -12871,6 +12836,18 @@ node-notifier@^8.0.0:
   version "8.0.1"
   resolved "https://registry.yarnpkg.com/node-notifier/-/node-notifier-8.0.1.tgz#f86e89bbc925f2b068784b31f382afdc6ca56be1"
   integrity sha512-BvEXF+UmsnAfYfoapKM9nGxnP+Wn7P91YfXmrKnfcYCx6VBeoN5Ez5Ogck6I8Bi5k4RlpqRYaw75pAwzX9OphA==
+  dependencies:
+    growly "^1.3.0"
+    is-wsl "^2.2.0"
+    semver "^7.3.2"
+    shellwords "^0.1.1"
+    uuid "^8.3.0"
+    which "^2.0.2"
+
+node-notifier@^8.0.1:
+  version "8.0.2"
+  resolved "https://registry.yarnpkg.com/node-notifier/-/node-notifier-8.0.2.tgz#f3167a38ef0d2c8a866a83e318c1ba0efeb702c5"
+  integrity sha512-oJP/9NAdd9+x2Q+rfphB2RJCHjod70RcRLjosiPMMu5gjIfwVnOUGq2nbTjTUbmy0DJ/tFIVT30+Qe3nzl4TJg==
   dependencies:
     growly "^1.3.0"
     is-wsl "^2.2.0"
@@ -15769,7 +15746,7 @@ ssri@^6.0.1:
   dependencies:
     figgy-pudding "^3.5.1"
 
-ssri@^8.0.0:
+ssri@^8.0.0, ssri@^8.0.1:
   version "8.0.1"
   resolved "https://registry.yarnpkg.com/ssri/-/ssri-8.0.1.tgz#638e4e439e2ffbd2cd289776d5ca457c4f51a2af"
   integrity sha512-97qShzy1AiyxvPNIkLWoGua7xoQzzPjQ0HAH4B0rWKo7SZ6USuPcrUiAFrws0UH8RrbWmgq3LMTObhPIHbbBeQ==
@@ -17735,6 +17712,11 @@ y18n@^4.0.0:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/y18n/-/y18n-4.0.1.tgz#8db2b83c31c5d75099bb890b23f3094891e247d4"
   integrity sha512-wNcy4NvjMYL8gogWWYAO7ZFWFfHcbdbE57tZO8e4cbpj8tfUcwrwqSl3ad8HxpYWCdXcJUCeKKZS62Av1affwQ==
+
+y18n@^4.0.1:
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/y18n/-/y18n-4.0.3.tgz#b5f259c82cd6e336921efd7bfd8bf560de9eeedf"
+  integrity sha512-JKhqTOwSrqNA1NY5lSztJ1GrBiUodLMmIZuLiDaMRJ+itFd+ABVE8XBjOvIWL+rSqNDC74LCSFmlb/U4UZ4hJQ==
 
 y18n@^5.0.5:
   version "5.0.5"
