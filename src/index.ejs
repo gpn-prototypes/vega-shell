@@ -48,10 +48,10 @@
     This is needed by babel to share largeish helper code for compiling async/await in older
     browsers. More information at https://github.com/single-spa/create-single-spa/issues/112
   -->
-    <% if (isYc) { %>
+    <% if (htmlWebpackPlugin.options.isYc) { %>
     <script src="/regenerator-runtime.js"></script>
     <% } else { %>
-    <script src="<%= baseUrl %>/regenerator-runtime.js"></script>
+    <script src="<%= htmlWebpackPlugin.options.baseUrl %>/regenerator-runtime.js"></script>
     <% } %>
 
     <!--
@@ -60,7 +60,7 @@
   -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self' data: https: localhost:* <%= baseApiUrl %> <%= cspHostname %>; script-src 'unsafe-inline' https: localhost:* <%= cspHostname %>; connect-src https: localhost:* ws://localhost:* <%= baseApiUrl %> <%= cspHostname %>; style-src 'unsafe-inline' blob: https:; object-src 'none';"
+      content="default-src 'self' data: https: localhost:* <%= htmlWebpackPlugin.options.baseApiUrl %> <%= htmlWebpackPlugin.options.cspHostname %>; script-src 'unsafe-inline' https: localhost:* <%= htmlWebpackPlugin.options.cspHostname %>; connect-src https: localhost:* ws://localhost:* <%= htmlWebpackPlugin.options.baseApiUrl %> <%= htmlWebpackPlugin.options.cspHostname %>; style-src 'unsafe-inline' blob: https:; object-src 'none';"
     />
     <meta name="importmap-type" content="systemjs-importmap" />
     <!-- If you wish to turn off import-map-overrides for specific environments (prod), uncomment the line below -->
@@ -75,16 +75,16 @@
 
     More information about shared dependencies can be found at https://single-spa.js.org/docs/recommended-setup#sharing-with-import-maps.
   -->
-    <% if (isYc) { %>
+    <% if (htmlWebpackPlugin.options.isYc) { %>
     <script type="systemjs-importmap" src="/import-map.json"></script>
     <% } else { %>
-    <script type="systemjs-importmap" src="<%= baseUrl %>/import-map.json"></script>
+    <script type="systemjs-importmap" src="<%= htmlWebpackPlugin.options.baseUrl %>/import-map.json"></script>
     <% } %>
 
     <!-- Add your organization's prod import map URL to this script's src  -->
     <!-- <script type="systemjs-importmap" src="/importmap.json"></script> -->
 
-    <% if (isLocal) { %>
+    <% if (htmlWebpackPlugin.options.isLocal) { %>
     <script type="systemjs-importmap">
       {
         "imports": {
@@ -110,16 +110,16 @@
   -->
     <!-- <script src="https://cdn.jsdelivr.net/npm/zone.js@0.10.3/dist/zone.min.js"></script> -->
 
-    <% if (isYc) { %>
+    <% if (htmlWebpackPlugin.options.isYc) { %>
     <script src="/import-map-overrides.js"></script>
     <script src="/systemjs.js"></script>
     <script src="/systemjs-amd.js"></script>
     <script src="/systemjs-named-exports.js"></script>
     <% } else { %>
-    <script src="<%= baseUrl %>/import-map-overrides.js"></script>
-    <script src="<%= baseUrl %>/systemjs.js"></script>
-    <script src="<%= baseUrl %>/systemjs-amd.js"></script>
-    <script src="<%= baseUrl %>/systemjs-named-exports.js"></script>
+    <script src="<%= htmlWebpackPlugin.options.baseUrl %>/import-map-overrides.js"></script>
+    <script src="<%= htmlWebpackPlugin.options.baseUrl %>/systemjs.js"></script>
+    <script src="<%= htmlWebpackPlugin.options.baseUrl %>/systemjs-amd.js"></script>
+    <script src="<%= htmlWebpackPlugin.options.baseUrl %>/systemjs-named-exports.js"></script>
     <% } %>
 
   </head>

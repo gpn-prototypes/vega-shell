@@ -1,3 +1,7 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+/* eslint-disable */
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { start } from 'single-spa';
