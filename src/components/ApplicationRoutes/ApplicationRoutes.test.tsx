@@ -300,9 +300,9 @@ describe('ApplicationRoutes', () => {
     });
   });
 
-  test('показыает 404 страницу, если url не совпадает ни с одним из роутов', async () => {
+  test('показывает 404 страницу, если url не совпадает ни с одним из роутов', async () => {
     renderComponent({ isAuth: true, route: '/unknown-test-page' });
-    expect(screen.getByText(/404/)).toBeInTheDocument();
+    expect(screen.getByText(/Указанная страница не найдена/)).toBeInTheDocument();
   });
 
   describe('страницы проекта', () => {
@@ -353,7 +353,7 @@ describe('ApplicationRoutes', () => {
       expect(screen.queryByLabelText('Загрузка приложения')).not.toBeInTheDocument();
     });
 
-    test('показыает 404 страницу, если проект не найден', async () => {
+    test('показывает 404 страницу, если проект не найден', async () => {
       fetchMock.mock('/graphql', createNotFoundMock);
 
       renderComponent({ isAuth: true, route: createProjectRoute(vid) });
@@ -363,10 +363,10 @@ describe('ApplicationRoutes', () => {
       });
 
       expect(fetchMock.done('/graphql')).toBe(true);
-      expect(screen.getByText(/404/)).toBeInTheDocument();
+      expect(screen.getByText(/Указанная страница не найдена/)).toBeInTheDocument();
     });
 
-    test('показыает 404 страницу, если url не совпадает ни с одним из приложений', async () => {
+    test('показывает 404 страницу, если url не совпадает ни с одним из приложений', async () => {
       fetchMock.mock('/graphql', createSuccessMock(vid));
 
       renderComponent({ isAuth: true, route: `${createProjectRoute(vid)}/unknown-test-page` });
@@ -375,10 +375,10 @@ describe('ApplicationRoutes', () => {
         await fetchMock.flush();
       });
 
-      expect(screen.getByText(/404/)).toBeInTheDocument();
+      expect(screen.getByText(/Указанная страница не найдена/)).toBeInTheDocument();
     });
 
-    test('показыает 404 страницу при ошибке запроса проекта', async () => {
+    test('показывает 404 страницу при ошибке запроса проекта', async () => {
       fetchMock.mock('/graphql', createErrorMock);
 
       renderComponent({ isAuth: true, route: createProjectRoute(vid) });
@@ -387,7 +387,7 @@ describe('ApplicationRoutes', () => {
         await fetchMock.flush();
       });
 
-      expect(screen.getByText(/404/)).toBeInTheDocument();
+      expect(screen.getByText(/Указанная страница не найдена/)).toBeInTheDocument();
     });
 
     describe('роуты приложений', () => {
