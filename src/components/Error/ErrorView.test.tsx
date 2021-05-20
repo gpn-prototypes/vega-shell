@@ -13,11 +13,16 @@ let history: History;
 const USER_MESSAGE = 'user message';
 
 beforeEach(() => {
+  jest.clearAllTimers();
   jest.useFakeTimers();
   history = createMemoryHistory({ initialEntries: ['/'] });
   Object.defineProperty(global, 'location', {
     writable: true,
     value: { reload: jest.fn() },
+  });
+  Object.defineProperty(global, 'open', {
+    writable: true,
+    value: jest.fn(),
   });
 });
 
@@ -142,7 +147,7 @@ describe('ErrorView', () => {
     });
 
     test('при нажатии на кнопку перехода в суид происходит открытие новой страницы', () => {
-      const spy = jest.spyOn(window, 'open');
+      const spy = jest.spyOn(global, 'open');
 
       const button = findSuidButton();
 
