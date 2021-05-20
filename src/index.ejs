@@ -55,8 +55,8 @@
     Learn more about CSP policies at https://content-security-policy.com/#directive
   -->
     <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self' data: https: localhost:* <%= htmlWebpackPlugin.options.baseApiUrl %> <%= htmlWebpackPlugin.options.cspHostname %>; script-src 'unsafe-inline' https: localhost:* <%= htmlWebpackPlugin.options.cspHostname %>; connect-src https: localhost:* ws://localhost:* <%= htmlWebpackPlugin.options.baseApiUrl %> <%= htmlWebpackPlugin.options.cspHostname %>; style-src 'unsafe-inline' blob: https:; object-src 'none';"
+            http-equiv="Content-Security-Policy"
+            content="default-src 'self' data: https: localhost:* <%= baseApiUrl %> <%= cspHostname %>; script-src 'unsafe-inline' https: localhost:* <%= cspHostname %>; connect-src https: localhost:* ws://localhost:* <%= baseApiUrl %> <%= cspHostname %>; style-src 'unsafe-inline' blob: https:; object-src 'none';"
     />
     <meta name="importmap-type" content="systemjs-importmap" />
     <!-- If you wish to turn off import-map-overrides for specific environments (prod), uncomment the line below -->
