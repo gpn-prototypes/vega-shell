@@ -75,52 +75,25 @@
 
     More information about shared dependencies can be found at https://single-spa.js.org/docs/recommended-setup#sharing-with-import-maps.
   -->
-    <% if (htmlWebpackPlugin.options.isYc) { %>
     <script type="systemjs-importmap" src="/import-map.json"></script>
-    <% } else { %>
-    <script type="systemjs-importmap" src="<%= htmlWebpackPlugin.options.baseUrl %>/import-map.json"></script>
-    <% } %>
 
     <!-- Add your organization's prod import map URL to this script's src  -->
     <!-- <script type="systemjs-importmap" src="/importmap.json"></script> -->
-
-    <% if (htmlWebpackPlugin.options.isLocal) { %>
-    <script type="systemjs-importmap">
-      {
-        "imports": {
-          "@vega/sp": "//localhost:9003/vega-sp.js",
-          "@vega/rb": "//localhost:9004/vega-rb.js",
-          "@vega/lc": "//localhost:9005/vega-lc.js",
-          "@vega/fem": "//localhost:9006/vega-fem.js"
-        }
-      }
-    </script>
-    <% } else if (isYc) { %>
-      <script type="systemjs-importmap" src="/vega-shell/dist/import-map.json"></script>
-      <script type="systemjs-importmap" src="/vega-sp/dist/import-map.json" crossorigin="anonymous"></script>
-      <script type="systemjs-importmap" src="/vega-rb/dist/import-map.json" crossorigin="anonymous"></script>
-      <script type="systemjs-importmap" src="/vega-lc/dist/import-map.json" crossorigin="anonymous"></script>
-      <script type="systemjs-importmap" src="/vega-fem/dist/import-map.json" crossorigin="anonymous"></script>
-    <% } %>
-
+    <script type="systemjs-importmap" src="/vega-shell/dist/import-map.json"></script>
+    <script type="systemjs-importmap" src="/vega-sp/dist/import-map.json" crossorigin="anonymous"></script>
+    <script type="systemjs-importmap" src="/vega-rb/dist/import-map.json" crossorigin="anonymous"></script>
+    <script type="systemjs-importmap" src="/vega-lc/dist/import-map.json" crossorigin="anonymous"></script>
+    <script type="systemjs-importmap" src="/vega-fem/dist/import-map.json" crossorigin="anonymous"></script>
 
     <!--
     If you need to support Angular applications, uncomment the script tag below to ensure only one instance of ZoneJS is loaded
     Learn more about why at https://single-spa.js.org/docs/ecosystem-angular/#zonejs
   -->
     <!-- <script src="https://cdn.jsdelivr.net/npm/zone.js@0.10.3/dist/zone.min.js"></script> -->
-
-    <% if (htmlWebpackPlugin.options.isYc) { %>
     <script src="/import-map-overrides.js"></script>
     <script src="/systemjs.js"></script>
     <script src="/systemjs-amd.js"></script>
     <script src="/systemjs-named-exports.js"></script>
-    <% } else { %>
-    <script src="<%= htmlWebpackPlugin.options.baseUrl %>/import-map-overrides.js"></script>
-    <script src="<%= htmlWebpackPlugin.options.baseUrl %>/systemjs.js"></script>
-    <script src="<%= htmlWebpackPlugin.options.baseUrl %>/systemjs-amd.js"></script>
-    <script src="<%= htmlWebpackPlugin.options.baseUrl %>/systemjs-named-exports.js"></script>
-    <% } %>
 
   </head>
   <body>
