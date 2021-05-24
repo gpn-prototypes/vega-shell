@@ -35,7 +35,7 @@ export class ProjectDiffResolver {
 
     const diffPatcherConfig: DiffPatcherConfig = {
       objectHash(item, index) {
-        return item?.vid || `$$index:${index}`;
+        return item?.vid || item?.id || `$$index:${index}`;
       },
       textDiff: {
         minLength: Infinity,
@@ -56,7 +56,7 @@ export class ProjectDiffResolver {
 
       if (diff !== undefined) {
         if (this.mergeStrategy.resolvers.length) {
-          let patched = this.diffPatcher.patch(remote, diff);
+          let patched = this.diffPatcher.patch(this.diffPatcher.clone(remote), diff);
           this.mergeStrategy.resolvers.forEach(([matcher, resolver]) => {
             if (typeof matcher === 'string') {
               const localData = getDataByMatcher(matcher, local);
@@ -86,7 +86,7 @@ export class ProjectDiffResolver {
           });
           return patched;
         }
-        return this.diffPatcher.patch(remote, diff);
+        return this.diffPatcher.patch(this.diffPatcher.clone(remote), diff);
       }
     }
 
