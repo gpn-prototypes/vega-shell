@@ -186,13 +186,13 @@ async function saveProject() {
 
 ## Детальное решение конфликтов
 
-Для `mergeStrategy` была реализована версия с розолверами по матчерам
+Для `mergeStrategy` была реализована версия с резолверами по матчерам
 
 ### Резолверы по матчерам
 
 ```ts
 type Matcher<T = any> = (data: any) => T;
-type Resolver<T = any> = (local: T, remote: T) => T;
+type Resolver<T = any> = (local: T, remote: T, diff: jsonDiffPatch.Delta) => T;
 type MatchedResolver = [Matcher | string, Resolver];
 
 type MergeStrategy = {
@@ -203,7 +203,7 @@ type MergeStrategy = {
 const mergeStrategy: MergeStrategy = {
   default: 'smart',
   resolvers: [
-    // resolver для вложенного поля
+    // resolver для вложенного поля, diff это отправляемые на сервер изменения локальной версии
     ['foo.bar.baz', (local, remote, diff) => local],
     // resolver для элементов массива
     ['some.nested.array[*]', (local, remote, diff) => local],

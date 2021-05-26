@@ -554,7 +554,16 @@ describe('ProjectDiffResolverLink', () => {
           projectDiffResolving: {
             mergeStrategy: {
               default: 'smart',
-              resolvers: [['data.d[*]', (local: any) => local]],
+              resolvers: [
+                [
+                  'data.d[*]',
+                  (local: any, remote: any, diff: any) => {
+                    if (!diff) return remote;
+
+                    return local;
+                  },
+                ],
+              ],
             },
             projectAccessor: {
               // eslint-disable-next-line @typescript-eslint/no-explicit-any

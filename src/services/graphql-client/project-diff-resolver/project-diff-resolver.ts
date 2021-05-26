@@ -10,7 +10,7 @@ interface ResolverParams {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyObject = Record<string | number, any>;
 type Matcher<T = any> = (data: any) => T; // eslint-disable-line @typescript-eslint/no-explicit-any
-type Resolver<T = any> = (local: T, remote: T) => T; // eslint-disable-line @typescript-eslint/no-explicit-any
+type Resolver<T = any> = (local: T, remote: T, diff?: jsonDiffPatch.Delta) => T; // eslint-disable-line @typescript-eslint/no-explicit-any
 type MatchedResolver = [Matcher | string, Resolver];
 
 interface Input<T extends AnyObject> {
@@ -35,7 +35,7 @@ export class ProjectDiffResolver {
 
     const diffPatcherConfig: DiffPatcherConfig = {
       objectHash(item, index) {
-        return item?.vid || item?.id || `$$index:${index}`;
+        return item?.vid || `$$index:${index}`;
       },
       textDiff: {
         minLength: Infinity,
@@ -53,7 +53,6 @@ export class ProjectDiffResolver {
 
     if (this.mergeStrategy.default === 'smart') {
       const diff = this.diffPatcher.diff(local, localChanges);
-
       if (diff !== undefined) {
         if (this.mergeStrategy.resolvers.length) {
           let patched = this.diffPatcher.patch(this.diffPatcher.clone(remote), diff);
@@ -68,18 +67,19 @@ export class ProjectDiffResolver {
                 Array.isArray(localChangesData) &&
                 Array.isArray(remoteData)
               ) {
-                const patchedRows = remoteData.map((remoteRow, index) => {
+                let patchedRows = remoteData.map((remoteRow, index) => {
                   const rowDiff = this.diffPatcher.diff(localData[index], localChangesData[index]);
-                  if (rowDiff) {
-                    return resolver(localChangesData[index], remoteRow);
-                  }
-
-                  return remoteRow;
+                  return resolver(localChangesData[index], remoteRow, rowDiff);
                 });
+
+                if (remoteData.length < localChangesData.length) {
+                  patchedRows = [...patchedRows, ...localChangesData.slice(remoteData.length)];
+                }
 
                 patched = setDataByMatcher(matcher, patched, patchedRows);
               } else {
-                const patchedData = resolver(localChangesData, remoteData);
+                const objectDiff = this.diffPatcher.diff(localData, localChangesData);
+                const patchedData = resolver(localChangesData, remoteData, objectDiff);
                 patched = setDataByMatcher(matcher, patched, patchedData);
               }
             }
