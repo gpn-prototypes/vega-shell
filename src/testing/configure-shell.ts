@@ -63,6 +63,9 @@ function createSchemaLink(resolvers: SchemaResolvers): SchemaLink {
 export const configureShell = (options: Options = {}): Shell => {
   const { user: userOpts, isAuth = false, baseApiUrl = '', resolvers } = options;
 
+  process.env.DISABLE_SSO =
+    process.env.DISABLE_SSO !== undefined ? process.env.DISABLE_SSO : 'true';
+
   if (isAuth) {
     const user: User = {
       firstName: userOpts?.firstName ?? 'First',

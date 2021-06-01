@@ -43,9 +43,10 @@ export const AuthPage: AuthPageType = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const useUnstableAuthSSO = localStorage.getItem('useUnstableAuthSSO');
+    const useAuthWithoutSSO = process.env.DISABLE_SSO === 'true';
+    const manuallyDisableSSO = localStorage.getItem('disableSSO') === 'true';
 
-    if (useUnstableAuthSSO === 'true') {
+    if (!useAuthWithoutSSO && !manuallyDisableSSO) {
       if (notifications.find(LOGIN_SSO_ERROR_NOTIFICATION_KEY) !== undefined) {
         notifications.remove(LOGIN_SSO_ERROR_NOTIFICATION_KEY);
       }

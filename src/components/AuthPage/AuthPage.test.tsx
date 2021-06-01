@@ -23,6 +23,10 @@ describe('AuthPage', () => {
   });
 
   describe('авторизация по логину и паролю', () => {
+    beforeEach(() => {
+      process.env.DISABLE_SSO = 'true';
+    });
+
     test('успешная авторизация', async () => {
       fetchMock.mock(`/auth/jwt/obtain`, {
         first_name: 'First',
@@ -95,7 +99,7 @@ describe('AuthPage', () => {
 
   describe('авторизация через SSO', () => {
     beforeEach(() => {
-      localStorage.setItem('useUnstableAuthSSO', 'true');
+      process.env.DISABLE_SSO = 'false';
     });
 
     test('успешная авторизация', async () => {

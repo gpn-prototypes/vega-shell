@@ -54,6 +54,10 @@ describe('ApplicationRoutes', () => {
   });
 
   describe('авторизация', () => {
+    beforeEach(() => {
+      process.env.DISABLE_SSO = 'true';
+    });
+
     test('при авторизации по умолчанию происходит редирект на страницу проектов', async () => {
       fetchMock.mock(`/auth/jwt/obtain`, {
         first_name: 'First',
@@ -73,7 +77,7 @@ describe('ApplicationRoutes', () => {
     });
 
     test('корректно работает авторизация через SSO', async () => {
-      localStorage.setItem('useUnstableAuthSSO', 'true');
+      process.env.DISABLE_SSO = 'false';
 
       fetchMock.mock(`/auth/sso/login`, {
         first_name: 'First',
