@@ -5,6 +5,10 @@ describe('точка входа', () => {
 
   document.body.appendChild(mountNode);
 
+  beforeAll(() => {
+    process.env.DISABLE_SSO = 'true';
+  });
+
   test('запускается без ошибок', async () => {
     await import('./vega-shell');
     expect(mountNode).toBeInTheDocument();
