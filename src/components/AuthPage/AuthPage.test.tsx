@@ -23,7 +23,7 @@ describe('AuthPage', () => {
   });
 
   describe('авторизация по логину и паролю', () => {
-    beforeEach(() => {
+    beforeAll(() => {
       process.env.DISABLE_SSO = 'true';
     });
 
@@ -98,7 +98,7 @@ describe('AuthPage', () => {
   });
 
   describe('авторизация через SSO', () => {
-    beforeEach(() => {
+    beforeAll(() => {
       process.env.DISABLE_SSO = 'false';
     });
 
