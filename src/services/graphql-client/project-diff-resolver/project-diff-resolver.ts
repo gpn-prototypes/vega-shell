@@ -65,7 +65,8 @@ export class ProjectDiffResolver {
               if (
                 Array.isArray(localData) &&
                 Array.isArray(localChangesData) &&
-                Array.isArray(remoteData)
+                Array.isArray(remoteData) &&
+                matcher.includes('[*]')
               ) {
                 let patchedRows = remoteData.map((remoteRow, index) => {
                   const rowDiff = this.diffPatcher.diff(localData[index], localChangesData[index]);
