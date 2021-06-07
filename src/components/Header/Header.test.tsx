@@ -66,8 +66,8 @@ describe('Header', () => {
       expect(screen.getByLabelText('Разделы проекта')).toBeInTheDocument();
       expect(screen.getByText('О проекте')).toBeInTheDocument();
       expect(screen.getByText('Ресурсная база')).toBeInTheDocument();
-      // expect(screen.getByText('Логика проекта')).toBeInTheDocument();
-      // expect(screen.getByText('Экономика проекта')).toBeInTheDocument();
+      expect(screen.getByText('Логика проекта')).toBeInTheDocument();
+      expect(screen.getByText('Экономика проекта')).toBeInTheDocument();
     });
 
     test('управляет переходом по вкладкам', async () => {
