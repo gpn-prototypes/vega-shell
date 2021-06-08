@@ -1,4 +1,5 @@
 import * as utils from './utils';
+import { MatchedResolver } from './utils';
 
 describe('utils', () => {
   describe('omitTypename', () => {
@@ -161,6 +162,44 @@ describe('utils', () => {
       const result = utils.setDataByMatcher(mockElementMatcher, testObject, newElement);
 
       expect(result).toEqual(testObject);
+    });
+  });
+
+  describe('removeDataByResolvers', () => {
+    const testObject = {
+      project: {
+        inner: {
+          0: {
+            element: { data: 'element' },
+            array: [{ data: 'first' }, { data: 'second' }, { data: 'third' }],
+          },
+        },
+        outer: {
+          first: 1,
+          second: 2,
+        },
+      },
+    };
+
+    const resolvers = [
+      ['project.inner.0.array', () => {}],
+      ['project.outer', () => {}],
+    ] as MatchedResolver[];
+
+    test('remove element by matcher', () => {
+      const result = utils.removeDataByResolvers(resolvers, testObject);
+      const expectedObject = {
+        project: {
+          inner: {
+            0: {
+              element: { data: 'element' },
+              array: {},
+            },
+          },
+          outer: {},
+        },
+      };
+      expect(result).toEqual(expectedObject);
     });
   });
 });

@@ -1,5 +1,10 @@
+import { Delta } from 'jsondiffpatch';
+
 type AnyValue = any; // eslint-disable-line @typescript-eslint/no-explicit-any
 type AnyObject = Record<string, AnyValue>;
+export type Matcher<T = any> = (data: any) => T; // eslint-disable-line @typescript-eslint/no-explicit-any
+export type Resolver<T = any> = (local: T, remote: T, diff?: Delta) => T; // eslint-disable-line @typescript-eslint/no-explicit-any
+export type MatchedResolver = [Matcher | string, Resolver];
 
 export function isObject(value: AnyValue): value is AnyObject {
   return typeof value === 'object' && value !== null;
@@ -105,4 +110,22 @@ export function setDataByMatcher<T extends AnyObject>(
   }
 
   return { ...object };
+}
+
+export function removeDataByResolvers<T extends AnyObject>(
+  resolvers: MatchedResolver[],
+  object: T,
+): T {
+  let resultObject = object;
+  resolvers.forEach(([matcher]) => {
+    if (typeof matcher === 'string') {
+      const idxOfArrayMatcherPrefix = matcher.indexOf('[*]');
+      resultObject = setDataByMatcher(
+        idxOfArrayMatcherPrefix === -1 ? matcher : matcher.substring(0, idxOfArrayMatcherPrefix),
+        object,
+        {},
+      );
+    }
+  });
+  return resultObject;
 }

@@ -473,7 +473,7 @@ describe('ProjectDiffResolverLink', () => {
           result: {
             vid,
             data: {
-              a: { b: 2, c: 2 },
+              a: { b: 2, c: 1 },
               d: [
                 { e: 4, d: 5 },
                 { e: 5, d: 2 },
@@ -592,7 +592,7 @@ describe('ProjectDiffResolverLink', () => {
     expect(patchedVars).toStrictEqual({
       vid,
       data: {
-        a: { b: 2, c: 2 },
+        a: { b: 2, c: 1 },
         d: [
           { e: 4, d: 5 },
           { e: 5, d: 2 },
@@ -631,7 +631,7 @@ describe('ProjectDiffResolverLink', () => {
             vid,
             data: {
               a: { b: 2, c: 1 },
-              d: { b: 2, c: 2 },
+              d: { b: 1, c: 2 },
             },
             version: 3,
             __typename: 'Test',
@@ -729,7 +729,7 @@ describe('ProjectDiffResolverLink', () => {
       vid,
       data: {
         a: { b: 2, c: 1 },
-        d: { b: 2, c: 2 },
+        d: { b: 1, c: 2 },
       },
       version: 2,
     });

@@ -1,7 +1,7 @@
 import type { Config as DiffPatcherConfig } from 'jsondiffpatch';
 import * as jsonDiffPatch from 'jsondiffpatch';
 
-import { getDataByMatcher, setDataByMatcher } from '../utils';
+import { getDataByMatcher, removeDataByResolvers, setDataByMatcher } from '../utils';
 
 interface ResolverParams {
   mergeStrategy: MergeStrategy;
@@ -55,7 +55,26 @@ export class ProjectDiffResolver {
       const diff = this.diffPatcher.diff(local, localChanges);
       if (diff !== undefined) {
         if (this.mergeStrategy.resolvers.length) {
-          let patched = this.diffPatcher.patch(this.diffPatcher.clone(remote), diff);
+          const localWithoutResolved = removeDataByResolvers(
+            this.mergeStrategy.resolvers,
+            this.diffPatcher.clone(local),
+          );
+          const remoteWithoutResolved = removeDataByResolvers(
+            this.mergeStrategy.resolvers,
+            this.diffPatcher.clone(remote),
+          );
+          const localChangesWithoutResolved = removeDataByResolvers(
+            this.mergeStrategy.resolvers,
+            this.diffPatcher.clone(remote),
+          );
+          const diffWithoutResolved = this.diffPatcher.diff(
+            localWithoutResolved,
+            localChangesWithoutResolved,
+          ) as jsonDiffPatch.Delta;
+          let patched = this.diffPatcher.patch(
+            this.diffPatcher.clone(remoteWithoutResolved),
+            diffWithoutResolved,
+          );
           this.mergeStrategy.resolvers.forEach(([matcher, resolver]) => {
             if (typeof matcher === 'string') {
               const localData = getDataByMatcher(matcher, local);
