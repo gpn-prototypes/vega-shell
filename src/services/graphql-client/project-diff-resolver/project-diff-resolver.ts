@@ -35,7 +35,7 @@ export class ProjectDiffResolver {
 
     const diffPatcherConfig: DiffPatcherConfig = {
       objectHash(item, index) {
-        return item?.vid || `$$index:${index}`;
+        return item?.vid || item?.code || `$$index:${index}`;
       },
       textDiff: {
         minLength: Infinity,
@@ -65,7 +65,7 @@ export class ProjectDiffResolver {
           );
           const localChangesWithoutResolved = removeDataByResolvers(
             this.mergeStrategy.resolvers,
-            this.diffPatcher.clone(remote),
+            this.diffPatcher.clone(localChanges),
           );
           const diffWithoutResolved = this.diffPatcher.diff(
             localWithoutResolved,
