@@ -355,7 +355,7 @@ describe('ProjectDiffResolverLink', () => {
         testMutationOne: {
           result: {
             vid,
-            data: [{ a: 2 }, { b: 2 }],
+            data: { a: { b: 2, c: 2 }, d: [{ e: 4 }, { e: 5 }] },
             version: 3,
             __typename: 'Test',
           },
@@ -377,7 +377,7 @@ describe('ProjectDiffResolverLink', () => {
             result: {
               remote: {
                 vid,
-                data: [{ a: 2 }, { b: 1 }],
+                data: { a: { b: 2, c: 1 }, d: [{ e: 2 }, { e: 5 }] },
                 version: 2,
                 __typename: 'Test',
               },
@@ -407,7 +407,7 @@ describe('ProjectDiffResolverLink', () => {
 
     const variables = {
       vid,
-      data: [{ a: 1 }, { b: 2 }],
+      data: { a: { b: 1, c: 2 }, d: [{ e: 4 }, { e: 3 }] },
       version: 1,
     };
 
@@ -427,7 +427,7 @@ describe('ProjectDiffResolverLink', () => {
                   remote: data.result.remote,
                   local: {
                     vid,
-                    data: [{ a: 1 }, { b: 1 }],
+                    data: { a: { b: 1, c: 1 }, d: [{ e: 2 }, { e: 3 }] },
                     version: 1,
                   },
                 };
@@ -440,7 +440,297 @@ describe('ProjectDiffResolverLink', () => {
 
     expect(patchedVars).toStrictEqual({
       vid,
-      data: [{ a: 2 }, { b: 2 }],
+      data: { a: { b: 2, c: 2 }, d: [{ e: 4 }, { e: 5 }] },
+      version: 2,
+    });
+
+    expect(result).toStrictEqual(expectedResponse);
+  });
+
+  test('режим решения конфликтов с применением резолвера массива', async () => {
+    const vid = 'test-vid';
+    const query = gql`
+      fragment testData on TestData {
+        vid
+        data
+      }
+
+      mutation TestMutation($foo: String!, $version: Int!) {
+        testMutationOne(foo: $foo, version: $version) {
+          result {
+            ... on TestData { ...testData }
+            ... on ${errorTypename} {
+              remote { ...testData }
+            }
+          }
+        }
+      }
+    `;
+
+    const expectedResponse: Response = {
+      data: {
+        testMutationOne: {
+          result: {
+            vid,
+            data: {
+              a: { b: 2, c: 2 },
+              d: [
+                { e: 4, d: 5 },
+                { e: 5, d: 2 },
+              ],
+            },
+            version: 3,
+            __typename: 'Test',
+          },
+        },
+      },
+    };
+
+    let patchedVars = {};
+
+    const stub = createHttpLink((operation) => {
+      const { attempt } = operation.getContext();
+      patchedVars = operation.variables;
+
+      let data: Response['data'] = {};
+
+      if (attempt === 1) {
+        data = {
+          testMutationOne: {
+            result: {
+              remote: {
+                vid,
+                data: {
+                  a: { b: 2, c: 1 },
+                  d: [
+                    { e: 2, d: 5 },
+                    { e: 5, d: 2 },
+                  ],
+                },
+                version: 2,
+                __typename: 'Test',
+              },
+              __typename: errorTypename,
+            },
+          },
+        };
+      }
+
+      if (attempt === 2) {
+        data = {
+          testMutationOne: {
+            result: {
+              vid,
+              ...patchedVars,
+              version: 3,
+              __typename: 'Test',
+            },
+          },
+        };
+      }
+
+      return { data };
+    });
+
+    const link = createLink(stub);
+
+    const variables = {
+      vid,
+      data: {
+        a: { b: 1, c: 2 },
+        d: [
+          { e: 4, d: 5 },
+          { e: 3, d: 7 },
+        ],
+      },
+      version: 1,
+    };
+
+    const result = await toPromise(
+      execute(link, {
+        query,
+        variables,
+        context: {
+          projectDiffResolving: {
+            mergeStrategy: {
+              default: 'smart',
+              resolvers: [
+                [
+                  'data.d[*]',
+                  (local: any, remote: any, diff: any) => {
+                    if (!diff) return remote;
+
+                    return local;
+                  },
+                ],
+              ],
+            },
+            projectAccessor: {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              fromDiffError(data: any) {
+                return {
+                  remote: data.result.remote,
+                  local: {
+                    vid,
+                    data: {
+                      a: { b: 1, c: 1 },
+                      d: [
+                        { e: 2, d: 5 },
+                        { e: 3, d: 7 },
+                      ],
+                    },
+                    version: 1,
+                  },
+                };
+              },
+            },
+          },
+        },
+      }),
+    );
+
+    expect(patchedVars).toStrictEqual({
+      vid,
+      data: {
+        a: { b: 2, c: 2 },
+        d: [
+          { e: 4, d: 5 },
+          { e: 5, d: 2 },
+        ],
+      },
+      version: 2,
+    });
+
+    expect(result).toStrictEqual(expectedResponse);
+  });
+
+  test('режим решения конфликтов с применением резолвера объекта', async () => {
+    const vid = 'test-vid';
+    const query = gql`
+      fragment testData on TestData {
+        vid
+        data
+      }
+
+      mutation TestMutation($foo: String!, $version: Int!) {
+        testMutationOne(foo: $foo, version: $version) {
+          result {
+            ... on TestData { ...testData }
+            ... on ${errorTypename} {
+              remote { ...testData }
+            }
+          }
+        }
+      }
+    `;
+
+    const expectedResponse: Response = {
+      data: {
+        testMutationOne: {
+          result: {
+            vid,
+            data: {
+              a: { b: 2, c: 1 },
+              d: { b: 2, c: 2 },
+            },
+            version: 3,
+            __typename: 'Test',
+          },
+        },
+      },
+    };
+
+    let patchedVars = {};
+
+    const stub = createHttpLink((operation) => {
+      const { attempt } = operation.getContext();
+      patchedVars = operation.variables;
+
+      let data: Response['data'] = {};
+
+      if (attempt === 1) {
+        data = {
+          testMutationOne: {
+            result: {
+              remote: {
+                vid,
+                data: {
+                  a: { b: 1, c: 2 },
+                  d: { b: 1, c: 2 },
+                },
+                version: 2,
+                __typename: 'Test',
+              },
+              __typename: errorTypename,
+            },
+          },
+        };
+      }
+
+      if (attempt === 2) {
+        data = {
+          testMutationOne: {
+            result: {
+              vid,
+              ...patchedVars,
+              version: 3,
+              __typename: 'Test',
+            },
+          },
+        };
+      }
+
+      return { data };
+    });
+
+    const link = createLink(stub);
+
+    const variables = {
+      vid,
+      data: {
+        a: { b: 2, c: 1 },
+        d: { b: 2, c: 1 },
+      },
+      version: 1,
+    };
+
+    const result = await toPromise(
+      execute(link, {
+        query,
+        variables,
+        context: {
+          projectDiffResolving: {
+            mergeStrategy: {
+              default: 'smart',
+              resolvers: [['data.a', (local: any) => local]],
+            },
+            projectAccessor: {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              fromDiffError(data: any) {
+                return {
+                  remote: data.result.remote,
+                  local: {
+                    vid,
+                    data: {
+                      a: { b: 1, c: 1 },
+                      d: { b: 1, c: 1 },
+                    },
+                    version: 1,
+                  },
+                };
+              },
+            },
+          },
+        },
+      }),
+    );
+
+    expect(patchedVars).toStrictEqual({
+      vid,
+      data: {
+        a: { b: 2, c: 1 },
+        d: { b: 2, c: 2 },
+      },
       version: 2,
     });
 

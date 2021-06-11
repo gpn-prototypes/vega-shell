@@ -9,7 +9,8 @@ import {
 import { BREAK, DocumentNode, visit } from 'graphql';
 
 import { ProjectDiffResolverError } from './error';
-import type { Data, MergeStrategy, ProjectAccessor } from './project-diff-resolving-operation';
+import { MergeStrategy } from './project-diff-resolver';
+import type { Data, ProjectAccessor } from './project-diff-resolving-operation';
 import { ProjectDiffResolvingOperation } from './project-diff-resolving-operation';
 
 export interface Options<D extends Data = Data, V extends OperationVariables = OperationVariables> {
@@ -58,6 +59,7 @@ export class ProjectDiffResolverLink extends ApolloLink {
   ): MergeStrategy {
     return {
       default: mergeStrategy.default ?? defaults.default,
+      resolvers: mergeStrategy.resolvers ?? defaults.resolvers,
     };
   }
 
@@ -88,6 +90,7 @@ export class ProjectDiffResolverLink extends ApolloLink {
       defaultOptions.mergeStrategy ?? {},
       {
         default: 'replace',
+        resolvers: [],
       },
     );
   }

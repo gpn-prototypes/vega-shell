@@ -1,5 +1,10 @@
+import { Delta } from 'jsondiffpatch';
+
 type AnyValue = any; // eslint-disable-line @typescript-eslint/no-explicit-any
 type AnyObject = Record<string, AnyValue>;
+export type Matcher<T = any> = (data: any) => T; // eslint-disable-line @typescript-eslint/no-explicit-any
+export type Resolver<T = any> = (local: T, remote: T, diff?: Delta) => T; // eslint-disable-line @typescript-eslint/no-explicit-any
+export type MatchedResolver = [Matcher | string, Resolver];
 
 export function isObject(value: AnyValue): value is AnyObject {
   return typeof value === 'object' && value !== null;
@@ -47,4 +52,80 @@ export function normalizeUri(uri: string): string {
   }
 
   return `/${path}`;
+}
+
+export function getDataByMatcher(
+  matcher: string,
+  object: AnyObject,
+): AnyObject | AnyObject[] | null {
+  const matchedProperty =
+    matcher.indexOf('.') !== -1 ? matcher.slice(0, matcher.indexOf('.')) : matcher;
+
+  if (matchedProperty.indexOf('[*]') === -1) {
+    if (matcher.indexOf('.') === -1) {
+      if (!object[matchedProperty]) {
+        return null;
+      }
+
+      return object[matchedProperty];
+    }
+
+    return getDataByMatcher(matcher.slice(matcher.indexOf('.') + 1), object[matchedProperty]);
+  }
+
+  const data = object[matchedProperty.slice(0, matchedProperty.indexOf('[*]'))];
+  if (!data) {
+    return null;
+  }
+
+  return data;
+}
+
+export function setDataByMatcher<T extends AnyObject>(
+  matcher: string,
+  object: T,
+  data: AnyObject | AnyObject[],
+): T {
+  const matcherProperties = matcher.split('.');
+  if (matcherProperties) {
+    const lastIndex = matcherProperties.length - 1;
+    if (matcherProperties[lastIndex].indexOf('[*]') !== -1) {
+      matcherProperties[lastIndex] = matcherProperties[lastIndex].slice(
+        0,
+        matcherProperties[lastIndex].indexOf('[*]'),
+      );
+    }
+
+    let currInstance: AnyObject = object;
+    matcherProperties.forEach((matcherProperty, index) => {
+      if (index !== matcherProperties.length - 1) {
+        if (!currInstance[matcherProperty]) {
+          currInstance[matcherProperty] = {};
+        }
+        currInstance = currInstance[matcherProperty];
+      } else {
+        currInstance[matcherProperty] = data;
+      }
+    });
+  }
+
+  return { ...object };
+}
+
+export function removeDataByResolvers<T extends AnyObject>(
+  resolvers: MatchedResolver[],
+  object: T,
+): T {
+  let resultObject = object;
+  resolvers.forEach(([matcher]) => {
+    if (typeof matcher === 'string') {
+      const idxOfArrayMatcherPrefix = matcher.indexOf('[*]');
+      resultObject = setDataByMatcher(
+        idxOfArrayMatcherPrefix === -1 ? matcher : matcher.substring(0, idxOfArrayMatcherPrefix),
+        object,
+        {},
+      );
+    }
+  });
+  return resultObject;
 }

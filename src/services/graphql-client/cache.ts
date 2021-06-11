@@ -57,6 +57,26 @@ export function createCache(): Cache {
       ProjectInner: {
         keyFields: ['vid'],
       },
+      DomainObject: {
+        keyFields: ['vid'],
+        fields: {
+          domainObjectPath: {
+            merge: (existing, incoming) => {
+              return incoming;
+            },
+          },
+          attributeValues: {
+            merge: (existing, incoming) => {
+              return incoming;
+            },
+          },
+          risksValues: {
+            merge: (existing, incoming) => {
+              return incoming;
+            },
+          },
+        },
+      },
     },
   });
 }
