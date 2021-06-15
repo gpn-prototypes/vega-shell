@@ -837,7 +837,6 @@ union ProjectDiffOrError = Project | UpdateProjectDiff | Error | ValidationError
 """Contains remote and local versions of  project if versions are not equal."""
 type UpdateProjectDiff {
   remoteProject: Project
-  localProject: Project
   message: String
 }
 input ProjectUpdateType {
