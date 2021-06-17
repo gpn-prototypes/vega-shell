@@ -16,6 +16,8 @@
 
 Для сборки проекта в prod-режиме выполните `yarn build`.
 
+По умолчанию флаг disableSSO проставлен false (нужно для прод режима). Для работы с авторизацией (login, logout) прописываем disableSSO true в localStorage браузера.
+
 ## Службы
 
 - [Identity](src/services/identity/README.md)
