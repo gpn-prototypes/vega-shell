@@ -152,7 +152,7 @@ const singleSpaConfig = (webpackConfigEnv) => {
       new HtmlWebpackPlugin({
         inject: false,
         favicon: 'src/assets/img/favicon.png',
-        template: process.env.VEGA_SHELL_TEMPLATE || 'src/index.ejs',
+        template: 'src/index.ejs',
         templateParameters: {
           isLocal: webpackConfigEnv && webpackConfigEnv.isLocal === 'true',
           isYc: YC_DEPLOYMENT,
